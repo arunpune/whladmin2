@@ -1,0 +1,176 @@
+@model DemographicsReportViewModel
+@{
+  ViewData["Title"] = "Application Demographics Report";
+}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a class="whl-link" asp-area="" asp-controller="Home" asp-action="Index" title="Home"><i
+          class="fa-solid fa-house"></i></a></li>
+    <li class="breadcrumb-item" aria-current="page">Reports</li>
+    <li class="breadcrumb-item active" aria-current="page">Application Demographics Report</li>
+  </ol>
+</nav>
+
+<div class="text-left mt-32" aria-label="amenity">
+  <h5>@ViewData["Title"]</h5>
+
+  <!-- Search Parameters -->
+  @using (Html.BeginForm("DemographicsReport", "Reports", FormMethod.Post))
+  {
+    <div class="card card-light border-0 mb-3 mt-16">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-xs-12 col-md-2">Submissions between:</div>
+          <div class="col-xs-12 col-md-3">
+            @Html.TextBoxFor(e => e.FromDate, htmlAttributes: new
+              {
+                @class = "form-control whl-formfield-fromdate",
+                placeholder = "From Date",
+                @type = "date"
+              })
+            @Html.ValidationMessageFor(v => v.FromDate)
+          </div>
+          <div class="col-xs-12 col-md-3">
+            @Html.TextBoxFor(e => e.ToDate, htmlAttributes: new
+              {
+                @class = "form-control whl-formfield-todate",
+                placeholder = "To Date",
+                @type = "date"
+              })
+            @Html.ValidationMessageFor(v => v.ToDate)
+          </div>
+          <div class="col-xs-12 col-md-3">
+            <button type="submit" class="btn btn-outline-secondary whl-action-viewreport" title="View Report" aria-label="View Report">View
+              Report</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Report Data -->
+  @if (Model.Searched)
+  {
+    var listingTypes = "RENTAL|SALE".Split("|");
+    <hr />
+
+    <!-- By Listing Type -->
+    foreach (var listingType in listingTypes)
+    {
+      <h4 class="fs-4 mt-16">@(listingType == "RENTAL" ? "Rental" : "Ownership")</h4>
+      <div class="card card-light border-0 mb-3 mt-16">
+        <div class="card-body">
+          <table class="table table-sm table-striped w-100">
+            <thead>
+              <tr>
+                <th>&nbsp;</th>
+                <th class="bg-light">&nbsp;</th>
+                <th colspan="@Model.RaceTypes.Count" class="text-center">RACIAL GROUP IDENTIFICATION</th>
+                <th colspan="@Model.EthnicityTypes.Count" class="text-center bg-light">ETHNICITY</th>
+              </tr>
+              <tr>
+                <th>Development Name</th>
+                <th class="text-end bg-light">Total</th>
+                @foreach (var raceType in Model.RaceTypes)
+                {
+                  <th class="text-end">@raceType.Value</th>
+                }
+                @foreach (var ethnicityType in Model.EthnicityTypes)
+                {
+                  <th class="text-end bg-light">@ethnicityType.Value</th>
+                }
+              </tr>
+            </thead>
+            <tbody>
+              @if ((Model.Data?.Count(c => c.ListingTypeCd == listingType) ?? 0) > 0)
+              {
+                foreach (var record in Model.Data.Where(w => w.ListingTypeCd == listingType))
+                {
+                  <tr>
+                    <td>@record.ListingName</td>
+                    <td class="text-end bg-light">@record.TotalCount</td>
+                    @foreach (var raceType in Model.RaceTypes)
+                    {
+                      <td class="text-end">@(record.RaceData.ContainsKey(raceType.Key) ? record.RaceData[raceType.Key] : 0)</td>
+                    }
+                    @foreach (var ethnicityType in Model.EthnicityTypes)
+                    {
+                      <td class="text-end bg-light">@(record.EthnicityData.ContainsKey(ethnicityType.Key) ? record.EthnicityData[ethnicityType.Key] : 0)</td>
+                    }
+                  </tr>
+                }
+              }
+              else
+              {
+                <tr>
+                  <td colspan="@(Model.RaceTypes.Count + Model.EthnicityTypes.Count + 2)" class="text-center">
+                    <small class="text-secondary">No application demographics data for @(listingType == "RENTAL" ? "rentals" : "ownership").</small>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    }
+  }
+</div>
+
+@section Scripts
+{
+  <script>
+    //<![CDATA[
+
+    $(function () {
+
+      fnToggleViewReport();
+
+      $('.whl-formfield-fromdate').on('change', function () {
+        fnToggleViewReport();
+      });
+
+      $('.whl-formfield-todate').on('change', function () {
+        fnToggleViewReport();
+      });
+
+      function fnToggleViewReport() {
+
+        $('.whl-action-viewreport').attr('disabled', 'disabled');
+
+        var fs = $('.whl-formfield-fromdate').val().split('-');
+        var fd = new Date(parseInt(fs[0]), parseInt(fs[1]) - 1, parseInt(fs[2]));
+
+        var ts = $('.whl-formfield-todate').val().split('-');
+        var td = new Date(parseInt(ts[0]), parseInt(ts[1]) - 1, parseInt(ts[2]));
+
+        var m = new Date(2024, 0, 1, 0, 0, 0);
+        var t = new Date();
+
+        $('.whl-formfield-fromdate').removeClass('is-valid');
+        $('.whl-formfield-fromdate').removeClass('is-invalid');
+        if (fd !== undefined && fd !== null && fd >= m && fd <= t) {
+          $('.whl-formfield-fromdate').addClass('is-valid');
+        } else {
+          $('.whl-formfield-fromdate').addClass('is-invalid');
+          return;
+        }
+
+        $('.whl-formfield-todate').removeClass('is-valid');
+        $('.whl-formfield-todate').removeClass('is-invalid');
+        if (td !== undefined && td !== null && td >= fd && td <= t) {
+          $('.whl-formfield-todate').addClass('is-valid');
+        } else {
+          $('.whl-formfield-todate').addClass('is-invalid');
+          return;
+        }
+
+        $('.whl-action-viewreport').removeAttr('disabled');
+
+      }
+
+    });
+
+    //]]>
+  </script>
+}

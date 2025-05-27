@@ -1,0 +1,23 @@
+@{
+  ViewData["Title"] = "Logged Out";
+  ViewData["MENUID"] = "LOGOUT";
+}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a class="whl-link" asp-area="" asp-controller="Home" asp-action="Index" title="Home"><i
+          class="fa-solid fa-house"></i></a></li>
+    <li class="breadcrumb-item active" aria-current="page">Log Out</li>
+  </ol>
+</nav>
+
+<div class="text-left mt-32 login-page">
+  <div class="card mt-16 mb-3 shadow-sm">
+    <div class="card-body">
+      <h4 class="text-dark">Logged Out</h4>
+      <p>You have been logged out of the application. Please <a class="whl-link" asp-area="" asp-controller="Account"
+          asp-action="LogIn" title="Click here to log in" aria-label="Click here to log in">log in</a> again to your
+        account to complete your profile and apply for eligible listings.</p>
+    </div>
+  </div>
+</div>

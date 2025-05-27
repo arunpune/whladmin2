@@ -1,0 +1,59 @@
+@model EditableHousingApplicationViewModel
+<div class="text-left mt-16">
+  <div class="card text-bg-light border-0">
+    <div class="card-body">
+      <h4 class="text-secondary whl-card-title">Household Members Information</h4>
+      <div class="card-text mt-16">
+        @if (Model.Members.Any())
+        {
+          <div class="row mb-3 border-bottom">
+            <div class="col-xs-11 col-md-4">
+              <small class="fw-bold">Relation Type</small>
+            </div>
+            <div class="col-xs-12 col-md-4">
+              <small class="fw-bold">Name</small>
+            </div>
+            <div class="col-xs-12 col-md-2 text-end">
+              <small class="fw-bold">Income</small>
+            </div>
+            <div class="col-xs-12 col-md-2 text-end">
+              <small class="fw-bold">Real Estate</small>
+            </div>
+          </div>
+          @foreach (var member in Model.Members)
+          {
+            <div class="row mb-3">
+              <div class="col-xs-12 col-md-4">
+                @member.RelationTypeDescription
+              </div>
+              <div class="col-xs-12 col-md-4">
+                @member.DisplayName
+              </div>
+              <div class="col-xs-12 col-md-2 text-end">
+                @member.IncomeValueAmt.ToString("C0")
+              </div>
+              <div class="col-xs-12 col-md-2 text-end">
+                @member.RealEstateValueAmt.ToString("C0")
+              </div>
+            </div>
+          }
+          <div class="row mb-3 bg-light border-top">
+            <div class="col-xs-12 col-md-8">
+              <span class="fw-bolder">Total</span>
+            </div>
+            <div class="col-xs-12 col-md-2 text-end">
+              <span class="fw-bolder">@Model.Members.Select(s => s.IncomeValueAmt).Sum().ToString("C0")</span>
+            </div>
+            <div class="col-xs-12 col-md-2 text-end">
+              <span class="fw-bolder">@Model.Members.Select(s => s.RealEstateValueAmt).Sum().ToString("C0")</span>
+            </div>
+          </div>
+        }
+        else
+        {
+          <p>There are no household members to be associated with this application.</p>
+        }
+      </div>
+    </div>
+  </div>
+</div>

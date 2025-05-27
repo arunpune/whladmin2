@@ -1,0 +1,39 @@
+﻿@model EditableListingDocumentsReqdViewModel
+@{
+  var documentTypesCount = Model.DocumentTypes?.Count() ?? 0;
+}
+
+<div class="text-left">
+  @if (documentTypesCount == 0)
+  {
+    <div>
+      <h6 class="text-danger"><i class="fa-solid fa-triangle-exclamation"></i>&nbsp;Error</h6>
+      <p>There are no document types available for selection!</p>
+      <hr />
+    </div>
+  }
+  else
+  {
+    using (Html.BeginForm("EditDocumentsReqd", "Listings", FormMethod.Post))
+    {
+      <div id="divDocumentsReqdSaveErrorMessage" style="display: none;">
+        <h6 class="text-danger"><i class="fa-solid fa-triangle-exclamation"></i>&nbsp;Error</h6>
+        <p id="lblDocumentsReqdSaveErrorMessage">Failed to save document types</p>
+        <hr />
+      </div>
+
+      <input type="hidden" id="DocumentTypeListingId" name="DocumentTypeListingId" value="@Model.ListingId" />
+
+      <div class="row mb-3">
+        <div class="col-sm-12">
+          @foreach (var amenity in Model.DocumentTypes)
+          {
+            var id = $"selDocumentType{amenity.DocumentTypeId}";
+            <input type="checkbox" id="@id" name="selDocumentTypes" value="@amenity.DocumentTypeId" @(Html.Raw(amenity.Selected ? "checked=\"checked\"" : "")) />
+            <label for="@id">@amenity.Name @if (!amenity.Active) { @(" (Inactive)") }</label><br />
+          }
+        </div>
+      </div>
+    }
+  }
+</div>

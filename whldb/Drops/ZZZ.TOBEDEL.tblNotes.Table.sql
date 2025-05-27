@@ -1,0 +1,8 @@
+SET ANSI_NULLS ON;
+GO
+SET QUOTED_IDENTIFIER ON;
+GO
+
+IF OBJECT_ID(N'tblNotes', N'U') IS NOT NULL
+    DROP TABLE [dbo].[tblNotes];
+GO

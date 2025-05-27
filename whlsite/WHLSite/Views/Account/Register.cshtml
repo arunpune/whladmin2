@@ -1,0 +1,152 @@
+@model RegistrationViewModel
+@{
+  ViewData["Title"] = "New HomeSeeker Registration";
+  ViewData["MENUID"] = "REGISTER";
+}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a class="whl-link" asp-area="" asp-controller="Home" asp-action="Index" title="Home"><i
+          class="fa-solid fa-house"></i></a></li>
+    <li class="breadcrumb-item active" aria-current="page">Register</li>
+  </ol>
+</nav>
+
+<div class="text-left mt-32 registration-page">
+  <div class="card border-0 shadow-lg">
+    @* <h5 class="card-header">New HomeSeeker Registration</h5> *@
+    <div class="card-body">
+      <h4 class="text-secondary whl-card-title">New HomeSeeker Registration</h4>
+      @using (Html.BeginForm("Register", "Account", FormMethod.Post, new { @class = "form whl-form-register", id = "frmRegister", name = "frmRegister" }))
+      {
+        if (!string.IsNullOrEmpty((Model.Message ?? "").Trim()))
+        {
+          <div id="divSaveErrorMessage">
+            <h6 class="text-danger"><i class="fa-solid fa-triangle-exclamation"></i>&nbsp;Error</h6>
+            <p id="lblSaveErrorMessage">@Model.Message</p>
+            <hr />
+          </div>
+        }
+
+        @await Html.PartialAsync("~/Views/Shared/_RequiredFieldBlurb.cshtml")
+
+        <div class="row mb-3">
+          <label class="col-sm-3 form-label small fw-bolder" asp-for="Username">Username <span class="fw-bold text-danger">*</span></label>
+          <div class="col-sm-3">
+            <input type="text" class="form-control whl-formfield-username" minlength="8" maxlength="32" placeholder="Enter Username" autocomplete="username" asp-for="Username" />
+            <div id="whl-formfield-helptext-username" class="form-text">This is the username you would like to associate with this account. It must be a minimum of 8 characters long, and up to 32 characters. It must start with an alphabet, and can contain only alphabets and numbers, and may not contain more than 2 consecutive repeating characters.</div>
+          </div>
+          <div class="col-sm-3">
+            <button type="button" class="btn btn-outline-secondary whl-action-checkavailability" title="Check availability" aria-label="Check availability">Check Availability</button>
+            <label class="whl-formfieldlabel-usernameavailable" style="display: none;"></label>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <label class="col-sm-3 form-label small fw-bolder" asp-for="EmailAddress">Email Address <span class="fw-bold text-danger">*</span></label>
+          <div class="col-sm-6">
+            <input type="email" class="form-control whl-formfield-emailaddress" maxlength="200" placeholder="Enter Email Address" autocomplete="email" asp-for="EmailAddress" />
+            <div id="whl-formfield-helptext-emailaddress" class="form-text">This is the primary email address you would like to associate with this account. An email will be sent to this address to confirm your HomeSeeker account.</div>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-sm-3">&nbsp;</div>
+          <div class="form-check form-switch col-sm-9">
+            <input type="checkbox" class="form-check-input whl-formfield-authrepemailaddressind ml-8" role="switch" asp-for="AuthRepEmailAddressInd" />
+            <label class="form-check-label" asp-for="AuthRepEmailAddressInd">This email address is for the registrant's authorized representative to receive notifications.</label>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <label class="col-sm-3 form-label small fw-bolder" asp-for="Password">Password <span class="fw-bold text-danger">*</span></label>
+          <div class="col-sm-6">
+            <input type="password" class="form-control whl-formfield-password" maxlength="32" placeholder="Enter Password" autocomplete="off" asp-for="Password" />
+            <div id="whl-formfield-helptext-password" class="form-text">Your password must be a minimum of 14 characters long, and contain at least one lowercase, one uppercase, one number and one special character.</div>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <label class="col-sm-3 form-label small fw-bolder" asp-for="ConfirmationPassword">Confirm Password <span class="fw-bold text-danger">*</span></label>
+          <div class="col-sm-6">
+            <input type="password" class="form-control whl-formfield-confirmpassword" maxlength="32" placeholder="Confirm Password" autocomplete="off" asp-for="ConfirmationPassword" />
+            <div id="whl-formfield-helptext-confirmpassword" class="form-text">Passwords must match.</div>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <label class="col-sm-3 form-label small fw-bolder" asp-for="PhoneNumber">Phone Number <span class="fw-bold text-danger">*</span></label>
+          <div class="col-sm-3">
+            <input type="tel" class="form-control whl-formfield-phonenumber" maxlength="10" placeholder="Phone Number" autocomplete="phone" asp-for="PhoneNumber" />
+            <div id="whl-formfield-helptext-phonenumber" class="form-text">This is your primary US phone number.</div>
+          </div>
+          <div class="col-sm-3">
+            <input type="text" class="form-control whl-formfield-phonenumberextn" maxlength="10" placeholder="Extn" autocomplete="off" asp-for="PhoneNumberExtn" />
+            <div id="whl-formfield-helptext-phonenumberextn" class="form-text">Enter the extension if you have one.</div>
+          </div>
+          <div class="col-sm-3">
+            <select class="form-select whl-formfield-phonenumbertypecd" placeholder="Select One" asp-for="PhoneNumberTypeCd" asp-items="@(new SelectList(Model.PhoneNumberTypes, "Key", "Value", Model.PhoneNumberTypeCd))"></select>
+            <div id="whl-formfield-helptext-phonenumbertypecd" class="form-text">Specify type of primary US phone number.</div>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <label class="col-sm-3 form-label small fw-bolder" asp-for="LeadTypeCd">How did you hear about HomeSeeker? <span class="fw-bold text-danger">*</span></label>
+          <div class="col-sm-3">
+            <select class="form-select whl-formfield-leadtypecd" placeholder="Select One" asp-for="LeadTypeCd" asp-items="@(new SelectList(Model.LeadTypes, "Key", "Value", Model.LeadTypeCd))"></select>
+            <div id="whl-formfield-helptext-leadtypecd" class="form-text">Specify how you heard about us.</div>
+          </div>
+          <div class="col-sm-6 whl-formfieldcol-leadtypeother" style="display: none;">
+            <input type="text" class="form-control whl-formfield-leadtypeother" maxlength="200" placeholder="Please specify" autocomplete="off" asp-for="LeadTypeOther" />
+          </div>
+        </div>
+
+        <hr />
+
+        <div class="row mb-3">
+          <div class="form-check form-switch col-sm-12 ml-8">
+            <input type="checkbox" class="form-check-input whl-formfield-emailconsent" role="switch" asp-for="ConsentToReceiveEmailNotifications" />
+            <label class="form-check-label" asp-for="ConsentToReceiveEmailNotifications">By clicking on the Register button below, I consent to receiving communications and notifications related to my account including updates regarding listings on the site per my preferences and applications I have submitted.</label>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="form-check form-switch col-sm-12 ml-8">
+            <input type="checkbox" class="form-check-input whl-formfield-acceptterms" role="switch" asp-for="AcceptTermsAndConditions" />
+            <label class="form-check-label" asp-for="AcceptTermsAndConditions">By clicking on the Register button below, I accept the <a class="whl-link fw-bolder" href="https://www.westchestergov.com/digital-content-accessibility-policy" target="_blank" title="View digital content accessibility policy" aria-label="View digital content accessibility policy">terms and conditions of use</a> for this site.</label>
+          </div>
+        </div>
+
+        <input type="hidden" id="hidRegisterAction" name="hidRegisterAction" value="" />
+        <input type="hidden" class="whl-formfield-recaptchaenabled" asp-for="RecaptchaEnabled" />
+        @if (Model.RecaptchaEnabled == "1")
+        {
+          <input type="hidden" class="whl-formfield-recaptchaversion" asp-for="RecaptchaVersion" />
+          <input type="hidden" class="whl-formfield-recaptchaaction" asp-for="RecaptchaAction" />
+          <input type="hidden" class="whl-formfield-grecaptchatoken" asp-for="RecaptchaToken" />
+          <div class="g-recaptcha" data-sitekey="@Model.RecaptchaKey" data-callback="fnRegister" data-size="invisible"></div>
+        }
+        <button type="submit" class="btn btn-primary whl-action-register">Register</button>
+      }
+    </div>
+  </div>
+</div>
+
+@section Scripts
+{
+  @if (Model.RecaptchaEnabled == "1")
+  {
+    <script src="@Model.RecaptchaTokenUrl" async defer></script>
+    <script src="~/js/registration/register.recaptcha.@(Model.RecaptchaVersion).js" asp-append-version="true"></script>
+  }
+  else
+  {
+    <script src="~/js/registration/register.actions.js" asp-append-version="true"></script>
+  }
+  <script src="~/js/registration/register.validations.js" asp-append-version="true"></script>
+  <script>
+    //<![CDATA[
+    const checkAvailabilityUrl = '@Url.Action("CheckAvailability", "Account")';
+    //]]>
+  </script>
+}

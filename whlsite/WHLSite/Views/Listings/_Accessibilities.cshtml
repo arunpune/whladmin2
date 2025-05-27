@@ -1,0 +1,22 @@
+@model ListingViewModel
+
+<p class="fs-5 mt-32 border-bottom">Accessibility</p>
+@if ((Model.Accessibilities?.Count() ?? 0) > 0)
+{
+  foreach (var accessibility in Model.Accessibilities)
+  {
+    if (accessibility.Key.Equals("NONSMOKING", StringComparison.CurrentCultureIgnoreCase)) continue;
+    var className = "fa-brands fa-accessible-icon";
+    switch (accessibility.Key)
+    {
+      case "VISION": className = "fa-solid fa-eye-low-vision"; break;
+      case "HEARING": className = "fa-solid fa-ear-listen"; break;
+      case "WHEELCHAIR": className = "fa-solid fa-wheelchair"; break;
+    }
+    <p><i class="@className"></i>&nbsp;@accessibility.Value</p>
+  }
+}
+else
+{
+  <p class="text-secondary"><i class="fa-solid fa-circle-exclamation"></i>&nbsp;None</p>
+}

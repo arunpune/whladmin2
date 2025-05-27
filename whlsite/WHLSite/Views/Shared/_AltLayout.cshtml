@@ -1,0 +1,163 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>@ViewData["Title"] - HomeSeeker - Westchester County</title>
+  <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="~/lib/fontawesome/css/all.min.css" />
+  <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+  <link rel="stylesheet" href="~/WHLSite.styles.css" asp-append-version="true" />
+  @await RenderSectionAsync("HeaderScripts", required: false)
+</head>
+
+<body>
+  <a id="pagetop"></a>
+  <header>
+    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+      <div class="container">
+        <a class="navbar-brand" href="https://www.westchestergov.com/" title="Westchester County, NY"
+          aria-label="Westchester County, NY" target="_blank"><img src="~/images/westchester-primary-logo-color.png"
+            width="227" height="45" title="Westchester County, NY" /></a>
+        <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index"
+                title="HomeSeeker" aria-label="HomeSeeker"><img src="~/images/temp-homeseeker-logo.png"
+            width="167" height="57" title="HomeSeeker" /></a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
+          aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+          <ul class="navbar-nav flex-grow-1">
+            @* <li class="nav-item">
+              <a class="nav-link fw-semibold whl-nav-link-HOME" asp-area="" asp-controller="Home" asp-action="Index"
+                title="HomeSeeker" aria-label="HomeSeeker"><img src="~/images/westchester-primary-logo-color.png"
+            width="227" height="45" title="Westchester County, NY" /></a>
+            </li> *@
+            <li class="nav-item">
+              <a class="nav-link fw-semibold whl-nav-link-LISTINGS" asp-area="" asp-controller="Listings" asp-action="Index"
+                title="Listings" aria-label="Listings">Listings</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link fw-semibold whl-nav-link-ABOUT" asp-area="" asp-controller="Home" asp-action="About" title="About"
+                aria-label="About">About</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link fw-semibold whl-nav-link-FAQS" asp-area="" asp-controller="Home" asp-action="FAQs" title="FAQs"
+                aria-label="FAQs">FAQs</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link fw-semibold whl-nav-link-RESOURCES" asp-area="" asp-controller="Home" asp-action="Resources" title="Resources and Links"
+                aria-label="Resources and Links">Resources &amp; Links</a>
+            </li>
+          </ul>
+        </div>
+        <div class="d-flex justify-content-end">
+          @if (User.Identity.IsAuthenticated)
+          {
+            @* <a class="btn btn-link whl-nav-link whl-nav-link-NOTIFICATIONS" asp-area="" asp-controller="Account"
+              asp-action="Notifications" title="Notifications" aria-label="Notifications"><i class="fa-solid fa-bell"></i>
+              <span class="badge text-dark">4</span></a> *@
+            @(await Component.InvokeAsync("UnreadNotifications"))
+            <a class="btn btn-link whl-nav-link whl-nav-link-PROFILE" asp-area="" asp-controller="Profile" asp-action="Index"
+              title="Profile" aria-label="Profile"><i class="fa-solid fa-user"></i></a>
+            <a class="btn btn-link whl-nav-link whl-nav-link-HOUSEHOLD" asp-area="" asp-controller="Household"
+              asp-action="Index" title="Household" aria-label="Household"><i class="fa-solid fa-house-user"></i></a>
+            <a class="btn btn-link whl-nav-link whl-nav-link-DASHBOARD" asp-area="" asp-controller="Applications"
+              asp-action="Dashboard" title="Dashboard" aria-label="Dashboard"><i class="fa-solid fa-gauge"></i></a>
+            <a class="btn btn-link whl-nav-link whl-nav-link-LOGOUT" asp-area="" asp-controller="Account" asp-action="LogOut"
+              title="Log Out" aria-label="Log Out"><i class="fa-solid fa-right-from-bracket"></i></a>
+          }
+          else
+          {
+            <a class="btn btn-link whl-nav-link whl-nav-link-LOGIN" asp-area="" asp-controller="Account" asp-action="LogIn"
+              title="Log In" aria-label="Log In">Login</a>
+            <a class="btn btn-link whl-nav-link whl-nav-link-REGISTER" asp-area="" asp-controller="Account"
+              asp-action="Register" title="Register" aria-label="Register">Register</a>
+          }
+          <div id="google_translate_element" class="ml-8"></div>
+        </div>
+      </div>
+    </nav>
+  </header>
+  <div class="container">
+    <main role="main" class="pb-3">
+      @RenderBody()
+    </main>
+  </div>
+
+  <footer class="border-top bg-whlgreen text-white mt-32 p-4">
+    <div class="container">
+      <div class="row mb-3">
+        <div class="col-xs-12 col-md-4">
+          <p class="lh-lg">Westchester County &copy; @DateTime.Now.Year<br />
+            <i class="fa-solid fa-location-dot"></i> 148 Martine Avenue, White Plains, NY 10601<br />
+            <a class=" text-decoration-none text-white" href="tel:9149952000" title="Call us" aria-label="Call us"><i
+                class="fa-solid fa-phone"></i> (914) 995-2000</a>
+          </p>
+          <p class="lh-base"><a class="text-white" href="http://www3.westchestergov.com/disclaimer" target="_blank"
+              title="View privacy policies and disclaimers" aria-label="View privacy policies and disclaimers">Privacy /
+              Disclaimers</a></p>
+          <p class="lh-base"><a class="text-white"
+              href="https://www.westchestergov.com/digital-content-accessibility-policy" target="_blank"
+              title="View digital content accessibility policy"
+              aria-label="View digital content accessibility policy">Digital Content Accessibility Policy</a></p>
+        </div>
+        <div class="col-xs-12 col-md-4">
+          <p>
+            <a class="text-white" href="https://www.westchestergov.com/subscribe-to-my-westchester" target="_blank"
+              title="Subscribe to the Westchester County Newsletter"
+              aria-label="Subscribe to the Westchester County Newsletter">Subscribe</a> to the Westchester County
+            Newsletter<br />
+            <small class="text-light">Receive the County's weekly e-mail newsletter, My Westchester.</small>
+          </p>
+        </div>
+        <div class="col-xs-12 col-md-4 text-md-end">
+          <p class="fs-4">
+            <a class="text-white" href="https://www.facebook.com/westchestergov" target="_blank" title="Go to Facebook"
+              aria-label="Go to Facebook"><i class="fa-brands fa-facebook"></i></a>
+            <a class="text-white ml-8" href="https://www.twitter.com/westchestergov" target="_blank"
+              title="Go to Twitter" aria-label="Go to Twitter"><i class="fa-brands fa-x-twitter"></i></a>
+            <a class="text-white ml-8" href="https://www.youtube.com/channel/UCC774tkGUZw8xoZtHhuQUsQ" target="_blank"
+              title="Go to Youtube" aria-label="Go to Youtube"><i class="fa-brands fa-youtube"></i></a>
+            <a class="text-white ml-8" href="https://www.linkedin.com/company/westchester-county" target="_blank"
+              title="Go to LinkedIn" aria-label="Go to LinkedIn"><i class="fa-brands fa-linkedin"></i></a>
+          </p>
+          <p>
+            <img src="~/images/equalopportunity_64px.png" alt="Equal Housing Opportunity"
+              title="Equal Housing Opportunity" aria-label="Equal Housing Opportunity" width="64" height="64" />
+          </p>
+          @(await Component.InvokeAsync("AppVersion"))
+        </div>
+      </div>
+    </div>
+  </footer>
+  
+  @await Html.PartialAsync("~/Views/Shared/_NavigateToTopAnchorFixed.cshtml")
+
+  <script src="~/lib/jquery/dist/jquery.min.js"></script>
+  <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="~/js/site.js" asp-append-version="true"></script>
+  @await RenderSectionAsync("Scripts", required: false)
+  <script>
+    //<![CDATA[
+    $(function () {
+      var menuId = "@ViewData["MENUID"]";
+      if (menuId !== undefined && menuId !== null && menuId !== '') {
+        $('.whl-nav-link-' + menuId).addClass('active');
+      }
+    });
+    //]]>
+  </script>
+  <script type="text/javascript">
+    //<![CDATA[
+    function googleTranslateElementInit() {
+      new google.translate.TranslateElement({pageLanguage: 'en', layout: google.translate.TranslateElement.InlineLayout.VERTICAL}, 'google_translate_element');
+      $('.goog-te-combo').addClass('form-select form-select-sm');
+    }
+    //]]>
+  </script>
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+</body>
+
+</html>

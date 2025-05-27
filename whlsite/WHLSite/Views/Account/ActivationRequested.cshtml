@@ -1,0 +1,38 @@
+@model AccountViewModel
+@{
+  ViewData["Title"] = "Activation Requested";
+  ViewData["MENUID"] = "REGISTER";
+}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a class="whl-link" asp-area="" asp-controller="Home" asp-action="Index" title="Home"><i
+          class="fa-solid fa-house"></i></a></li>
+    <li class="breadcrumb-item active" aria-current="page">Register</li>
+  </ol>
+</nav>
+
+<div class="text-left mt-32 registration-page">
+  <div class="card mt-16 mb-3 shadow-sm">
+    <div class="card-body">
+      <h4 class="text-success">Activation Link Sent</h4>
+      <p>A new activation link for your HomeSeeker account has been sent to your email address on file with a
+        confirmation
+        code. Please click on the activation link in the email to complete your registration and account activation
+        process.
+        The activation link will only be valid for 10 minutes. If you do not see the email in your Inbox, please check
+        your
+        Junk Mail and/or Spam folder.
+      </p>
+      <p>If you have not received a confirmation email after 10 minutes, please request for a
+        <a class="whl-link" asp-area="" asp-controller="Account" asp-action="ResendActivation"
+          title="Click here to request a new activation link via email"
+          aria-label="Click here to request a new activation link via email">new activation link</a>, or email <a
+          href="mailto:homeseeker@westchestercountyny.gov?subject=Account Activation Support">homeseeker@westchestercountyny.gov</a>
+        with the subject <strong>Account Activation Support</strong> &ndash; please have your email address on file
+        ready.
+      </p>
+      <hr />
+    </div>
+  </div>
+</div>

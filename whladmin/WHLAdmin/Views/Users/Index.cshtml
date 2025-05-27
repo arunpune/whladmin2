@@ -1,0 +1,133 @@
+﻿@model UsersViewModel
+@{
+  ViewData["Title"] = "Users";
+  var userCount = Model.Users?.Count() ?? 0;
+}
+
+<div class="row">
+  <div class="col-xs-12 col-md-9">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a class="whl-link" asp-area="" asp-controller="Home" asp-action="Index"
+            title="Home"><small><i class="fa-solid fa-house"></i></small></a></li>
+        <li class="breadcrumb-item"><small>Admin Site</small></li>
+        <li class="breadcrumb-item active fs-6 fw-bolder" aria-current="page"><small>@ViewData["Title"]</small></li>
+      </ol>
+    </nav>
+  </div>
+  <div class="col-xs-12 col-md-3 text-end">
+    <button type="button" class="btn btn-sm btn-link whl-link mr-4 whl-action-refresh-page" title="Refresh"
+      aria-label="Refresh"><i class="fa-solid fa-rotate-right"></i></button>
+  </div>
+</div>
+
+<div class="text-left mt-8">
+  <div class="card bg-light">
+    <table class="table table-sm table-hover">
+      <thead class="bg-whlgreen text-white">
+        <tr>
+          <th class="text-center" style="width: 120px;">
+            <small>
+              @if (Model.CanEdit)
+              {
+                <a class="whl-link text-white fw-bold whl-action-add-user" title="Add a new user"
+                  href="javascript:void(0);"><i class="fa-solid fa-plus"></i>&nbsp;Add</a>
+              }
+            </small>
+          </th>
+          <th class="text-center" style="width: 180px;"><small>User ID</small></th>
+          <th class="text-left"><small>Email Address</small></th>
+          <th class="text-left"><small>Display Name</small></th>
+          <th class="text-left"><small>Organization</small></th>
+          <th class="text-left"><small>Role</small></th>
+          <th class="text-left" style="width: 240px;"><small>Last Logged In</small></th>
+        </tr>
+      </thead>
+      <tbody class="table-group-divider">
+        @if (userCount == 0)
+        {
+          <tr>
+            <td colspan="7" class="text-center">No users found</td>
+          </tr>
+        }
+        else
+        {
+          foreach (var user in Model.Users)
+          {
+            <tr>
+              <td class="text-center" style="width: 120px;">
+                <small>
+                  @if (Model.CanEdit)
+                  {
+                    <a class="whl-link whl-action-edit-user" data-userid="@user.UserId" title="Edit user"
+                      href="javascript:void(0);"><i class="fa-solid fa-pencil"></i></a>
+                    @if (user.Active)
+                    {
+                      <a class="whl-link whl-action-delete-user ml-8" data-userid="@user.UserId" title="Delete user"
+                        href="javascript:void(0);"><i class="fa-solid fa-trash"></i></a>
+                    }
+                    else
+                    {
+                      <a class="whl-link whl-action-reactivate-user ml-8" data-userid="@user.UserId" title="Reactivate user"
+                        href="javascript:void(0);"><i class="fa-solid fa-rotate-right"></i></a>
+                    }
+                  }
+                  <a class="whl-link whl-action-view-audit ml-8" data-entitytype="USER" data-entityid="@user.UserId"
+                    title="View audit log" href="javascript:void(0);"><i class="fa-solid fa-list"></i></a>
+                </small>
+              </td>
+              <td class="text-center" style="width: 180px;"><small>@user.UserId</small></td>
+              <td class="text-left"><small>@user.EmailAddress</small></td>
+              <td class="text-left"><small>@user.DisplayName</small></td>
+              <td class="text-left"><small>@user.OrganizationDescription</small></td>
+              <td class="text-left"><small>@user.RoleDescription</small></td>
+              <td class="text-left" style="width: 240px;">
+                <small>@user.LastLoggedIn?.ToString("G")</small>
+              </td>
+            </tr>
+          }
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- User Editor Modal -->
+<div class="modal fade" id="userEditorModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+  aria-labelledby="userEditorModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="userEditorModalLabel"><span id="whl-title-user-action">User Editor</span></h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+      </div>
+      <div class="modal-footer">
+        <input type="hidden" id="hidUserAction" name="hidUserAction" value="" />
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i
+            class="fa-solid fa-ban"></i>&nbsp;Cancel</button>
+        <button type="button" class="btn btn-primary whl-action-save-user"><i
+            class="fa-solid fa-floppy-disk"></i>&nbsp;Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Audit Viewer Modal -->
+@await Html.PartialAsync("~/Views/Shared/_AuditViewerModalPartial.cshtml")
+
+@section Scripts
+{
+  <script>
+    //<![CDATA[
+    const userAddUrl = '@Url.Action("Add", "Users")';
+    const userEditUrl = '@Url.Action("Edit", "Users")';
+    const userDeleteUrl = '@Url.Action("Delete", "Users")';
+    const userReactivateUrl = '@Url.Action("Reactivate", "Users")';
+    const auditViewerUrl = '@Url.Action("Index", "Audit")';
+    //]]>
+  </script>
+  <script src="~/js/management/common.js" asp-append-version="true"></script>
+  <script src="~/js/management/users.js" asp-append-version="true"></script>
+}

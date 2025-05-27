@@ -1,0 +1,145 @@
+@model EditableHousingApplicationViewModel
+<div class="text-left mt-32">
+  <div class="card text-bg-light border-0">
+    <div class="card-body">
+      <h4 class="text-secondary whl-card-title">Profile Information</h4>
+      <div class="card-text">
+        <div class="row mb-3 mt-16">
+          <div class="col-xs-12 col-sm-6 col-md-4"><small class="border-bottom">Name</small><br />
+            @if (!string.IsNullOrEmpty(Model.DisplayName))
+            {
+              <span class="fs-5 fw-semibold text-dark">@Model.DisplayName</span>
+            }
+            else
+            {
+              <span class="fs-5 fw-light text-secondary">Not Specified</span>
+            }
+          </div>
+          <div class="col-xs-12 col-sm-6 col-md-4"><small class="border-bottom">Last 4 of
+              SSN/ITIN</small><br />
+            @if (!string.IsNullOrEmpty(Model.ApplicationDetails.Last4SSN))
+            {
+              <span class="fs-5 fw-semibold text-dark whl-show-last4ssn" style="display: block;">***-**-****
+                <i class="fa-regular fa-eye whl-action-togglelast4ssn" title="Show Last 4 of SSN/ITIN"
+                  aria-label="Show Last 4 of SSN/ITIN"></i></span>
+              <span class="fs-5 fw-semibold text-dark whl-hide-last4ssn"
+                style="display: none;">@($"***-**-{Model.ApplicationDetails.Last4SSN}") <i
+                  class="fa-regular fa-eye-slash whl-action-togglelast4ssn" title="Hide Last 4 of SSN/ITIN"
+                  aria-label="Hide Last 4 of SSN/ITIN"></i></span>
+            }
+            else
+            {
+              <span class="fs-5 fw-light text-secondary">Not Specified</span>
+            }
+          </div>
+          <div class="col-xs-12 col-sm-6 col-md-4"><small class="border-bottom">Date of Birth</small><br />
+            @if (!string.IsNullOrEmpty(Model.DisplayDateOfBirth))
+            {
+              <span class="fs-5 fw-semibold text-dark whl-show-dateofbirth" style="display: block;">**/**/****
+                <i class="fa-regular fa-eye whl-action-toggledateofbirth" title="Show Date of Birth"
+                  aria-label="Show Date of Birth"></i></span>
+              <span class="fs-5 fw-semibold text-dark whl-hide-dateofbirth"
+                style="display: none;">@($"{Model.DisplayDateOfBirth}") <i
+                  class="fa-regular fa-eye-slash whl-action-toggledateofbirth" title="Hide Date of Birth"
+                  aria-label="Hide Date of Birth"></i></span>
+            }
+            else
+            {
+              <span class="fs-5 fw-light text-secondary">Not Specified</span>
+            }
+          </div>
+        </div>
+        <div class="row mb-3 mt-16">
+          <div class="col-xs-12 col-sm-6 col-md-6"><small class="border-bottom">Identification
+              Document</small><br />
+            @if (!string.IsNullOrEmpty(Model.DisplayIdTypeValue))
+            {
+              if (!string.IsNullOrEmpty(Model.DisplayIdIssueDate))
+              {
+                <span class="fs-5 fw-semibold text-dark">@Model.DisplayIdTypeValue</span>
+
+                <br />
+                <small>Issued: @Model.DisplayIdIssueDate</small>
+              }
+              else
+              {
+                <span class="fs-5 fw-semibold text-dark">@Model.DisplayIdTypeValue</span>
+              }
+            }
+            else
+            {
+              <span class="fs-5 fw-light text-secondary">Not Specified</span>
+            }
+          </div>
+        </div>
+        <div class="row mb-3 mt-16">
+          <div class="col-xs-12 col-sm-6 col-md-4"><small class="border-bottom">Gender</small><br />
+            @if (!string.IsNullOrEmpty(Model.ApplicationDetails.GenderDescription) &&
+            Model.ApplicationDetails.GenderCd != "NOTSPEC")
+            {
+              <span class="fs-5 fw-semibold text-dark">@Model.ApplicationDetails.GenderDescription</span>
+            }
+            else
+            {
+              <span class="fs-5 fw-light text-secondary">Not Specified</span>
+            }
+          </div>
+          <div class="col-xs-12 col-sm-6 col-md-4"><small class="border-bottom">Race</small><br />
+            @if (!string.IsNullOrEmpty(Model.ApplicationDetails.RaceDescription) && Model.ApplicationDetails.RaceCd
+            !=
+            "NOTSPEC")
+            {
+              <span class="fs-5 fw-semibold text-dark">@Model.ApplicationDetails.RaceDescription</span>
+            }
+            else
+            {
+              <span class="fs-5 fw-light text-secondary">Not Specified</span>
+            }
+          </div>
+          <div class="col-xs-12 col-sm-6 col-md-4"><small class="border-bottom">Ethnicity</small><br />
+            @if (!string.IsNullOrEmpty(Model.ApplicationDetails.EthnicityDescription) &&
+            Model.ApplicationDetails.EthnicityCd != "NOTSPEC")
+            {
+              <span class="fs-5 fw-semibold text-dark">@Model.ApplicationDetails.EthnicityDescription</span>
+            }
+            else
+            {
+              <span class="fs-5 fw-light text-secondary">Not Specified</span>
+            }
+          </div>
+        </div>
+        <div class="row mb-3">
+          <div class="col-xs-12 col-sm-6 col-md-4"><small class="border-bottom">Student</small><br />
+            <span class="fs-5 fw-semibold text-dark">@(Model.ApplicationDetails.StudentInd ? "Yes" :
+              "No")</span>
+          </div>
+          <div class="col-xs-12 col-sm-6 col-md-4"><small class="border-bottom">Disabled</small><br />
+            <span class="fs-5 fw-semibold text-dark">@(Model.ApplicationDetails.DisabilityInd ? "Yes" :
+              "No")</span>
+          </div>
+          <div class="col-xs-12 col-sm-6 col-md-4"><small class="border-bottom">Veteran</small><br />
+            <span class="fs-5 fw-semibold text-dark">@(Model.ApplicationDetails.VeteranInd ? "Yes" :
+              "No")</span>
+          </div>
+        </div>
+        <div class="row mb-3">
+          <div class="col-xs-12 col-sm-6 col-md-4"><small class="border-bottom">Ever lived in Westchester
+              County?</small><br />
+            <span class="fs-5 fw-semibold text-dark">@(Model.ApplicationDetails.EverLivedInWestchesterInd ?
+              "Yes"
+              : "No")</span>
+          </div>
+          <div class="col-xs-12 col-sm-6 col-md-4"><small class="border-bottom">Currently work in
+              Westchester
+              County?</small><br />
+            <span class="fs-5 fw-semibold text-dark">@(Model.ApplicationDetails.CurrentlyWorkingInWestchesterInd
+              ?
+              "Yes" : "No")</span>
+          </div>
+        </div>
+      </div>
+      @* <a class="btn btn-sm btn-outline-primary mt-16" asp-area="" asp-controller="Profile" asp-action="EditProfile"
+                      title="Edit Profile" aria-label="Edit Profile">Edit Profile</a> *@
+    </div>
+  </div>
+</div>

@@ -1,0 +1,72 @@
+@model ResendActivationViewModel
+@{
+  ViewData["Title"] = "Resend Activation Link";
+  ViewData["MENUID"] = "REGISTER";
+}
+
+@* <nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a class="whl-link" asp-area="" asp-controller="Home" asp-action="Index" title="Home"><i
+          class="fa-solid fa-house"></i></a></li>
+    <li class="breadcrumb-item active" aria-current="page">Register</li>
+  </ol>
+</nav> *@
+
+<div class="text-left py-16 mt-64 registration-page">
+  <div class="login-container">
+    <div class="card border-0 shadow-lg">
+      @* <h5 class="card-header">Resend Activation Link</h5> *@
+      <div class="card-body">
+        <h4 class="text-secondary whl-card-title">Resend Activation Link</h4>
+        @using (Html.BeginForm("ResendActivation", "Account", FormMethod.Post, new { @class = "form whl-form-resend-activation", id = "frmResendActivation", name = "frmResendActivation" }))
+        {
+          <div id="divSaveErrorMessage" style="display: none;">
+            <h6 class="text-danger"><i class="fa-solid fa-triangle-exclamation"></i>&nbsp;Error</h6>
+            <p id="lblSaveErrorMessage">Failed to send activation link</p>
+            <hr />
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-xs-12">
+              <p class="lead">Enter the username associated with your HomeSeeker account to request for a new activation link.</p>
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-xs-12">
+              @Html.TextBoxFor(e => e.Username, htmlAttributes: new { @class = "form-control whl-formfield-username", placeholder = "Enter Username", autocomplete = "username" })
+              @Html.ValidationMessageFor(v => v.Username)
+            </div>
+          </div>
+
+          <hr />
+
+          <input type="hidden" id="hidResendActivationAction" name="hidResendActivationAction" value="" />
+          @Html.Hidden("hidRecaptchaEnabled", Model.RecaptchaEnabled, htmlAttributes: new { @class = "whl-formfield-recaptchaenabled" })
+          @if (Model.RecaptchaEnabled == "1")
+          {
+            @Html.HiddenFor(h => h.RecaptchaVersion, htmlAttributes: new { @class = "whl-formfield-recaptchaversion" })
+            @Html.HiddenFor(h => h.RecaptchaAction, htmlAttributes: new { @class = "whl-formfield-recaptchaaction" })
+            @Html.HiddenFor(h => h.RecaptchaToken, htmlAttributes: new { @class = "whl-formfield-grecaptchatoken" })
+            <div class="g-recaptcha" data-sitekey="@Model.RecaptchaKey" data-callback="fnResendActivation" data-size="invisible"></div>
+          }
+          <button type="submit" class="btn btn-primary whl-action-resend-activation">Request</button>
+        }
+      </div>
+    </div>
+  </div>
+</div>
+
+@section Scripts
+{
+  @if (Model.RecaptchaEnabled == "1")
+  {
+    <script src="@Model.RecaptchaTokenUrl" async defer></script>
+    <script src="~/js/activation/resend.recaptcha.@(Model.RecaptchaVersion).js" asp-append-version="true"></script>
+  }
+  else
+  {
+    <script src="~/js/activation/resend.actions.js" asp-append-version="true"></script>
+  }
+  <script src="~/js/activation/resend.validations.js" asp-append-version="true"></script>
+}

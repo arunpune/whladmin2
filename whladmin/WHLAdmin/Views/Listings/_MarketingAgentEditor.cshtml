@@ -1,0 +1,126 @@
+﻿@model EditableListingMarketingAgentViewModel
+
+<div class="text-left">
+  @using (Html.BeginForm("EditMarketingAgent", "Listings", FormMethod.Post))
+  {
+    <div id="divMarketingAgentSaveErrorMessage" style="display: none;">
+      <h6 class="text-danger"><i class="fa-solid fa-triangle-exclamation"></i>&nbsp;Error</h6>
+      <p id="lblMarketingAgentSaveErrorMessage">Failed to save Marketing Agent information</p>
+      <hr />
+    </div>
+
+    <input type="hidden" id="MarketingAgentListingId" name="MarketingAgentListingId" value="@Model.ListingId" />
+
+    <div class="row mb-3">
+      <div class="col-xs-12">
+        <label class="form-label small fw-bolder">Use Marketing Agent?</label><br />
+        <div class="form-check form-switch">
+          <input type="checkbox" class="form-check-input whl-formfield-useagent" role="switch"
+            asp-for="MarketingAgentInd" />
+          <label class="form-check-label small whl-formfieldlabel-useagent" asp-for="MarketingAgentInd">Yes</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="row mb-3 whl-formfieldrow-marketingagent" style="display: none;">
+      <div class="col-xs-12">
+        <label class="form-label small fw-bolder" asp-for="MarketingAgentId">Marketing Agent <span
+            class="text-danger">*</span></label><br />
+        <select class="form-select form-select-sm whl-formfield-agentid" placeholder="Select Marketing Agent"
+          asp-for="MarketingAgentId"
+          asp-items="@(new SelectList(Model.Agents, "AgentId", "Name", Model.MarketingAgentId))"></select>
+      </div>
+    </div>
+
+    <div class="row mb-3 whl-formfieldrow-marketingagent" style="display: none;">
+      <div class="col-xs-12">
+        <label class="form-label small fw-bolder" asp-for="MarketingAgentApplicationLink">Application Link <span
+            class="text-danger">*</span></label><br />
+        <input type="text" class="form-control form-control-sm whl-formfield-applicationlink"
+          placeholder="Enter Application Link" maxlength="500" asp-for="MarketingAgentApplicationLink" />
+      </div>
+    </div>
+  }
+</div>
+
+<script>
+  //<![CDATA[
+  $(function () {
+
+    // Disable submission
+    $('.whl-action-save-marketingagent').attr('disabled', 'disabled');
+    fnToggleAgentDetails();
+    fnToggleSaveAgent();
+
+    $('.whl-formfield-useagent').on('change', function (e) {
+      fnToggleAgentDetails();
+      fnToggleSaveAgent();
+    });
+
+    function fnToggleAgentDetails() {
+      const c = $('.whl-formfield-useagent').prop('checked');
+      if (c) {
+        $('.whl-formfieldlabel-useagent').html('Yes');
+        $('.whl-formfieldrow-marketingagent').show();
+      } else {
+        $('.whl-formfieldlabel-useagent').html('No');
+        $('.whl-formfieldrow-marketingagent').hide();
+        $('.whl-formfield-agentid').val(0);
+        $('.whl-formfield-agentid').removeClass('is-valid');
+        $('.whl-formfield-agentid').removeClass('is-invalid');
+        $('.whl-formfield-applicationlink').val('');
+        $('.whl-formfield-applicationlink').removeClass('is-valid');
+        $('.whl-formfield-applicationlink').removeClass('is-invalid');
+      }
+    }
+
+    $('.whl-formfield-agentid').on('change', function (e) {
+      $(this).removeClass('is-valid');
+      $(this).removeClass('is-invalid');
+      let v = $(this).val();
+      if (!isNaN(parseInt(v)) && parseInt(v) > 0) {
+        $(this).addClass('is-valid');
+      } else {
+        $(this).addClass('is-invalid');
+      }
+      fnToggleSaveAgent();
+    });
+
+    $('.whl-formfield-applicationlink').on('change', function (e) {
+      $(this).removeClass('is-valid');
+      $(this).removeClass('is-invalid');
+      let v = $(this).val();
+      if (v !== undefined && v !== null && v.trim().length > 0) {
+        $(this).addClass('is-valid');
+      } else {
+        $(this).addClass('is-invalid');
+      }
+      fnToggleSaveAgent();
+    });
+
+    function fnToggleSaveAgent() {
+      let u = $('.whl-formfield-useagent').prop('checked');
+      let i = $('.whl-formfield-agentid').val();
+      let a = $('.whl-formfield-applicationlink').val();
+
+      let allowSubmission = false;
+      if (u) {
+        allowSubmission = (!isNaN(parseInt(i)) && parseInt(i) > 0)
+          && (a !== undefined && a !== null && a.trim().length > 0);
+      } else {
+        allowSubmission = true;
+        i = 0;
+        a = '';
+      }
+
+      if (allowSubmission) {
+        $('.whl-action-save-marketingagent').removeAttr('disabled');
+      }
+      else {
+        $('.whl-action-save-marketingagent').attr('disabled', 'disabled');
+      }
+    }
+
+  });
+  //]]>
+</script>

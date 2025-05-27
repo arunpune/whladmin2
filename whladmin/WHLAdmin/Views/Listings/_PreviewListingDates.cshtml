@@ -1,0 +1,61 @@
+@model ListingViewModel
+
+<p class="fs-5 mt-32 border-bottom">Application Dates</p>
+@if (!string.IsNullOrEmpty(ViewBag.DisplayApplicationStartDate))
+{
+  <p class="text-dark">Start:&nbsp;@ViewBag.DisplayApplicationStartDate</p>
+}
+else
+{
+  <p class="text-secondary">Start:&nbsp;N/A</p>
+}
+@if (!string.IsNullOrEmpty(ViewBag.DisplayApplicationEndDate))
+{
+  <p class="text-dark">End:&nbsp;@ViewBag.DisplayApplicationEndDate</p>
+}
+else
+{
+  <p class="text-secondary">End:&nbsp;N/A</p>
+}
+
+<p class="fs-5 mt-32 border-bottom">Lottery Dates</p>
+@if (Model.LotteryEligible)
+{
+  @if (!string.IsNullOrEmpty(ViewBag.DisplayLotteryDate))
+  {
+    <p class="text-dark">Date/Time:&nbsp;@ViewBag.DisplayLotteryDate</p>
+  }
+  else
+  {
+    <p class="text-secondary">Date/Time:&nbsp;N/A</p>
+  }
+}
+else
+{
+  <p class="text-secondary"><i class="fa-regular fa-circle-xmark"></i>&nbsp;Not Lottery Eligible</p>
+}
+
+<p class="fs-5 mt-32 border-bottom">Waitlist Dates</p>
+@if (Model.WaitlistEligible)
+{
+  @if (!string.IsNullOrEmpty(ViewBag.DisplayWaitlistStartDate))
+  {
+    <p class="text-dark">Start:&nbsp;@ViewBag.DisplayWaitlistStartDate</p>
+  }
+  else
+  {
+    <p class="text-secondary">Start:&nbsp;N/A</p>
+  }
+  @if (!string.IsNullOrEmpty(ViewBag.DisplayWaitlistEndDate))
+  {
+    <p class="text-dark">End:&nbsp;@ViewBag.DisplayWaitlistEndDate</p>
+  }
+  else
+  {
+    <p class="text-secondary">End:&nbsp;N/A</p>
+  }
+}
+else
+{
+  <p class="text-secondary"><i class="fa-regular fa-circle-xmark"></i>&nbsp;Not Waitlist Eligible</p>
+}

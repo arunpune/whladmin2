@@ -1,0 +1,16 @@
+@model ListingViewModel
+
+<p class="fs-5 mt-32 border-bottom">Amenities</p>
+@if ((Model.Amenities?.Count() ?? 0) > 0)
+{
+  <div class="row mb-3">
+    @foreach (var amenity in Model.Amenities.OrderBy(o => o.Name))
+    {
+      <div class="col-xs-12 col-md-4"><i class="fa-regular fa-circle-dot text-whlgreen"></i>&nbsp;@amenity.Name</div>
+    }
+  </div>
+}
+else
+{
+  <p class="text-secondary"><i class="fa-solid fa-circle-exclamation"></i>&nbsp;None</p>
+}

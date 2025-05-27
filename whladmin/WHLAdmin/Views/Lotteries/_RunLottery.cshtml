@@ -1,0 +1,32 @@
+@model string
+<div class="modal fade" id="runLotteryModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+  aria-labelledby="runLotteryModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="runLotteryModalLabel">@(Model == "RERUN" ? "Re-run" : "Run") Lottery</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row mb-3">
+          <div class="col-sm-12">
+            <p class="lead whl-label-confirm-lottery-lead">Are you sure you want to manually @(Model == "RERUN" ?
+              "re-run" : "run") a lottery for this listing?</p>
+            <p class="text-dark">
+              <span class="whl-label-confirm-listing-id fw-bold"></span><br />
+              <span class="whl-label-confirm-listing-name fw-bold"></span><br />
+              <span class="whl-label-confirm-listing-address"></span>
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary whl-action-cancel-run-lottery" data-bs-dismiss="modal"><i
+            class="fa-regular fa-thumbs-down"></i>&nbsp;No</button>
+        <button type="button" class="btn btn-primary whl-action-confirm-run-lottery"><i
+            class="fa-regular fa-thumbs-up"></i>&nbsp;Yes</button>
+        <label class="whl-label-confirm-run-lottery-inprogress">Running lottery&hellip;</label>
+      </div>
+    </div>
+  </div>
+</div>

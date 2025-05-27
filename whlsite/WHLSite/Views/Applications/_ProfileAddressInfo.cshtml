@@ -1,0 +1,64 @@
+@model EditableHousingApplicationViewModel
+<div class="text-left mt-16">
+  <div class="card text-bg-light border-0">
+    <div class="card-body">
+      <h4 class="text-secondary whl-card-title">Address Information</h4>
+      <div class="card-text mt-16">
+        <div class="row mb-3">
+          <div class="col-xs-12 col-md-6">
+            <small class="border-bottom">Physical Address</small><br />
+            @if (!string.IsNullOrEmpty(Model.ApplicationDetails.PhysicalStreetLine1))
+            {
+              @await Html.PartialAsync("~/Views/Profile/_AddressDisplay.cshtml", new AddressViewModel()
+              {
+                StreetLine1 = Model.ApplicationDetails.PhysicalStreetLine1,
+                StreetLine2 = Model.ApplicationDetails.PhysicalStreetLine2,
+                StreetLine3 = Model.ApplicationDetails.PhysicalStreetLine3,
+                City = Model.ApplicationDetails.PhysicalCity,
+                StateCd = Model.ApplicationDetails.PhysicalStateCd,
+                ZipCode = Model.ApplicationDetails.PhysicalZipCode,
+                County = Model.ApplicationDetails.PhysicalCounty
+              });
+            }
+            else
+            {
+              <span class="fs-5 fw-light text-secondary">Not Specified</span>
+            }
+          </div>
+          @if (!string.IsNullOrEmpty(Model.ApplicationDetails.PhysicalStreetLine1))
+          {
+            <div class="col-xs-12 col-md-6">
+              <small class="border-bottom">Mailing Address</small><br />
+              @if (Model.ApplicationDetails.DifferentMailingAddressInd)
+              {
+                if (!string.IsNullOrEmpty(Model.ApplicationDetails.MailingStreetLine1))
+                {
+                  @await Html.PartialAsync("~/Views/Profile/_AddressDisplay.cshtml", new AddressViewModel()
+                  {
+                    StreetLine1 = Model.ApplicationDetails.MailingStreetLine1,
+                    StreetLine2 = Model.ApplicationDetails.MailingStreetLine2,
+                    StreetLine3 = Model.ApplicationDetails.MailingStreetLine3,
+                    City = Model.ApplicationDetails.MailingCity,
+                    StateCd = Model.ApplicationDetails.MailingStateCd,
+                    ZipCode = Model.ApplicationDetails.MailingZipCode,
+                    County = Model.ApplicationDetails.MailingCounty
+                  });
+                }
+                else
+                {
+                  <span class="fs-5 fw-light text-secondary">Not Specified</span>
+                }
+              }
+              else
+              {
+                <span class="fs-5 fw-semibold text-dark">Same as Physical Address</span>
+              }
+            </div>
+          }
+        </div>
+      </div>
+      @* <a class="btn btn-sm btn-outline-primary mt-16" asp-area="" asp-controller="Profile" asp-action="EditAddressInfo"
+                      title="Edit Address Information" aria-label="Edit Address Information">Edit Address Information</a> *@
+    </div>
+  </div>
+</div>

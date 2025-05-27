@@ -1,0 +1,192 @@
+﻿@model HousingApplicationsViewModel
+@{
+  ViewData["Title"] = "Applications";
+  var applicationCount = Model.HousingApplications?.Count() ?? 0;
+}
+
+<div class="row">
+  <div class="col-xs-12 col-md-9">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a class="whl-link" asp-area="" asp-controller="Home" asp-action="Index"
+            title="Home"><small><i class="fa-solid fa-house"></i></small></a></li>
+        <li class="breadcrumb-item"><small>Listings, Applications &amp; Lotteries</small></li>
+        <li class="breadcrumb-item active fs-6 fw-bolder" aria-current="page"><small>@ViewData["Title"]</small></li>
+      </ol>
+    </nav>
+  </div>
+  <div class="col-xs-12 col-md-3 text-end">
+    <button type="button" class="btn btn-sm btn-link whl-link mr-4 whl-action-refresh-page" title="Refresh"
+      aria-label="Refresh"><i class="fa-solid fa-rotate-right"></i></button>
+    @if (applicationCount > 0)
+    {
+      <button type="button" class="btn btn-sm btn-link whl-link mr-4 whl-action-download-results" title="Download"
+        aria-label="Download"><i class="fa-solid fa-download"></i></button>
+    }
+  </div>
+</div>
+
+<div class="text-left mt-8">
+  <div class="card bg-light mb-3">
+    <div class="card-body">
+      <form asp-area="" asp-action="Index" asp-controller="Applications" method="get" novalidate="novalidate">
+        <input type="hidden" class="whl-formfield-pageno" asp-for="PageNo" />
+        <div class="row">
+          <div class="col-xs-12 col-md-6">
+            <label class="form-label text-secondary"><small>Select a listing to view and manage applications
+                for:</small></label><br />
+            <select class="form-select form-select-sm whl-formfield-listingid" asp-for="ListingId"
+              asp-items="@(new SelectList(Model.Listings, "Key", "Value", Model.ListingId))"></select>
+          </div>
+          <div class="col-xs-12 col-md-2">
+            <label class="form-label text-secondary"><small>Submission Type</small></label><br />
+            <select class="form-select form-select-sm whl-formfield-submissiontypecd" asp-for="SubmissionTypeCd"
+              asp-items="@(new SelectList(Model.SubmissionTypes, "Key", "Value", Model.SubmissionTypeCd))"></select>
+          </div>
+          <div class="col-xs-12 col-md-2">
+            <label class="form-label text-secondary"><small>Application Status</small></label><br />
+            <select class="form-select form-select-sm whl-formfield-statuscd" asp-for="StatusCd"
+              asp-items="@(new SelectList(Model.Statuses, "Key", "Value", Model.StatusCd))"></select>
+          </div>
+          <div class="col-xs-12 col-md-1">
+            <label class="form-label text-secondary"><small>Page Size</small></label><br />
+            <select class="form-select form-select-sm whl-formfield-pagesize" asp-for="PageSize"
+              asp-items="@(new SelectList(Model.PageSizes, Model.PageSize))"></select>
+          </div>
+          <div class="col-xs-12 col-md-1">
+            <button type="submit" class="btn btn-sm btn-outline-primary mt-32 whl-action-filter-applications"
+              title="Filter applications" aria-label="Filter applications">Filter</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="card bg-light mt-2">
+    @if (applicationCount > 0)
+    {
+      <div class="row">
+        <div class="col-xs-12 py-1 px-3">
+          @await Html.PartialAsync("~/Views/Shared/_PagingInfo.cshtml", Model)
+        </div>
+      </div>
+    }
+    <table class="table table-sm table-hover">
+      <thead class="bg-whlgreen text-white">
+        <tr>
+          <th class="text-center" style="width: 120px;">
+            @if (Model.ListingId > 0 && Model.CanEdit)
+            {
+              <small>
+                <a class="whl-link text-white fw-bold whl-action-add-application" title="Add a new application"
+                  asp-area="" asp-controller="Applications" asp-action="ApplicantInfo"
+                  asp-route-listingId="@Model.ListingId"><i class="fa-solid fa-plus"></i>&nbsp;Add</a>
+              </small>
+            }
+          </th>
+          <th class="text-center" style="width: 96px;"><small>Lottery #</small></th>
+          <th class="text-center" style="width: 48px;"><small>&nbsp;</small></th>
+          <th class="text-center" style="width: 180px;"><small>Application ID</small></th>
+          <th class="text-left"><small>Applicant Name</small></th>
+          <th class="text-center" style="width: 128px;"><small>DOB</small></th>
+          <th class="text-center" style="width: 128px;"><small>Tax ID</small></th>
+          <th class="text-left"><small>Email Address</small></th>
+          <th class="text-center"><small>Status</small></th>
+          <th class="text-left"><small>Submitted</small></th>
+          <th class="text-center" style="width: 96px;"><small>Paper?</small></th>
+        </tr>
+      </thead>
+      @if (applicationCount == 0)
+      {
+        <tbody class="table-group-divider">
+          <tr>
+            <td colspan="11" class="text-center">No applications found</td>
+          </tr>
+        </tbody>
+      }
+      else
+      {
+        <tbody class="table-group-divider">
+          @foreach (var application in Model.HousingApplications)
+          {
+            <tr>
+              <td class="text-center" style="width: 120px;">
+                @if (application.IsPaperBased && Model.CanEdit)
+                {
+                  <a class="whl-link whl-action-edit-application" data-applicationid="@application.ApplicationId"
+                    title="Edit application" asp-area="" asp-controller="Applications" asp-action="ApplicantInfo"
+                    asp-route-applicationId="@application.ApplicationId"><i class="fa-solid fa-pencil"></i></a>
+                  @* <a class="whl-link whl-action-delete-application ml-8" data-applicationid="@application.ApplicationId"
+                    title="Delete application"
+                    href="javascript:void(0);"><i class="fa-solid fa-trash"></i></a> *@
+                }
+                else
+                {
+                  <a class="whl-link whl-action-view-application" data-applicationid="@application.ApplicationId"
+                    title="View application" asp-area="" asp-controller="Applications" asp-action="Details"
+                    asp-route-applicationId="@application.ApplicationId"><i class="fa-regular fa-file-lines"></i></a>
+                }
+                <a class="whl-link whl-action-view-audit ml-8" data-entitytype="APPLICATION"
+                  data-entityid="@application.ApplicationId" title="View audit log" href="javascript:void(0);"><i
+                    class="fa-solid fa-list"></i></a>
+              </td>
+              <td class="text-center" style="width: 96px;"><small>@application.LotteryNumber?.Split("-")?[1]</small></td>
+              <td class="text-center" style="width: 48px;">
+                <small>
+                  @if (application.IsDuplicate)
+                  {
+                    <i class="fa-regular fa-flag text-danger mr-4" title="Duplicate Application"
+                      aria-label="Duplicate Application"></i>
+                  }
+                  else if (application.IsPotentialDuplicate)
+                  {
+                    <i class="fa-regular fa-flag text-warning mr-4" title="Potential Duplicate Application"
+                      aria-label="Potential Duplicate Application"></i>
+                  }
+                </small>
+              </td>
+              <td class="text-center" style="width: 180px;"><small>@application.ApplicationId</small></td>
+              <td class="text-left"><small>@application.DisplayName</small></td>
+              <td class="text-center" style="width: 128px;"><small>@application.DisplayDateOfBirth</small></td>
+              <td class="text-center" style="width: 128px;"><small>@application.DisplayLast4SSN</small></td>
+              <td class="text-left"><small>@application.EmailAddress</small></td>
+              <td class="text-center"><small>@application.StatusDescription</small></td>
+              <td class="text-left"><small>@application.DisplaySubmittedDate</small></td>
+              <td class="text-center" style="width: 96px;">
+                <small>@if (application.IsPaperBased)
+                  {
+                    <i class="fa-regular fa-rectangle-list"></i>
+                  }
+                </small>
+              </td>
+            </tr>
+          }
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="11">
+              @await Html.PartialAsync("~/Views/Shared/_PagingInfo.cshtml", Model)
+            </td>
+          </tr>
+        </tfoot>
+      }
+    </table>
+  </div>
+
+</div>
+
+<!-- Audit Viewer Modal -->
+@await Html.PartialAsync("~/Views/Shared/_AuditViewerModalPartial.cshtml")
+
+@section Scripts
+{
+  <script>
+    //<![CDATA[
+    const applicationsUrl = '@Url.Action("Download", "Applications")';
+    const applicationDeleteUrl = '@Url.Action("Delete", "Applications")';
+    const auditViewerUrl = '@Url.Action("Index", "Audit")';
+    //]]>
+  </script>
+  <script src="~/js/management/common.js" asp-append-version="true"></script>
+  <script src="~/js/applications/applications.js" asp-append-version="true"></script>
+}

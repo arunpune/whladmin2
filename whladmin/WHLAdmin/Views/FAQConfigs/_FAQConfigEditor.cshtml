@@ -1,0 +1,210 @@
+﻿@model EditableFaqConfigViewModel
+
+<div class="text-left">
+  @using (Html.BeginForm("Add", "FAQConfigs", FormMethod.Post))
+  {
+    <div id="divSaveErrorMessage" style="display: none;">
+      <h6 class="text-danger"><i class="fa-solid fa-triangle-exclamation"></i>&nbsp;Error</h6>
+      <p id="lblSaveErrorMessage">Failed to save FAQ information</p>
+      <hr />
+    </div>
+
+    @Html.HiddenFor(h => h.FaqId);
+
+    <div class="row mb-3">
+      <div class="col-xs-12">
+        <label class="form-label small fw-bolder" asp-for="CategoryName">Category <span class="text-danger">*</span></label><br />
+        <input type="text" class="form-control form-control-sm whl-formfield-categoryname" placeholder="Enter Category Name" maxlength="100" asp-for="CategoryName" />
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-xs-12">
+        <label class="form-label small fw-bolder" asp-for="Title">Question <span class="text-danger">*</span></label><br />
+        <input type="text" class="form-control form-control-sm whl-formfield-title" placeholder="Enter Question" maxlength="200" asp-for="Title" />
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-xs-12">
+        <label class="form-label small fw-bolder" asp-for="Text">Answer <span class="text-danger">*</span></label><br />
+        <textarea rows="3" class="form-control form-control-sm whl-formfield-text" placeholder="Enter Answer" maxlength="4000" asp-for="Text"></textarea>
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-xs-12">
+        <label class="form-label small" asp-for="Url">Link #1</label><br />
+        <input type="text" class="form-control form-control-sm whl-formfield-url" placeholder="Enter Link #1" maxlength="500" asp-for="Url" />
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-xs-12">
+        <label class="form-label small" asp-for="Url1">Link #2</label><br />
+        <input type="text" class="form-control form-control-sm whl-formfield-url1" placeholder="Enter Link #2" maxlength="500" asp-for="Url1" />
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-xs-12">
+        <label class="form-label small" asp-for="Url2">Link #3</label><br />
+        <input type="text" class="form-control form-control-sm whl-formfield-url2" placeholder="Enter Link #3" maxlength="500" asp-for="Url2" />
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-xs-12">
+        <label class="form-label small" asp-for="Url3">Link #4</label><br />
+        <input type="text" class="form-control form-control-sm whl-formfield-url3" placeholder="Enter Link #4" maxlength="500" asp-for="Url3" />
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-xs-12">
+        <label class="form-label small" asp-for="Url4">Link #5</label><br />
+        <input type="text" class="form-control form-control-sm whl-formfield-url4" placeholder="Enter Link #5" maxlength="500" asp-for="Url4" />
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-xs-12">
+        <label class="form-label small" asp-for="Url5">Link #6</label><br />
+        <input type="text" class="form-control form-control-sm whl-formfield-url5" placeholder="Enter Link #6" maxlength="500" asp-for="Url5" />
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-xs-12">
+        <label class="form-label small" asp-for="Url6">Link #7</label><br />
+        <input type="text" class="form-control form-control-sm whl-formfield-url6" placeholder="Enter Link #7" maxlength="500" asp-for="Url6" />
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-xs-12">
+        <label class="form-label small" asp-for="Url7">Link #8</label><br />
+        <input type="text" class="form-control form-control-sm whl-formfield-url7" placeholder="Enter Link #8" maxlength="500" asp-for="Url7" />
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-xs-12">
+        <label class="form-label small" asp-for="Url8">Link #9</label><br />
+        <input type="text" class="form-control form-control-sm whl-formfield-url8" placeholder="Enter Link #9" maxlength="500" asp-for="Url8" />
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-xs-12">
+        <label class="form-label small" asp-for="Url9">Link #10</label><br />
+        <input type="text" class="form-control form-control-sm whl-formfield-url9" placeholder="Enter Link #10" maxlength="500" asp-for="Url9" />
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-xs-12">
+        <label class="form-label small" asp-for="DisplayOrder">Display Order</label><br />
+        <input type="text" class="form-control form-control-sm whl-formfield-displayorder" placeholder="Enter Display Order" maxlength="3" asp-for="DisplayOrder" />
+      </div>
+    </div>
+
+    @if (Model.FaqId > 0)
+    {
+      <div class="row mb-3">
+        <div class="col-xs-12">
+          <div class="form-check form-switch">
+            <input type="checkbox" class="form-check-input" role="switch" asp-for="Active" />
+            <label class="form-check-label small" asp-for="Active">Active</label>
+          </div>
+        </div>
+      </div>
+    }
+  }
+</div>
+
+<script>
+  //<![CDATA[
+  $(function () {
+
+    // Disable submission
+    $('.whl-action-save-faq').attr('disabled', 'disabled');
+    fnToggleSaveFAQ();
+
+    $('.whl-formfield-categoryname').on('change', function (e) {
+      $(this).removeClass('is-valid');
+      $(this).removeClass('is-invalid');
+      var v = $(this).val();
+      if (v !== undefined && v !== null && v.trim().length > 0) {
+        $(this).addClass('is-valid');
+      } else {
+        $(this).addClass('is-invalid');
+      }
+      fnToggleSaveFAQ();
+    });
+
+    $('.whl-formfield-title').on('change', function (e) {
+      $(this).removeClass('is-valid');
+      $(this).removeClass('is-invalid');
+      var v = $(this).val();
+      if (v !== undefined && v !== null && v.trim().length > 0) {
+        $(this).addClass('is-valid');
+      } else {
+        $(this).addClass('is-invalid');
+      }
+      fnToggleSaveFAQ();
+    });
+
+    $('.whl-formfield-text').on('change', function (e) {
+      $(this).removeClass('is-valid');
+      $(this).removeClass('is-invalid');
+      var v = $(this).val();
+      if (v !== undefined && v !== null && v.trim().length > 0) {
+        $(this).addClass('is-valid');
+      } else {
+        $(this).addClass('is-invalid');
+      }
+      fnToggleSaveFAQ();
+    });
+
+    $('.whl-formfield-displayorder').on('keypress', function (e) {
+      var reg = /^\d+$/;
+      var k = e.key;
+      return reg.test(e.key);
+    });
+
+    $('.whl-formfield-displayorder').on('change', function (e) {
+      var reg = /^\d+$/;
+      $(this).removeClass('is-valid');
+      $(this).removeClass('is-invalid');
+      var v = $(this).val();
+      if (v === undefined || v == null || v.trim().length == 0) {
+        $(this).val('0');
+        v = '0';
+      }
+      var n = parseInt(v);
+      if (!isNaN(n)) {
+        $(this).addClass('is-valid');
+      }
+      fnToggleSaveFAQ();
+    });
+
+    function fnToggleSaveFAQ() {
+      var cn = $('.whl-formfield-categoryname').val();
+      var ti = $('.whl-formfield-title').val();
+      var tx = $('.whl-formfield-text').val();
+      var ds = $('.whl-formfield-displayorder').val();
+      var allowSubmission = (cn !== undefined && cn !== null && cn.trim().length > 0)
+                              && (ti !== undefined && ti !== null && ti.trim().length > 0)
+                              && (tx !== undefined && tx !== null && tx.trim().length > 0)
+                              && (ds !== undefined && ds !== null && !isNaN(parseInt(ds)));
+      if (allowSubmission) {
+        $('.whl-action-save-faq').removeAttr('disabled');
+      }
+      else {
+        $('.whl-action-save-faq').attr('disabled', 'disabled');
+      }
+    }
+  });
+  //]]>
+</script>

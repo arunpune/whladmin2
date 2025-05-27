@@ -1,0 +1,17 @@
+@model RailroadViewModel
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a class="whl-link" asp-area="" asp-controller="Home" asp-action="Index" title="Home"><i
+          class="fa-solid fa-house"></i></a></li>
+    <li class="breadcrumb-item active" aria-current="page">
+      @if (Model.ApplicationId > 0)
+      {
+        <span>@Model.ApplicationId &ndash; @ViewData["Title"]</span>
+      }
+      else
+      {
+        <span>@ViewData["Title"]</span>
+      }
+    </li>
+  </ol>
+</nav>

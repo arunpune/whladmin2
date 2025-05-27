@@ -1,0 +1,103 @@
+@model LogInViewModel
+@{
+  ViewData["Title"] = "Log In";
+  ViewData["MENUID"] = "LOGIN";
+}
+
+<div class="text-center py-16 mt-64 login-page">
+  <div class="login-container">
+    <div class="card border-0 shadow-lg">
+      @* <h5 class="card-header">HomeSeeker Login</h5> *@
+      <div class="card-body">
+        <h4 class="text-secondary whl-card-title">Login</h4>
+        <div class="mt-4 text-left">
+          @using (Html.BeginForm("LogIn", "Account", FormMethod.Post, new
+          {
+            @class = "form whl-form-login",
+            id = "frmLogin",
+            name = "frmLogin"
+          }))
+          {
+            if (!string.IsNullOrEmpty((Model.Message ?? "").Trim()))
+            {
+              <div id="divSaveErrorMessage">
+                <h6 class="text-danger"><i class="fa-solid fa-triangle-exclamation"></i>&nbsp;Error</h6>
+                <p id="lblSaveErrorMessage">@Model.Message</p>
+                <hr />
+              </div>
+            }
+
+            <div class="row mb-3">
+              @Html.LabelFor(l => l.Username, htmlAttributes: new { @class = "col-sm-4 form-label small fw-bolder" })
+              <div class="col-sm-8">
+                @Html.TextBoxFor(e => e.Username, htmlAttributes: new
+                  {
+                    @class = "form-control whl-formfield-username",
+                    placeholder = "Enter Username",
+                    autocomplete = "username"
+                  })
+                @Html.ValidationMessageFor(v => v.Username)
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              @Html.LabelFor(l => l.Password, htmlAttributes: new { @class = "col-sm-4 form-label small fw-bolder" })
+              <div class="col-sm-8">
+                @Html.PasswordFor(e => e.Password, htmlAttributes: new
+                  {
+                    @class = "form-control whl-formfield-password",
+                    placeholder = "Enter Password",
+                    autocomplete = "off"
+                  })
+                @Html.ValidationMessageFor(v => v.Password)
+              </div>
+            </div>
+
+            <hr />
+
+            <input type="hidden" id="hidLoginAction" name="hidLoginAction" value="" />
+            @Html.HiddenFor(h => h.ReturnUrl, htmlAttributes: new { @class = "whl-formfield-returnurl" })
+            @Html.HiddenFor(h => h.RecaptchaEnabled, htmlAttributes: new { @class = "whl-formfield-recaptchaenabled" })
+            @if (Model.RecaptchaEnabled == "1")
+            {
+              @Html.HiddenFor(h => h.RecaptchaVersion, htmlAttributes: new { @class = "whl-formfield-recaptchaversion" })
+              @Html.HiddenFor(h => h.RecaptchaAction, htmlAttributes: new { @class = "whl-formfield-recaptchaaction" })
+              @Html.HiddenFor(h => h.RecaptchaToken, htmlAttributes: new { @class = "whl-formfield-grecaptchatoken" })
+              <div class="g-recaptcha" data-sitekey="@Model.RecaptchaKey" data-callback="fnLogin" data-size="invisible"></div>
+            }
+            <button type="submit" class="btn btn-primary whl-action-login">Login</button>
+
+            <p>&nbsp;</p>
+            <p>Access issues? <a class="whl-link fw-bolder" asp-area="" asp-controller="Account" asp-action="ResetPasswordRequest"
+                title="Request Reset Password" aria-label="Request Reset Password">Request a password reset</a>.</p>
+            <p>Do not have an account? <a class="whl-link fw-bolder" asp-area="" asp-controller="Account" asp-action="Register"
+                title="Register" aria-label="Register">Register</a> for one.</p>
+            <p>Account not activated? <a class="whl-link fw-bolder" asp-area="" asp-controller="Account"
+                asp-action="ResendActivation" title="Request new activation link"
+                aria-label="Request new activation link">Request a new Activation Link</a>.</p>
+
+            <p>&nbsp;</p>
+            <p>Technical issues? Please reach out to <a
+                href="mailto:homeseeker@westchestercountyny.gov?subject=Account Activation Support">homeseeker@westchestercountyny.gov</a>
+              with the subject <strong>Technical Support</strong> &ndash; please have your email address on file ready.
+            </p>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+@section Scripts
+{
+  @if (Model.RecaptchaEnabled == "1")
+  {
+    <script src="@Model.RecaptchaTokenUrl" async defer></script>
+    <script src="~/js/login/login.recaptcha.@(Model.RecaptchaVersion).js" asp-append-version="true"></script>
+  }
+  else
+  {
+    <script src="~/js/login/login.actions.js" asp-append-version="true"></script>
+  }
+  <script src="~/js/login/login.validations.js" asp-append-version="true"></script>
+}

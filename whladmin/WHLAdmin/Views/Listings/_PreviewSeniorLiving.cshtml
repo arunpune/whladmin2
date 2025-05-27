@@ -1,0 +1,7 @@
+@model ListingViewModel
+
+@if (Model.Is55Plus || Model.Is62Plus)
+{
+  <p class="fs-5 mt-32 border-bottom">Senior Living</p>
+  <p><i class="fa-regular fa-circle-dot text-whlgreen"></i>&nbsp;Has @Model.ListingAgeTypeDescription</p>
+}

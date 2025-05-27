@@ -1,0 +1,61 @@
+@model EditableHousingApplicationViewModel
+<div class="text-left mt-16">
+  <div class="card text-bg-light border-0">
+    <div class="card-body">
+      <h4 class="text-secondary whl-card-title">Accounts &amp; Assets Information</h4>
+      <div class="card-text mt-16">
+        @if (Model.Accounts.Any())
+        {
+          <div class="row mb-3 border-bottom">
+            <div class="col-xs-11 col-md-4">
+              <small class="fw-bold">Asset Type/Number</small>
+            </div>
+            <div class="col-xs-11 col-md-3">
+              <small class="fw-bold">Institution Name</small>
+            </div>
+            <div class="col-xs-12 col-md-3">
+              <small class="fw-bold">Primary Holder</small>
+            </div>
+            <div class="col-xs-12 col-md-2 text-end">
+              <small class="fw-bold">Value</small>
+            </div>
+          </div>
+          @foreach (var account in Model.Accounts)
+          {
+            <div class="row mb-3">
+              <div class="col-xs-12 col-md-4">
+                @account.DisplayAccountType
+                @if (!string.IsNullOrEmpty(account.DisplayAccountNumber))
+                {
+                  <br />
+                  @account.DisplayAccountNumber
+                }
+              </div>
+              <div class="col-xs-12 col-md-3">
+                @account.InstitutionName
+              </div>
+              <div class="col-xs-12 col-md-3">
+                @account.PrimaryHolderMemberName
+              </div>
+              <div class="col-xs-12 col-md-2 text-end">
+                @account.AccountValueAmt.ToString("C0")
+              </div>
+            </div>
+          }
+          <div class="row mb-3 bg-light border-top">
+            <div class="col-xs-12 col-md-10">
+              <span class="fw-bolder">Total</span>
+            </div>
+            <div class="col-xs-12 col-md-2 text-end">
+              <span class="fw-bolder">@Model.Accounts.Select(s => s.AccountValueAmt).Sum().ToString("C0")</span>
+            </div>
+          </div>
+        }
+        else
+        {
+          <p>There are no accounts &amp; assets to be associated with this application.</p>
+        }
+      </div>
+    </div>
+  </div>
+</div>

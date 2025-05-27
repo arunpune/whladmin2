@@ -1,0 +1,26 @@
+@model AddressViewModel
+
+@if (!string.IsNullOrEmpty(Model.StreetLine1))
+{
+  <span class="fs-5 fw-semibold text-dark">@Model.StreetLine1
+    @if (!string.IsNullOrEmpty(Model.StreetLine2))
+    {
+      <br />
+      @Model.StreetLine2
+    }
+    @if (!string.IsNullOrEmpty(Model.StreetLine3))
+    {
+      <br />
+      @Model.StreetLine3
+    }
+    @if (!string.IsNullOrEmpty(Model.City))
+    {
+      <br />
+      @($"{Model.City}, {Model.StateCd} {Model.ZipCode}")
+    }
+  </span>
+}
+else
+{
+  <span class="fs-5 fw-light text-secondary">Not Specified</span>
+}

@@ -1,0 +1,532 @@
+@model EditableListingViewModel
+@{
+  var rentalOrSalesDisclaimerText = (Model.ListingTypeCd ?? "") == "RENTAL" ? "Rent Includes" : "Disclaimer";
+}
+
+<div class="text-left">
+  @using (Html.BeginForm("Edit", "Listings", FormMethod.Post))
+  {
+    <div id="divSaveErrorMessage" style="display: none;">
+      <h6 class="text-danger"><i class="fa-solid fa-triangle-exclamation"></i>&nbsp;Error</h6>
+      <p id="lblSaveErrorMessage">Failed to save listing information</p>
+      <hr />
+    </div>
+
+    @Html.HiddenFor(h => h.ListingId)
+    ;
+    @Html.HiddenFor(h => h.StatusCd)
+    ;
+
+    <div class="row mb-3">
+      <div class="col-xs-12 col-md-3">
+        <div class="form-group form-group-sm">
+          <label class="form-label small fw-bolder" asp-for="ListingTypeCd">Listing Type <span
+              class="text-danger">*</span></label><br />
+          <select class="form-select form-select-sm whl-formfield-listingtypecd" placeholder="Select Listing Type"
+            asp-for="ListingTypeCd"
+            asp-items="@(new SelectList(Model.ListingTypes, "Key", "Value", Model.ListingTypeCd))"></select>
+        </div>
+      </div>
+      <div class="col-xs-12 col-md-3">
+        <div class="form-group form-group-sm whl-formfieldgroup-resaleind"
+          style="@(Model.ListingTypeCd == "RENTAL" ? "display: none;" : "")">
+          <label class="form-label small fw-bolder" asp-for="ResaleInd">Resale? <span class="text-danger">*</span></label>
+          <div class="form-check form-switch">
+            <input type="checkbox" class="form-check-input whl-formfield-resaleind" role="switch" asp-for="ResaleInd" />
+            <label class="form-check-label small whl-formfieldlabel-resaleind" asp-for="ResaleInd">@(Model.ResaleInd ?
+                          "Yes" : "No")</label>
+        </div>
+      </div>
+    </div>
+    <div class="col-xs-12 col-md-6">
+      <div class="form-group form-group-sm">
+        <label class="form-label small fw-bolder" asp-for="ListingAgeTypeCd">Senior Living Opportunities <span
+            class="text-danger">*</span></label><br />
+        <select class="form-select form-select-sm whl-formfield-listingagetypecd" placeholder="Select Listing Age Type"
+          asp-for="ListingAgeTypeCd"
+          asp-items="@(new SelectList(Model.ListingAgeTypes, "Key", "Value", Model.ListingAgeTypeCd))"></select>
+      </div>
+    </div>
+  </div>
+
+    <div class="row mb-3">
+      <div class="col-xs-12">
+        <div class="form-group form-group-sm">
+          <label class="form-label small whl-formlabel-rentincludestext"
+            asp-for="RentIncludesText">@rentalOrSalesDisclaimerText</label><br />
+          <textarea rows="2" class="form-control form-control-sm whl-formfield-rentincludestext"
+            placeholder="Inclusions Text" maxlength="1000" asp-for="RentIncludesText"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="row mb-3 mt-32">
+      <div class="col-xs-12">
+        <div class="form-group form-group-sm">
+          <label class="form-label small fw-bolder" asp-for="Name">Name <span class="text-danger">*</span></label><br />
+          <input type="text" class="form-control form-control-sm whl-formfield-name" placeholder="Enter Name"
+            maxlength="500" asp-for="Name" />
+        </div>
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-xs-12">
+        <div class="form-group form-group-sm">
+          <label class="form-label small" asp-for="Description">Description</label><br />
+          <textarea rows="5" class="form-control form-control-sm whl-formfield-description"
+            placeholder="Enter Description" maxlength="4000" asp-for="Description"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-xs-12">
+        <div class="form-group form-group-sm">
+          <label class="form-label small" asp-for="WebsiteUrl">Website Url</label><br />
+          <input type="text" class="form-control form-control-sm whl-formfield-websiteurl" placeholder="Enter Website Url"
+            maxlength="500" asp-for="WebsiteUrl" />
+        </div>
+      </div>
+    </div>
+
+    <h5 class="mt-32 border-bottom">Address</h5>
+
+    <div class="row mb-3">
+      <div class="col-xs-12">
+        <div class="form-group form-group-sm">
+          <label class="form-label small fw-bolder" asp-for="StreetAddress">Address to Validate <span
+              class="text-danger">*</span></label><br />
+          <div class="input-group input-group-sm">
+            <input type="text" class="form-control form-control-sm whl-formfield-streetaddress"
+              placeholder="Enter Address to Validate" maxlength="500" asp-for="StreetAddress" />
+            <button type="button" class="btn btn-sm btn-outline-secondary whl-action-validate-address"
+              disabled="disabled">Validate</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row mb-3 whl-formfieldrow-available-addresses"
+      style="display: none; border: 1px solid #cccccc; border-radius: 4px;">
+      <div class="col-sm-12">
+        <h6 class="mt-2">Please select one of the addresses below:</h6>
+        <div class="row bg-light text-secondary">
+          <div class="col-xs-12 col-md-1">&nbsp;</div>
+          <div class="col-xs-12 col-md-4"><small class="fw-bolder">Street Address</small></div>
+          <div class="col-xs-12 col-md-3"><small class="fw-bolder">City</small></div>
+          <div class="col-xs-12 col-md-1"><small class="fw-bolder">State</small></div>
+          <div class="col-xs-12 col-md-1"><small class="fw-bolder">Zip</small></div>
+          <div class="col-xs-12 col-md-2"><small class="fw-bolder">County</small></div>
+        </div>
+        <div class="whl-address-candidates mb-3">
+        </div>
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-xs-12 col-md-6">
+        <div class="row">
+          <div class="col-xs-12">
+            <div class="form-group form-group-sm">
+              <label class="form-label small fw-bolder" asp-for="StreetLine1">Street Line 1 <span
+                  class="text-danger">*</span></label><br />
+              <input type="text" class="form-control form-control-sm whl-formfield-streetline1 text-capitalize"
+                placeholder="Enter Street Line 1" maxlength="250" asp-for="StreetLine1" disabled="disabled"
+                aria-disabled="true" />
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-xs-12">
+            <div class="form-group form-group-sm">
+              <label class="form-label small" asp-for="StreetLine2">Street Line 2</label><br />
+              <input type="text" class="form-control form-control-sm whl-formfield-streetline2 text-capitalize"
+                placeholder="Enter Street Line 2" maxlength="250" asp-for="StreetLine2" disabled="disabled"
+                aria-disabled="true" />
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-xs-12">
+            <div class="form-group form-group-sm">
+              <label class="form-label small" asp-for="StreetLine3">Street Line 3</label><br />
+              <input type="text" class="form-control form-control-sm whl-formfield-streetline3 text-capitalize"
+                placeholder="Enter Street Line 3" maxlength="250" asp-for="StreetLine3" disabled="disabled"
+                aria-disabled="true" />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-xs-12 col-md-4">
+        <div class="row">
+          <div class="col-xs-12">
+            <div class="form-group form-group-sm">
+              <label class="form-label small fw-bolder" asp-for="City">City <span
+                  class="text-danger">*</span></label><br />
+              <input type="text" class="form-control form-control-sm whl-formfield-city text-capitalize"
+                placeholder="Enter City" maxlength="100" asp-for="City" disabled="disabled" aria-disabled="true" />
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-xs-12 col-sm-6">
+            <div class="form-group form-group-sm">
+              <label class="form-label small fw-bolder" asp-for="StateCd">State <span
+                  class="text-danger">*</span></label><br />
+              <input type="text" class="form-control form-control-sm whl-formfield-statecd" placeholder="Enter State"
+                maxlength="2" asp-for="StateCd" disabled="disabled" aria-disabled="true" />
+            </div>
+          </div>
+          <div class="col-xs-12 col-sm-6">
+            <div class="form-group form-group-sm">
+              <label class="form-label small fw-bolder" asp-for="ZipCode">Zip Code <span
+                  class="text-danger">*</span></label><br />
+              <input type="text" class="form-control form-control-sm whl-formfield-zipcode" placeholder="Enter Zip Code"
+                maxlength="5" asp-for="ZipCode" disabled="disabled" aria-disabled="true" />
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-xs-12">
+            <div class="form-group form-group-sm">
+              <label class="form-label small fw-bolder" asp-for="County">County <span
+                  class="text-danger">*</span></label><br />
+              <input type="text" class="form-control form-control-sm whl-formfield-county text-capitalize"
+                placeholder="Enter County" maxlength="100" asp-for="County" disabled="disabled" aria-disabled="true" />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-xs-12 col-md-2">
+        <div class="row">
+          <div class="col-xs-12">
+            <div class="form-group form-group-sm">
+              <label class="form-label small fw-bolder" asp-for="EsriX">X-Coordinate <span
+                  class="text-danger">*</span></label><br />
+              <input type="text" class="form-control form-control-sm whl-formfield-esrix" placeholder="Enter X-Coordinate"
+                maxlength="20" asp-for="EsriX" disabled="disabled" aria-disabled="true" />
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-xs-12">
+            <div class="form-group form-group-sm">
+              <label class="form-label small fw-bolder" asp-for="EsriY">Y-Coordinate <span
+                  class="text-danger">*</span></label><br />
+              <input type="text" class="form-control form-control-sm whl-formfield-esriy" placeholder="Enter Y-Coordinate"
+                maxlength="20" asp-for="EsriY" disabled="disabled" aria-disabled="true" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row mb-3 mt-32">
+      <div class="col-xs-12 col-md-4">
+        <div class="form-group form-group-sm">
+          <label class="form-label small" asp-for="Municipality">Municipality</label><br />
+          <input type="text" class="form-control form-control-sm whl-formfield-municipality"
+            placeholder="Enter Municipality" maxlength="250" asp-for="Municipality" />
+        </div>
+      </div>
+      <div class="col-xs-12 col-md-8">
+        <div class="form-group form-group-sm">
+          <label class="form-label small" asp-for="MunicipalityUrl">Municipality Url</label><br />
+          <input type="text" class="form-control form-control-sm whl-formfield-municipalityurl"
+            placeholder="Enter Municipality Url" maxlength="500" asp-for="MunicipalityUrl" />
+        </div>
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-xs-12 col-md-4">
+        <div class="form-group form-group-sm">
+          <label class="form-label small" asp-for="SchoolDistrict">School District</label><br />
+          <input type="text" class="form-control form-control-sm whl-formfield-schooldistrict"
+            placeholder="Enter School District" maxlength="250" asp-for="SchoolDistrict" />
+        </div>
+      </div>
+      <div class="col-xs-12 col-md-8">
+        <div class="form-group form-group-sm">
+          <label class="form-label small" asp-for="SchoolDistrictUrl">School District Url</label><br />
+          <input type="text" class="form-control form-control-sm whl-formfield-schooldistricturl"
+            placeholder="Enter School District Url" maxlength="500" asp-for="SchoolDistrictUrl" />
+        </div>
+      </div>
+    </div>
+
+    <div class="row mb-3 whl-formfieldrow-mapurl">
+      <div class="col-xs-12">
+        <div class="form-group form-group-sm">
+          <label class="form-label small" asp-for="MapUrl">Map Url</label><br />
+          <input type="text" class="form-control form-control-sm whl-formfield-mapurl" placeholder="Enter Map Url"
+            maxlength="500" asp-for="MapUrl" />
+        </div>
+      </div>
+    </div>
+
+    <div class="row mb-3 mt-32">
+      <div class="col-xs-12 col-md-6">
+        <div class="form-group form-group-sm">
+          <label class="form-label small" asp-for="CompletedOrInitialOccupancyYear">Completed or Initial Occupancy
+            Year</label><br />
+          <input type="text" class="form-control form-control-sm whl-formfield-completedorinitiaoccupancyyear"
+            placeholder="Enter Year" maxlength="4" asp-for="CompletedOrInitialOccupancyYear" />
+        </div>
+      </div>
+      <div class="col-xs-12 col-md-6">
+        <div class="form-group form-group-sm">
+          <label class="form-label small" asp-for="TermOfAffordability">Term of Affordability</label><br />
+          <input type="text" class="form-control form-control-sm whl-formfield-termofaffordability"
+            placeholder="Enter Term of Affordability" maxlength="100" asp-for="TermOfAffordability" />
+        </div>
+      </div>
+    </div>
+
+  @if (Model.ListingId > 0)
+    {
+      <div class="row mb-3">
+        <div class="col-xs-12">
+          <div class="form-group form-group-sm form-check form-switch">
+            <input type="checkbox" class="form-check-input" role="switch" asp-for="Active" />
+            <label class="form-check-label small" asp-for="Active">Active</label>
+          </div>
+        </div>
+      </div>
+    }
+  }
+</div>
+
+<script>
+  //<![CDATA[
+
+  $(function () {
+
+    // Disable submission
+    $('.whl-action-save-listing').attr('disabled', 'disabled');
+    fnToggleSaveListing();
+
+    $('.whl-formfield-listingtypecd').on('change', function (e) {
+      $(this).removeClass('is-valid');
+      $(this).removeClass('is-invalid');
+      let v = $(this).val();
+      if (v !== undefined && v !== null && v.trim().length > 0) {
+        $(this).addClass('is-valid');
+        if (v === 'RENTAL') {
+          $('.whl-formlabel-rentincludestext').html('Rent Includes');
+          $('.whl-formfield-rentincludestext').val('Rent includes heat, hot water, and electric, including cooking. Income guidelines are subject to change.');
+          $('.whl-formfieldgroup-resaleind').hide();
+          $('.whl-formfield-resaleind').prop('checked', false);
+          $('.whl-formfieldlabel-resaleind').html('No');
+        } else {
+          $('.whl-formlabel-rentincludestext').html('Disclaimer');
+          $('.whl-formfield-rentincludestext').val('Income guidelines are subject to change.');
+          $('.whl-formfieldgroup-resaleind').show();
+        }
+      } else {
+        $(this).addClass('is-invalid');
+      }
+      fnToggleSaveListing();
+    });
+
+    $('.whl-formfield-resaleind').on('change', function (e) {
+      let c = $(this).prop('checked');
+      $('.whl-formfieldlabel-resaleind').html(c ? 'Yes' : 'No');
+    });
+
+    $('.whl-formfield-listingagetypecd').on('change', function (e) {
+      $(this).removeClass('is-valid');
+      $(this).removeClass('is-invalid');
+      var v = $(this).val();
+      if (v !== undefined && v !== null && v.trim().length > 0) {
+        $(this).addClass('is-valid');
+      } else {
+        $(this).addClass('is-invalid');
+      }
+      fnToggleSaveListing();
+    });
+
+    $('.whl-formfield-name').on('change', function (e) {
+      $(this).removeClass('is-valid');
+      $(this).removeClass('is-invalid');
+      var v = $(this).val();
+      if (v !== undefined && v !== null && v.trim().length > 0) {
+        $(this).addClass('is-valid');
+      } else {
+        $(this).addClass('is-invalid');
+      }
+      fnToggleSaveListing();
+    });
+
+    $('.whl-formfield-streetaddress').on('change', function (e) {
+      $('.whl-formfieldrow-available-addresses').hide();
+      $('.whl-address-candidates').html('<li>None</li>');
+      $('.whl-formfield-streetline1').val('');
+      $('.whl-formfield-streetline2').val('');
+      $('.whl-formfield-city').val('');
+      $('.whl-formfield-statecd').val('');
+      $('.whl-formfield-zipcode').val('');
+      $('.whl-formfield-county').val('');
+      $('.whl-formfield-esrix').val('');
+      $('.whl-formfield-esriy').val('');
+      $('.whl-formfield-mapurl').val('');
+      $('.whl-formfieldrow-mapurl').show();
+      let v = $(this).val();
+      if (v !== undefined && v !== null && v.trim().length > 10) {
+        $('.whl-action-validate-address').removeAttr('disabled');
+      } else {
+        $('.whl-action-validate-address').attr('disabled', 'disabled');
+      }
+    });
+
+    $('.whl-action-validate-address').on('click', function (e) {
+
+      $('.whl-formfieldrow-available-addresses').hide();
+      $('.whl-address-candidates').html('<li>None</li>');
+      $('.whl-formfield-streetline1').val('');
+      $('.whl-formfield-streetline2').val('');
+      $('.whl-formfield-city').val('');
+      $('.whl-formfield-statecd').val('');
+      $('.whl-formfield-zipcode').val('');
+      $('.whl-formfield-county').val('');
+      $('.whl-formfield-esrix').val('');
+      $('.whl-formfield-esriy').val('');
+      $('.whl-formfield-mapurl').val('');
+      $('.whl-formfieldrow-mapurl').show();
+
+      const streetAddress = fnSanitize($('.whl-formfield-streetaddress').val());
+      let addressParts = 'Address=' + encodeURIComponent(streetAddress);
+
+      let addressCandidatesUrl = arcGisAddressCandidatesApiUrl + '?' + addressParts + '&outFields=*&f=pjson&forStorage=false';
+      if (arcGisApiToken !== undefined && arcGisApiToken !== null && arcGisApiToken.trim().length > 0) {
+        addressCandidatesUrl += '&api_key=' + arcGisApiToken;
+      }
+      $.get(addressCandidatesUrl)
+        .done(function (response) {
+          console.debug(response);
+          let liHtml = '';
+          const candidates = JSON.parse(response).candidates;
+          addressCandidates = [];
+          selectedAddress = {};
+          let addressCtr = 0;
+          $(candidates).each(function (i, elem) {
+            const singleLine = fnSanitize(elem.address);
+            const streetAddress1 = fnSanitize(elem.attributes.StAddr);
+            const streetAddress2 = fnSanitize(elem.attributes.SubAddr);
+            const streetAddress = streetAddress1 + (streetAddress2.length > 0 ? (', ' + streetAddress2) : '');
+            const city = fnSanitize(elem.attributes.City);
+            const region = fnSanitize(elem.attributes.Region);
+            const regionAbbr = fnSanitize(elem.attributes.RegionAbbr);
+            const state = regionAbbr.length == 2 ? regionAbbr : region;
+            const zipCode = fnSanitize(elem.attributes.Postal);
+            const subRegion = fnSanitize(elem.attributes.Subregion);
+            const county = subRegion.length > 0 ? subRegion : 'Other';
+            const longitude = fnSanitize('' + elem.location.x);
+            const latitude = fnSanitize('' + elem.location.y);
+            if (elem.score > 80.0 && county.length > 0) {
+              addressCandidates.push({ id: addressCtr, singleLine: singleLine, streetLine1: streetAddress1, streetLine2: streetAddress2, city: city, state: state, zipCode: zipCode, county: county, longitude: longitude, latitude: latitude, x: elem.location.x, y: elem.location.y });
+              liHtml += '<div class="row">'
+                + '<div class="col-xs-12 col-md-1"><small><a href="javascript:void(0);" class="whl-link fw-bolder whl-address-candidate" title="' + elem.address + '" onclick="return fnSelectAddress(' + addressCtr + ')">SELECT</a></small></div>'
+                + '<div class="col-xs-12 col-md-4"><small>' + streetAddress + '</small></div>'
+                + '<div class="col-xs-12 col-md-3"><small>' + city + '</small></div>'
+                + '<div class="col-xs-12 col-md-1"><small>' + state + '</small></div>'
+                + '<div class="col-xs-12 col-md-1"><small>' + zipCode + '</small></div>'
+                + '<div class="col-xs-12 col-md-2"><small>' + county + '</small></div>'
+                + '</div>';
+              addressCtr++;
+            }
+          });
+          if (liHtml.length === 0) liHtml += '<div class="row"><div class="col-xs-12">None</div></div>';
+          $('.whl-address-candidates').html(liHtml);
+          $('.whl-formfieldrow-available-addresses').show();
+        })
+        .fail(function (err) {
+          console.error(err);
+        });
+
+    });
+
+    $('.whl-formfield-completedorinitiaoccupancyyear').on('keypress', function (e) {
+      var reg = /^\d+$/;
+      var k = e.key;
+      return reg.test(e.key);
+    });
+
+    function fnToggleSaveListing() {
+      let lt = $('.whl-formfield-listingtypecd').val();
+      let lat = $('.whl-formfield-listingagetypecd').val();
+      let rit = $('.whl-formfield-rentincludestext').val();
+      let nm = $('.whl-formfield-name').val();
+      let de = $('.whl-formfield-description').val();
+      let ws = $('.whl-formfield-websiteurl').val();
+      let atv = $('.whl-formfield-streetaddress').val();
+      let aln1 = $('.whl-formfield-streetline1').val();
+      let aln2 = $('.whl-formfield-streetline2').val();
+      let aln3 = $('.whl-formfield-streetline3').val();
+      let act = $('.whl-formfield-city').val();
+      let ast = $('.whl-formfield-statecd').val();
+      let azc = $('.whl-formfield-zipcode').val();
+      let acn = $('.whl-formfield-county').val();
+      let aex = $('.whl-formfield-esrix').val();
+      let aey = $('.whl-formfield-esriy').val();
+      let mn = $('.whl-formfield-municipality').val();
+      let mnu = $('.whl-formfield-municipalityurl').val();
+      let sd = $('.whl-formfield-schooldistrict').val();
+      let sdu = $('.whl-formfield-schooldistricturl').val();
+      let ciy = $('.whl-formfield-completedorinitiaoccupancyyear').val();
+      let toa = $('.whl-formfield-termofaffordability').val();
+
+      let allowSubmission = (lt !== undefined && lt !== null && lt.trim().length > 0)
+        && (lat !== undefined && lat !== null && lat.trim().length > 0)
+        && (nm !== undefined && nm !== null && nm.trim().length > 0)
+        && (atv !== undefined && atv !== null && atv.trim().length > 0)
+        && (aln1 !== undefined && aln1 !== null && aln1.trim().length > 0)
+        && (act !== undefined && act !== null && act.trim().length > 0)
+        && (ast !== undefined && ast !== null && ast.trim().length > 0)
+        && (azc !== undefined && azc !== null && azc.trim().length > 0)
+        && (acn !== undefined && acn !== null && acn.trim().length > 0)
+        && (aex !== undefined && aex !== null && aex.trim().length > 0)
+        && (aey !== undefined && aey !== null && aey.trim().length > 0);
+
+      if (allowSubmission) {
+        $('.whl-action-save-listing').removeAttr('disabled');
+      }
+      else {
+        $('.whl-action-save-listing').attr('disabled', 'disabled');
+      }
+    }
+
+  });
+
+  function fnSanitize(v) {
+    if (v === undefined || v === null) v = '';
+    return v.trim();
+  }
+
+  function fnSelectAddress(i) {
+    selectedAddress = addressCandidates[i];
+    console.debug(selectedAddress);
+    $('.whl-formfield-streetline1').val(selectedAddress.streetLine1);
+    $('.whl-formfield-streetline2').val(selectedAddress.streetLine2);
+    $('.whl-formfield-city').val(selectedAddress.city);
+    $('.whl-formfield-statecd').val(selectedAddress.state);
+    $('.whl-formfield-zipcode').val(selectedAddress.zipCode);
+    $('.whl-formfield-county').val(selectedAddress.county);
+    $('.whl-formfield-esrix').val(selectedAddress.x);
+    $('.whl-formfield-esriy').val(selectedAddress.y);
+    $('.whl-formfield-mapurl').val('');
+    $('.whl-formfieldrow-mapurl').hide();
+    $('.whl-formfieldrow-available-addresses').hide();
+    $('.whl-address-candidates').html('<div class="row"><div class="col-xs-12">None</div></div>');
+    $('.whl-formfield-required-validation').removeClass('is-valid');
+    $('.whl-formfield-required-validation').removeClass('is-invalid');
+    $('.whl-formfield-required-save').removeClass('is-valid');
+    $('.whl-formfield-required-save').removeClass('is-invalid');
+    $('.whl-formfield-required-save').addClass('is-valid');
+    $('.whl-formfield-name').trigger('change');
+    return false;
+  }
+
+  //]]>
+</script>

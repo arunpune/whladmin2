@@ -1,0 +1,173 @@
+﻿@model AffordabilityAnalysisViewModel
+
+<div class="text-left">
+  @using (Html.BeginForm("AffordabilityAnalysis", "Listings", FormMethod.Post))
+  {
+    <input type="hidden" id="AffordabilityAnalsysListingId" name="AffordabilityAnalsysListingId"
+      value="@Model.ListingId" />
+
+    <div class="row mb-3">
+      <div class="col-xs-12 col-md-6">
+        <label class="form-label small fw-bolder" asp-for="UnitId">Unit Interested In <span
+            class="text-danger">*</span></label><br />
+        <select class="form-select form-select-sm whl-formfield-analysis whl-formfield-unitid"
+          placeholder="Select Unit interested in" asp-for="UnitId"
+          asp-items="@(new SelectList(Model.Units, "Key", "Value", Model.UnitId))"></select>
+      </div>
+      <div class="col-xs-12 col-md-3">
+        <label class="form-label small fw-bolder" asp-for="MortgageRatePct">Mortgage Rate</label><br />
+        <select class="form-select form-select-sm whl-formfield-analysis whl-formfield-mortgageratepct"
+          placeholder="Select Mortgage Rate" asp-for="MortgageRatePct"
+          asp-items="@(new SelectList(Model.MortgageRates, "Key", "Value", Model.MortgageRatePct))"></select>
+      </div>
+      <div class="col-xs-12 col-md-3">
+        <label class="form-label small fw-bolder" asp-for="MortgageTerm">Mortgage Term</label><br />
+        <select class="form-select form-select-sm whl-formfield-analysis whl-formfield-mortgageterm"
+          placeholder="Select Mortgage Term" asp-for="MortgageTerm"
+          asp-items="@(new SelectList(Model.MortgageTerms, "Key", "Value", Model.MortgageTerm))"></select>
+      </div>
+    </div>
+
+    <hr />
+
+    <div class="row mb-3">
+      <div class="col-xs-12 col-md-6">
+
+        <div class="row mb-3">
+          <div class="col-xs-12">
+            <label class="form-label small" asp-for="EstimatedPriceAmt">Est. Sale Price</label><br />
+            <input type="text" class="form-control form-control-sm text-end whl-formfield-estimatedpriceamt"
+              placeholder="Estimated Sale Price" maxlength="9" asp-for="EstimatedPriceAmt" disabled="disabled"
+              aria-disabled="true" />
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-xs-12">
+            <label class="form-label small" asp-for="SubsidyAmt">Subsidy Amount</label><br />
+            <input type="text" class="form-control form-control-sm text-end whl-formfield-subsidyamt" placeholder="Subsidy Amount"
+              maxlength="9" asp-for="SubsidyAmt" disabled="disabled" aria-disabled="true" />
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-xs-12">
+            <label class="form-label small fw-bolder" asp-for="NetSalePriceAmt">Net Sale Price</label><br />
+            <input type="text" class="form-control form-control-sm text-end whl-formfield-netsalepriceamt"
+              placeholder="Net Sale Price" maxlength="9" asp-for="NetSalePriceAmt" disabled="disabled"
+              aria-disabled="true" />
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-xs-12">
+            <label class="form-label small" asp-for="DownPaymentAmt">Down Payment (5%)</label><br />
+            <input type="text" class="form-control form-control-sm text-end whl-formfield-downpaymentamt"
+              placeholder="Down Payment Amount" maxlength="9" asp-for="DownPaymentAmt" disabled="disabled"
+              aria-disabled="true" />
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-xs-12">
+            <label class="form-label small fw-bolder" asp-for="MortgageAmt">Mortgage Payment</label><br />
+            <input type="text" class="form-control form-control-sm text-end whl-formfield-mortgageamt"
+              placeholder="Mortgage Amount" maxlength="9" asp-for="MortgageAmt" disabled="disabled"
+              aria-disabled="true" />
+          </div>
+        </div>
+
+      </div>
+      <div class="col-xs-12 col-md-6">
+
+        <div class="row mb-3">
+          <div class="col-xs-12">
+            <label class="form-label small" asp-for="MonthlyTaxesAmt">Monthly Taxes</label><br />
+            <input type="text" class="form-control form-control-sm text-end whl-formfield-monthlytaxesamt"
+              placeholder="Monthly Taxes" maxlength="9" asp-for="MonthlyTaxesAmt" disabled="disabled"
+              aria-disabled="true" />
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-xs-12">
+            <label class="form-label small" asp-for="MonthlyMaintenanceAmt">Monthly CC/HOA Fees</label><br />
+            <input type="text" class="form-control form-control-sm text-end whl-formfield-monthlymaintenanceamt"
+              placeholder="Monthly CC/HOA Fees" maxlength="9" asp-for="MonthlyMaintenanceAmt" disabled="disabled"
+              aria-disabled="true" />
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-xs-12">
+            <label class="form-label small" asp-for="MonthlyInsuranceAmt">Monthly &quot;Walls In&quot;
+              Insurance</label><br />
+            <input type="text" class="form-control form-control-sm text-end whl-formfield-monthlyinsuranceamt"
+              placeholder="Monthly Insurance" maxlength="9" asp-for="MonthlyInsuranceAmt" disabled="disabled"
+              aria-disabled="true" />
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-xs-12">
+            <label class="form-label small" asp-for="MonthlyPmiAmt">Monthly Private Mortgage Insurance</label><br />
+            <input type="text" class="form-control form-control-sm text-end whl-formfield-monthlypmiamt" placeholder="Monthly PMI"
+              maxlength="9" asp-for="MonthlyPmiAmt" disabled="disabled" aria-disabled="true" />
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-xs-12">
+            <label class="form-label small fw-bolder" asp-for="MonthlyPaymentAmt">Estimated Monthly Payment (PITI)</label><br />
+            <input type="text" class="form-control form-control-sm text-end whl-formfield-monthlypaymentamt"
+              placeholder="Monthly Payment" maxlength="9" asp-for="MonthlyPaymentAmt" disabled="disabled"
+              aria-disabled="true" />
+          </div>
+        </div>
+
+      </div>
+    </div>
+  }
+</div>
+<script>
+  //<[CDATA[
+  $(function () {
+    $('.whl-formfield-analysis').on('change', function (e) {
+      fnGetAffordabilityAnalysis();
+    });
+  });
+
+  function fnGetAffordabilityAnalysis() {
+    const unitId = parseInt($('.whl-formfield-unitid').val());
+    if (isNaN(unitId) || unitId <= 0) {
+      return false;
+    }
+    const rate = parseFloat($('.whl-formfield-mortgageratepct').val());
+    if (isNaN(rate) || rate <= 0) {
+      return false;
+    }
+    const term = parseInt($('.whl-formfield-mortgageterm').val());
+    if (isNaN(term) || term <= 0) {
+      return false;
+    }
+    $.get('@Url.Action("AffordabilityDetails", "Listings")?unitId=' + unitId + '&rate=' + rate + '&term=' + term)
+      .done(function (response) {
+        $('.whl-formfield-estimatedpriceamt').val(fnFormatCurrency(response.estimatedPriceAmt));
+        $('.whl-formfield-subsidyamt').val(fnFormatCurrency(response.subsidyAmt));
+        $('.whl-formfield-netsalepriceamt').val(fnFormatCurrency(response.netSalePriceAmt));
+        $('.whl-formfield-downpaymentamt').val(fnFormatCurrency(response.downPaymentAmt));
+        $('.whl-formfield-mortgageamt').val(fnFormatCurrency(response.mortgageAmt));
+        $('.whl-formfield-monthlyprincipalinterestamt').val(fnFormatCurrency(response.monthlyPrincipalInterestAmt));
+        $('.whl-formfield-monthlytaxesamt').val(fnFormatCurrency(response.monthlyTaxesAmt));
+        $('.whl-formfield-monthlymaintenanceamt').val(fnFormatCurrency(response.monthlyMaintenanceAmt));
+        $('.whl-formfield-monthlyinsuranceamt').val(fnFormatCurrency(response.monthlyInsuranceAmt));
+        $('.whl-formfield-monthlypmiamt').val(fnFormatCurrency(response.monthlyPmiAmt));
+        $('.whl-formfield-monthlypaymentamt').val(fnFormatCurrency(response.monthlyPaymentAmt));
+      })
+      .fail(function (e) {
+        var message = e.responseJSON && e.responseJSON.message && e.responseJSON.message.length > 0 ? e.responseJSON.message : 'Failed to load unit details';
+        fnShowToastForPage('FAILURE', message);
+      });
+  }
+  //]]>
+</script>

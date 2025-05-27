@@ -1,0 +1,385 @@
+﻿@model ListingViewModel
+@{
+  Layout = "~/Views/Shared/_PrintLayout.cshtml";
+  ViewData["Title"] = "Listing Details";
+  ViewData["MENUID"] = "LISTINGS";
+
+  var imagesCount = Model.Images?.Count() ?? 0;
+  var documentsCount = Model.Documents?.Count() ?? 0;
+  var unitsCount = Model.Units?.Count() ?? 0;
+}
+
+<div class="text-left mt-32" style="page-break-after: always;">
+
+  <div id="main" class="p-4 mt-16 bg-light">
+    <div class="row mb-3">
+      <div class="col-xs-12 col-md-9">
+        <h1 class="display-6">@Model.Name</h1>
+        <p class="fs-5">
+          <a class="whl-link" href="#map"><i class="fa-solid fa-location-dot"></i></a>&nbsp;
+          @Model.AddressText
+        </p>
+        @if (!string.IsNullOrEmpty(Model.WebsiteUrl ?? ""))
+        {
+          <p class="fs-5">
+            <a class="whl-link" href="@Model.WebsiteUrl" target="_blank" title="Visit the site"
+              aria-label="Visit the site">
+              <i class="fa-solid fa-globe"></i>
+            </a>&nbsp;@Model.WebsiteUrl
+          </p>
+        }
+        <p class="lead" style="white-space: pre-line; text-align: justify;">@Model.Description</p>
+
+        @await Html.PartialAsync("~/Views/Listings/_Amenities.cshtml", Model)
+
+      </div>
+      <div class="col-xs-12 col-md-3 bg-light p-4">
+        @await Html.PartialAsync("~/Views/Listings/_SeniorLiving.cshtml", Model)
+        @await Html.PartialAsync("~/Views/Listings/_Accessibilities.cshtml", Model)
+        @await Html.PartialAsync("~/Views/Listings/_ListingDates.cshtml", Model)
+        @await Html.PartialAsync("~/Views/Listings/_PetsAllowed.cshtml", Model)
+        @await Html.PartialAsync("~/Views/Listings/_DocumentsReqd.cshtml", Model)
+      </div>
+    </div>
+  </div>
+
+  <div id="units" class="p-4 mt-16">
+    <h6 class="display-6">Units</h6>
+    <div class="text-center">
+      <table class="table table-sm table-striped">
+        <thead>
+          <tr>
+            <th class="text-center">AMI</th>
+            <th class="text-center">Unit Size</th>
+            <th class="text-center"># Units</th>
+            @if (Model.IsRental)
+            {
+              <th class="text-center">Monthly Rent</th>
+            }
+            else
+            {
+              <th class="text-center"><small>Asset Limit</small></th>
+              <th class="text-center"><small>Monthly Maintenance</small></th>
+              <th class="text-center"><small>Estimated Price</small></th>
+            }
+            <th class="text-center">Household Size</th>
+            <th>Maximum Income by Household Size</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (unitsCount > 0)
+          {
+            foreach (var ami in Model.AreaMedianIncomePcts)
+            {
+              int unitCtr = 0;
+              var unitCount = Model.Units?.Where(w => w.AreaMedianIncomePct == ami)?.Count() ?? 0;
+              foreach (var unit in Model.Units?.Where(w => w.AreaMedianIncomePct == ami)?.OrderBy(o => o.BedroomCnt))
+              {
+                var households = Model.Households?.Where(w => w.UnitId == unit.UnitId) ?? new
+                List<ListingUnitHouseholdViewModel>();
+                var minHouseholdSize = households?.Where(w => w.UnitId == unit.UnitId)?.Min(m => m.HouseholdSize) ?? 0;
+                var maxHouseholdSize = households?.Where(w => w.UnitId == unit.UnitId)?.Max(m => m.HouseholdSize) ?? 0;
+                var hhCtr = 0;
+                <tr>
+                  <td class="text-center">@($"{ami}%")</td>
+                  <td class="text-center">@unit.UnitTypeDescription</td>
+                  <td class="text-center">@unit.UnitsAvailableCnt</td>
+                  @if (Model.IsRental)
+                  {
+                    <td class="text-center">@unit.MonthlyRentAmt.ToString("C0")</td>
+                  }
+                  else
+                  {
+                    <td class="text-center">@unit.AssetLimitAmt.ToString("C0")</td>
+                    <td class="text-center">@unit.MonthlyMaintenanceAmt.ToString("C0")</td>
+                    <td class="text-center">@unit.EstimatedPriceAmt.ToString("C0")</td>
+                  }
+                  <td class="text-center">@minHouseholdSize - @maxHouseholdSize</td>
+                  <td>
+                    @foreach (var household in households)
+                    {
+                      if (hhCtr > 0)
+                      {
+                        <br />
+                      }
+                      if (household.MinHouseholdIncomeAmt > 0)
+                      {
+                        <span>@household.MinHouseholdIncomeAmt.ToString("C0")</span>
+                        if (household.MaxHouseholdIncomeAmt > 0)
+                        {
+                          <span>&nbsp;&ndash;&nbsp;@household.MaxHouseholdIncomeAmt.ToString("C0")</span>
+                        }
+                      }
+                      else if (household.MaxHouseholdIncomeAmt > 0)
+                      {
+                        <span>@household.MaxHouseholdIncomeAmt.ToString("C0")</span>
+                      }
+                      <span>&nbsp;@($"({household.HouseholdSize} person HH)")</span>
+                      hhCtr++;
+                    }
+                  </td>
+                </tr>
+                unitCtr++;
+              }
+            }
+          }
+          else
+          {
+            <tr>
+              <td colspan="@(Model.IsRental ? "6" : "8")">
+                <p class="fs-6 text-muted">There is no unit information available at this time.</p>
+              </td>
+            </tr>
+          }
+        </tbody>
+        @if (!string.IsNullOrEmpty(Model.RentIncludesText))
+        {
+          <tfoot>
+            <tr>
+              <td colspan="@(Model.IsRental ? "6" : "8")">
+                <p class="small text-secondary"><span class="text-danger">*</span>&nbsp;@Model.RentIncludesText</p>
+              </td>
+            </tr>
+          </tfoot>
+        }
+      </table>
+      @if (!Model.IsRental)
+      {
+        <p class="mb-3 mt-16">View Affordability Analysis.</p>
+      }
+    </div>
+  </div>
+
+  <div id="photos" class="p-4 mt-16 bg-light" style="page-break-after: always;">
+    <h6 class="display-6">Photos</h6>
+    @if (imagesCount > 0)
+    {
+      var imageCtr = 0;
+      <div id="carouselListingPhotos" class="carousel slide">
+        <div class="carousel-indicators">
+          @for (imageCtr = 0; imageCtr < imagesCount; imageCtr++)
+          {
+            var slideClass = imageCtr == 0 ? "active" : "";
+            var ariaCurrent = imageCtr == 0;
+            var ariaLabel = $"Photo {imageCtr + 1}";
+            <button type="button" data-bs-target="#carouselListingPhotos" data-bs-slide-to="@imageCtr" class="@slideClass"
+              aria-current="@ariaCurrent" aria-label="@ariaLabel"></button>
+          }
+        </div>
+        <div class="carousel-inner">
+          @{
+            imageCtr = 0;
+          }
+          @foreach (var image in Model.Images)
+          {
+            var activeClass = imageCtr == 0 ? "active" : "";
+            <div class="carousel-item @activeClass bg-light">
+              <img src="@image.Contents" class="d-block w-100" alt="@image.Title"
+                style="max-height: 480px; object-fit: contain;" />
+              <div class="carousel-caption d-none d-md-block">
+                @* <h5>First slide label</h5> *@
+                @* <p>Some representative placeholder content for the first slide.</p> *@
+              </div>
+            </div>
+            imageCtr++;
+          }
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselListingPhotos" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselListingPhotos" data-bs-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
+      </div>
+    }
+    else
+    {
+      <div class="w-100 text-center">
+        <img src="~/images/defaultlisting.png" style="max-height: 480px;" alt="Photo provided for reference only"
+          title="Photo provided for reference only" />
+      </div>
+    }
+  </div>
+
+  <div id="map" class="p-4 mt-16 bg-light" style="page-break-after: always;">
+    <h6 class="display-6">Map</h6>
+    <div class="text-center">
+      @if (!string.IsNullOrEmpty(Model.EsriX ?? "") && !string.IsNullOrEmpty(Model.EsriY ?? ""))
+      {
+        <iframe
+          src="https://wcgis.maps.arcgis.com/apps/Embed/index.html?webmap=a8820b3576da4729a2f6aa6440d46e9c&level=16&legend=true&marker=@Model.EsriX;@Model.EsriY&center=@Model.EsriX,@Model.EsriY"
+          width="100%" style="border:0; height: 480px;" allowfullscreen="" loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"></iframe>
+      }
+      else if (!string.IsNullOrEmpty(Model.MapUrl ?? ""))
+      {
+        <iframe src="@Model.MapUrl" width="100%" height="480" style="border:0; max-width: 640px;" allowfullscreen=""
+          loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+      }
+      else
+      {
+        <p class="fs-6 text-muted">There is no map available to view at this time.</p>
+      }
+    </div>
+    <div class="text-left mt-16">
+      <div class="row mb-3">
+        <div class="col-xs-12 col-sm-6">
+          <p class="fs-5 border-bottom">Address</p>
+          <p>
+            @Model.StreetLine1
+            @if (!string.IsNullOrEmpty((Model.StreetLine2 ?? "").Trim()))
+            {
+              <br />
+              @Model.StreetLine2
+            }
+            @if (!string.IsNullOrEmpty((Model.StreetLine3 ?? "").Trim()))
+            {
+              <br />
+              @Model.StreetLine3
+            }
+            <br />
+            @Model.City, @Model.StateCd @Model.ZipCode
+            @if (!string.IsNullOrEmpty((Model.County ?? "").Trim()))
+            {
+              <br />
+              @Model.County
+            }
+          </p>
+        </div>
+        <div class="col-xs-12 col-sm-6">
+          @if (!string.IsNullOrEmpty((Model.Municipality ?? "").Trim()))
+          {
+            <p class="fs-5 border-bottom">Municipality</p>
+            <p class="text-dark">
+              @Model.Municipality
+              @if (!string.IsNullOrEmpty((Model.MunicipalityUrl ?? "").Trim()))
+              {
+                <br />
+                <span class="text-secondary text-decoration-underline">@Model.MunicipalityUrl</span>
+              }
+            </p>
+          }
+          @if (!string.IsNullOrEmpty((Model.SchoolDistrict ?? "").Trim()))
+          {
+            <p class="fs-5 border-bottom">School District</p>
+            <p class="text-dark">
+              @Model.SchoolDistrict
+              @if (!string.IsNullOrEmpty((Model.SchoolDistrictUrl ?? "").Trim()))
+              {
+                <br />
+                <span class="text-secondary text-decoration-underline">@Model.SchoolDistrictUrl</span>
+              }
+            </p>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+
+  @if (documentsCount > 0)
+  {
+    <div id="documents" class="p-4 mt-16 bg-light">
+      <h6 class="display-6">Documents</h6>
+      <div class="row mb-3 mt-16">
+        <div class="col-xs-12">
+          <div class="row border-bottom bg-light">
+            <div class="col-xs-12 col-md-1 text-center">&nbsp;</div>
+            <div class="col-xs-12 col-md-11"><small class="fw-bolder text-dark">Title</small></div>
+          </div>
+          @foreach (var document in Model.Documents.OrderBy(o => o.Title))
+          {
+            <div class="row mt-2">
+              <div class="col-xs-12 col-md-1 text-center">
+                <a class="whl-link whl-action-view-document" title="View document" aria-label="View document"
+                  data-documentid="@document.DocumentId" role="button">
+                  @if ((document.MimeType ?? "").Trim().Equals("application/pdf",
+                                StringComparison.CurrentCultureIgnoreCase))
+                  {
+                    <i class="fa-regular fa-file-pdf"></i>
+                  }
+                  else
+                  {
+                    <i class="fa-regular fa-file-image"></i>
+                  }
+                </a>
+              </div>
+              <div class="col-xs-12 col-md-11">
+                <small>@document.Title</small>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  }
+
+  <div id="howto" class="p-4 mt-16 bg-light">
+    <h6 class="display-6">Application How-To</h6>
+    <div class="row mb-3 mt-16">
+      <div class="col-xs-12 col-md-10">
+        <p class="fs-4">Who Should Apply</p>
+        <ul>
+          <li>Individuals or households who meet the income and household size requirements listed in the Available
+            Units table may apply.</li>
+          <li>Qualified applicants will be required to meet additional selection criteria.</li>
+        </ul>
+      </div>
+      <div class="col-xs-12 col-md-1 text-center">
+        <img src="~/images/equalopportunity_64px.png" alt="Equal Housing Opportunity" title="Equal Housing Opportunity"
+          aria-label="Equal Housing Opportunity" width="64" height="64" />
+      </div>
+      <div class="col-xs-12 col-md-1 text-center">
+        <img src="~/images/ada-wheelchair_64px.png" alt="ADA Compliant" title="ADA Compliant" aria-label="ADA Compliant"
+          width="64" height="64" />
+      </div>
+    </div>
+    @if (Model.MarketingAgentInd)
+    {
+      <div class="row mb-3 mt-32">
+        <div class="col-xs-12 bg-text-primary">
+          <p class="fs-4 fw-semibold border-bottom">Marketing Agent Details</p>
+          <p>Marketing Agent: <strong>@Model.MarketingAgentName</strong></p>
+          <p>Application Link: <a class="whl-link" href="@Model.MarketingAgentApplicationLink" target="_blank"
+              title="Application Link" aria-label="Application Link">@Model.MarketingAgentApplicationLink</a></p>
+          <div class="alert alert-warning">
+            <p class="small mt-16"><strong>Disclaimer:</strong> This application is not being administered through
+              HomeSeeker. Please follow the link for more information, and to complete the application. The application
+              for this listing will not be listed on your HomeSeeker Dashboard.</p>
+          </div>
+        </div>
+      </div>
+    }
+    else
+    {
+      <div class="row mb-3 mt-32">
+        <div class="col-xs-12 col-md-4 bg-text-primary">
+          <p class="fs-4 fw-semibold border-bottom">Please Note</p>
+          <ul>
+            <li>Do not submit duplicate applications.</li>
+            <li>Only send one application per lottery.</li>
+            <li>Do not apply online and also send in a paper application.</li>
+            <li>Applicants who submit more than one application may be disqualified.</li>
+          </ul>
+        </div>
+        <div class="col-xs-12 col-md-4">
+          <p class="fs-4 fw-semibold border-bottom">Apply Online</p>
+          <p>Once you have confirmed you meet the requirements to apply for this lottery you may apply directly online.
+          </p>
+        </div>
+        <div class="col-xs-12 col-md-4">
+          <p class="fs-4 fw-semibold border-bottom">Apply by Mail</p>
+          <p>If you are unable to apply online, then print and mail or hand deliver application to:</p>
+          <blockquote>
+            <strong>Attn: Affirmative Marketing</strong><br />
+            Westchester Residential Opportunities, Inc.<br />
+            470 Mamaroneck Avenue, Suite 410<br />
+            White Plains, New York 10605
+          </blockquote>
+          <p class="text-secondary fs-6 fw-semibold mt-8">Do not apply online and also send in a paper application.</p>
+        </div>
+      </div>
+    }
+  </div>
+</div>

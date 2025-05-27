@@ -1,0 +1,56 @@
+@model IEnumerable<EncTest>
+<div class="row bg-light">
+  <div class="col-xs-12 col-md-2">&nbsp;</div>
+  <div class="col-xs-12 col-md-2">Name</div>
+  <div class="col-xs-12 col-md-2">SSN</div>
+  <div class="col-xs-12 col-md-2">DOB</div>
+</div>
+@foreach (var item in Model)
+{
+  <div class="row">
+    <div class="col-xs-12 col-md-2"><button type="button" class="btn btn-sm btn-outline-primary mt-4 action-edit" title="Edit" data-name="@item.Name" data-ssn="@item.SSN" data-dob="@item.DOB.ToString("yyyy-MM-dd")"><i class="fa-solid fa-pencil"></i></button></div>
+    <div class="col-xs-12 col-md-2">@item.Name</div>
+    <div class="col-xs-12 col-md-2">@item.SSN</div>
+    <div class="col-xs-12 col-md-2">@item.DOB</div>
+  </div>
+}
+<form id="frmAdd" name="frmAdd" enctype="multipart/form-data" method="post" asp-controller="EncTest" asp-action="Add" novalidate="novalidate">
+  <div class="row mt-32">
+    <div class="col-xs-12 col-md-2">
+      <div class="form-group form-group-sm">
+        <label class="form-label" for="Name">Name</label><br />
+        <input type="text" class="form-control form-control-sm" id="Name" name="Name" maxlength="50" />
+      </div>
+    </div>
+    <div class="col-xs-12 col-md-2">
+      <div class="form-group form-group-sm">
+        <label class="form-label" for="SSN">SSN</label><br />
+        <input type="text" class="form-control form-control-sm" id="SSN" name="SSN" maxlength="9" />
+      </div>
+    </div>
+    <div class="col-xs-12 col-md-2">
+      <div class="form-group form-group-sm">
+        <label class="form-label" for="DOB">DOB</label><br />
+        <input type="date" class="form-control form-control-sm" id="DOB" name="DOB" maxlength="8" />
+      </div>
+    </div>
+  </div>
+  <button type="submit" class="btn btn-sm btn-outline-primary mt-4" title="Add">Add</button>
+</form>
+
+@section Scripts
+{
+  <script>
+    //<![CDATA[
+    $(function () {
+      $('.action-edit').on('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        $('#Name').val($(e.currentTarget).data('name'));
+        $('#SSN').val($(e.currentTarget).data('ssn'));
+        $('#DOB').val($(e.currentTarget).data('dob'));
+      });
+    });
+    //]]>
+  </script>
+}

@@ -1,0 +1,121 @@
+@model RecaptchaTestViewModel
+@{
+  Layout = "";
+}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Recaptcha Test</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/lib/fontawesome/css/all.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/WHLSite.styles.css" asp-append-version="true" />
+  </head>
+  <body>
+    <div class="w-100 p-3">
+      <form class="form whl-form-test-recaptcha" name="frmTestRecaptcha" id="frmTestRecaptcha" method="post">
+        <input asp-for="RecaptchaEnabled" class="whl-formfield-recaptchaenabled" type="hidden" />
+        <input asp-for="RecaptchaVersion" class="whl-formfield-recaptchaversion" type="hidden" />
+        <input asp-for="RecaptchaAction" class="whl-formfield-recaptchaaction" type="hidden" />
+        <input asp-for="RecaptchaKey" class="whl-formfield-recaptchakey" type="hidden" />
+        <input asp-for="RecaptchaToken" class="whl-formfield-grecaptchatoken" type="hidden" />
+        <div style="width: 240px;">
+          <button class="btn btn-outline-primary btn-sm whl-action-test-recaptcha" name="btnTest" id="btnTest" type="submit">Test</button>
+        </div>
+        <div class="g-recaptcha" data-sitekey="@Model.RecaptchaKey" data-callback="fnTestRecaptcha" data-size="invisible"></div>
+        @if (!string.IsNullOrEmpty(Model.R) || !string.IsNullOrEmpty(Model.Rr))
+        {
+          <hr />
+          <div>
+            <label asp-for="S">Success</label>: <input asp-for="S" type="text" readonly="readonly" /><br />
+            <label asp-for="Sc">Score</label>: <input asp-for="Sc" type="text" readonly="readonly" /><br />
+            <label asp-for="C">Challenge TS</label>: <input asp-for="C" type="text" readonly="readonly" /><br />
+            <label asp-for="H">Hostname</label>: <input asp-for="H" type="text" readonly="readonly" /><br />
+            <label asp-for="A">Action</label>: <input asp-for="A" type="text" readonly="readonly" /><br />
+            <label asp-for="E">Error Codes</label>: <textarea asp-for="E" type="text" readonly="readonly"></textarea><br />
+            <pre class="mt-32">Code: @Model.R</pre>
+            <pre>Raw: @Model.Rr</pre>
+          </div>
+        }
+      </form>
+    </div>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @if (Model.RecaptchaEnabled == "1")
+    {
+      <script src="@Model.RecaptchaTokenUrl" async defer></script>
+      @if (Model.RecaptchaVersion.Equals("V2", StringComparison.CurrentCultureIgnoreCase))
+      {
+        <div>
+          <script>
+            //<![CDATA[
+            $(function () {
+              $('.whl-action-test-recaptcha').on('click', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                $('.whl-formfield-grecaptchatoken').val('');
+                grecaptcha.execute();
+              });
+            });
+            function fnTestRecaptcha(t) {
+              console.debug('recaptcha token: ' + t);
+              $('.whl-formfield-grecaptchatoken').val(t);
+              $('.whl-form-test-recaptcha').submit();
+            }
+            //]]>
+          </script>
+        </div>
+      }
+      else if (Model.RecaptchaVersion.Equals("V3", StringComparison.CurrentCultureIgnoreCase))
+      {
+        <div>
+          <script>
+            //<![CDATA[
+            $(function () {
+              $('.whl-action-test-recaptcha').on('click', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                $('.whl-formfield-grecaptchatoken').val('');
+                grecaptcha.enterprise.ready(async () => {
+                  const k = $('.whl-formfield-recaptchakey').val();
+                  grecaptcha.enterprise.execute(k, { action: '@Model.RecaptchaAction' })
+                    .then(function (t) {
+                      console.debug('recaptcha token: ' + t);
+                      $('.whl-formfield-grecaptchatoken').val(t);
+                      $('.whl-form-test-recaptcha').submit();
+                    });
+                });
+              });
+            });
+            function fnTestRecaptcha(t) {
+              console.debug('recaptcha token: ' + t);
+              $('.whl-formfield-grecaptchatoken').val(t);
+              $('.whl-form-test-recaptcha').submit();
+            }
+            //]]>
+          </script>
+        </div>
+      }
+    }
+    else 
+    {
+      <div>
+        <script>
+          //<![CDATA[
+          $(function () {
+            $('.whl-action-test-recaptcha').on('click', function (e) {
+              e.preventDefault();
+              e.stopPropagation();
+              $('.whl-formfield-grecaptchatoken').val('');
+              $('.whl-form-test-recaptcha').submit();
+            });
+          });
+          //]]>
+        </script>
+      </div>
+    }
+  </body>
+</html>

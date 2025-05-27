@@ -1,0 +1,1409 @@
+@model ListingViewModel
+@{
+  ViewData["Title"] = "Listing Details";
+}
+
+<div class="row">
+  <div class="col-xs-12 col-md-9">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a class="whl-link" asp-area="" asp-controller="Home" asp-action="Index"
+            title="Home"><small><i class="fa-solid fa-house"></i></small></a></li>
+        <li class="breadcrumb-item"><small>Listings, Applications &amp; Lotteries</small></li>
+        <li class="breadcrumb-item"><a class="whl-link" asp-area="" asp-controller="Listings"
+            asp-action="Index" title="Back to listings" aria-label="Back to listings"><small>Listings</small></a></li>
+        <li class="breadcrumb-item active fs-6 fw-bolder" aria-current="page"><small>@ViewData["Title"]</small></li>
+      </ol>
+    </nav>
+  </div>
+  <div class="col-xs-12 col-md-3 text-end">
+    @if (Model.CanEdit)
+    {
+      <button type="button" class="btn btn-sm btn-link whl-link mr-4 whl-action-edit-listing"
+              data-listingid="@Model.ListingId" title="Edit listing"><i class="fa-solid fa-pencil"></i></button>
+      <button type="button" class="btn btn-sm btn-link whl-link mr-16 whl-action-delete-listing"
+              data-listingid="@Model.ListingId" title="Delete listing"><i class="fa-solid fa-trash"></i></button>
+    }
+    <button type="button" class="btn btn-sm btn-link whl-link mr-4 whl-action-view-preview"
+              data-listingid="@Model.ListingId" title="Preview Listing for Publish Site"><i class="fa-solid fa-eye"></i></button>
+    <button type="button" class="btn btn-sm btn-link whl-link mr-4 whl-action-view-paperform"
+              data-listingid="@Model.ListingId" title="Preview Paper Application Form"><i class="fa-regular fa-file-pdf"></i></button>
+    @if (Model.CanSubmitPaperApplication)
+    {
+      <a class="btn btn-sm btn-link whl-link mr-4 whl-action-view-applications"
+          data-listingid="@Model.ListingId" title="View and manage paper applications"
+          asp-area="" asp-controller="Applications" asp-action="Index"
+          asp-route-listingId="@Model.ListingId"><i class="fa-solid fa-users"></i></a>
+    }
+    @if (Model.LotteryId > 0)
+    {
+      <a class="btn btn-sm btn-link whl-link mr-4 whl-action-view-lotteryresults"
+          data-lotteryid="@Model.LotteryId" title="View lottery results"
+          asp-area="" asp-controller="Lotteries" asp-action="Results"
+          asp-route-lotteryId="@Model.LotteryId"><i class="fa-solid fa-list-ol"></i></a>
+    }
+
+    <a class="btn btn-sm btn-link whl-link ml-16 mr-4 whl-action-view-listings"
+        asp-area="" asp-controller="Listings" asp-action="Index" title="Back to listings"
+        aria-label="Back to listings"><i class="fa-regular fa-building"></i></a>
+    <button type="button" class="btn btn-sm btn-link whl-link mr-4 whl-action-refresh-page"
+        title="Refresh" aria-label="Refresh"><i class="fa-solid fa-rotate-right"></i></button>
+    <button type="button" class="btn btn-sm btn-link whl-link mr-4 whl-action-view-audit"
+        data-entityid="@Model.ListingId" data-entitytype="LISTING"
+        title="View audit log" aria-label="View audit log"><i class="fa-solid fa-list"></i></button>
+  </div>
+</div>
+
+<div class="text-left mt-8" aria-label="listing">
+
+  @if (Model.HasUnpublishedChanges)
+  {
+    <div class="alert alert-warning" role="alert">
+      <small><i class="fa-solid fa-triangle-exclamation mr-8"></i>This listing may have been modified since it was last published
+        to the public website. Publish this version to ensure the latest changes are reflected on the public website.</small>
+    </div>
+  }
+
+  <div class="row mt-8">
+    <div class="col-sm-12 col-md-9">
+      <div class="row">
+        <div class="col-sm-12 col-md-9">
+          <div class="card">
+            <div class="card-header">
+              <div style="float: right;">
+                <span class="badge bg-white text-dark">@Model.ListingTypeDescription</span>
+                <span class="badge bg-white text-dark ml-2">@Model.ListingAgeTypeDescription</span>
+                @if (!string.IsNullOrEmpty(Model.WebsiteUrl ?? ""))
+                {
+                  <a class="whl-link ml-8" target="_blank" title="Visit external website"
+                    href="@Model.WebsiteUrl"><i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+                }
+              </div>
+              Summary
+            </div>
+            <div class="card-body">
+              <h5 class="card-title">@Model.Name</h5>
+              <p class="card-text" style="white-space: pre-line;">@Model.Description</p>
+              @* <a href="#" class="btn btn-primary">Go somewhere</a> *@
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-12 col-md-3">
+          <div class="card">
+            <div class="card-header">
+              <i class="fa-regular fa-map"></i>&nbsp;Address
+            </div>
+            <div class="card-body">
+              <p class="card-text">
+                @Model.StreetLine1
+                @if (!string.IsNullOrEmpty(Model.StreetLine2?.Trim() ?? ""))
+                {
+                  <br />
+                  @Model.StreetLine2
+                }
+                @if (!string.IsNullOrEmpty(Model.StreetLine3?.Trim() ?? ""))
+                {
+                  <br />
+                  @Model.StreetLine3
+                }
+                <br />
+                @Model.City @Model.StateCd @Model.ZipCode
+              </p>
+              @if (!string.IsNullOrEmpty(Model.EsriX ?? "") && !string.IsNullOrEmpty(Model.EsriY ?? ""))
+              {
+                <iframe src="https://wcgis.maps.arcgis.com/apps/Embed/index.html?webmap=a8820b3576da4729a2f6aa6440d46e9c&level=16&legend=false&marker=@Model.EsriX;@Model.EsriY&center=@Model.EsriX,@Model.EsriY" width="100%" style="border:0; min-height: 320px;" allowfullscreen="" loading="lazy"
+                  referrerpolicy="no-referrer-when-downgrade"></iframe>
+              }
+              else if (!string.IsNullOrEmpty(Model.MapUrl ?? ""))
+              {
+                <iframe src="@Model.MapUrl" width="100%" style="border:0;" allowfullscreen="" loading="lazy"
+                  referrerpolicy="no-referrer-when-downgrade"></iframe>
+              }
+              @if (!string.IsNullOrEmpty(Model.Municipality))
+              {
+                <p class="mt-16">
+                  <small class="text-secondary">Municipality</small><br />
+                  @if (!string.IsNullOrEmpty(Model.MunicipalityUrl))
+                  {
+                    <a class="whl-link" target="_blank" title="Visit municipality website" href="@Model.MunicipalityUrl">@Model.Municipality</a>
+                  }
+                  else
+                  {
+                    @Model.Municipality
+                  }
+                </p>
+              }
+              @if (!string.IsNullOrEmpty(Model.SchoolDistrict))
+              {
+                <p class="mt-16">
+                  <small class="text-secondary">School District</small><br />
+                  @if (!string.IsNullOrEmpty(Model.SchoolDistrictUrl))
+                  {
+                    <a class="whl-link" target="_blank" title="Visit school district website" href="@Model.SchoolDistrictUrl">@Model.SchoolDistrict</a>
+                  }
+                  else
+                  {
+                    @Model.SchoolDistrict
+                  }
+                </p>
+              }
+              @* <a href="#" class="btn btn-primary">Go somewhere</a> *@
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row mt-16">
+        <div class="col-sm-12">
+          <div class="card">
+            <div class="card-header">
+              @if (Model.CanEdit)
+              {
+                <div style="float: right;">
+                  <a class="whl-link whl-action-add-image ml-8" data-listingid="@Model.ListingId" title="Add a new image"
+                    href="javascript:void(0);"><i class="fa-solid fa-plus"></i></a>
+                </div>
+              }
+              Photos
+            </div>
+            <div class="card-body">
+              @* <h5 class="card-title">@Model.Name</h5> *@
+              @* <p class="card-text">@Model.Description</p> *@
+              @* <a href="#" class="btn btn-primary">Go somewhere</a> *@
+              @if ((Model.Images?.Count() ?? 0) > 0)
+              {
+                <div class="row row-cols-1 row-cols-md-4 g-4">
+                  @foreach (var image in Model.Images)
+                  {
+                    var imageContents = (image.ThumbnailContents?.Length ?? 0) > 0 ? image.ThumbnailContents :
+                    image.Contents;
+
+                    <div class="col">
+                      <div class="card">
+                        <img src="@imageContents" class="card-img-top" alt="@image.Title" aria-label="@image.Title"
+                          width="100%" style="object-fit: cover; min-height: 240px;" />
+                        <div class="card-body">
+                          <p class="card-text fw-bold text-secondary">@image.Title</p>
+                          <p>
+                            @if (image.IsPrimary)
+                            {
+                              <small class="badge bg-whlgreen text-white mr-8">PRIMARY</small>
+                            }
+                            @if (image.DisplayOnListingsPageInd)
+                            {
+                              <small class="badge bg-light text-dark">DISPLAY</small>
+                            }
+                          </p>
+                          @* <p class="card-text">This is a longer card with supporting text below as a natural lead-in to
+                      additional content. This content is a little bit longer.</p> *@
+                          @if (image.Active)
+                          {
+                            if (Model.CanEdit)
+                            {
+                              <small><a class="whl-link whl-action-edit-image mr-8" data-imageid="@image.ImageId" title="Edit image"
+                                href="javascript:void(0);">Edit</a>
+                              <a class="whl-link whl-action-delete-image" data-imageid="@image.ImageId" title="Delete image"
+                                href="javascript:void(0);">Delete</a></small>
+                            }
+                          }
+                          else
+                          {
+                            <small class="text-muted">Deleted</small>
+                          }
+                        </div>
+                      </div>
+                    </div>
+                  }
+                </div>
+              }
+              else
+              {
+                <p class="card-text"><i class="fa-solid fa-triangle-exclamation text-danger"></i>&nbsp;No images have been
+                  associated with this listing!</p>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row mt-16">
+        <div class="col-sm-12">
+          <div class="card">
+            <div class="card-header">
+              @if (Model.CanEdit)
+              {
+                <div style="float: right;">
+                  <a class="whl-link whl-action-add-document ml-8" data-listingid="@Model.ListingId" title="Add a new document"
+                    href="javascript:void(0);"><i class="fa-solid fa-plus"></i></a>
+                </div>
+              }
+              Additional Information
+            </div>
+            <div class="card-body">
+              @* <h5 class="card-title">@Model.Name</h5> *@
+              @* <p class="card-text">@Model.Description</p> *@
+              @* <a href="#" class="btn btn-primary">Go somewhere</a> *@
+              @if ((Model.Documents?.Count() ?? 0) > 0)
+              {
+                <div class="row border-bottom bg-light">
+                  <div class="col-xs-12 col-md-2 text-center">&nbsp;</div>
+                  <div class="col-xs-12 col-md-1 text-center"><small class="fw-bolder text-dark">Display</small></div>
+                  <div class="col-xs-12 col-md-2 text-center"><small class="fw-bolder text-dark">Type</small></div>
+                  <div class="col-xs-12 col-md-7"><small class="fw-bolder text-dark">Title</small></div>
+                </div>
+                @foreach (var document in Model.Documents.OrderBy(o => o.Title))
+                {
+                  <div class="row mt-2">
+                    <div class="col-xs-12 col-md-2 text-center">
+                      <a class="whl-link whl-action-view-document" title="View document" aria-label="View document" data-documentid="@document.DocumentId" role="button">
+                        @if ((document.MimeType ?? "").Trim().Equals("application/pdf", StringComparison.CurrentCultureIgnoreCase))
+                        {
+                          <i class="fa-regular fa-file-pdf"></i>
+                        }
+                        else
+                        {
+                          <i class="fa-regular fa-file-image"></i>
+                        }
+                      </a>
+                      @if (Model.CanEdit)
+                      {
+                        <a class="whl-link whl-action-edit-document ml-8" title="Edit document" aria-label="Edit document" data-documentid="@document.DocumentId" role="button"><i class="fa-solid fa-pencil"></i></a>
+                        <a class="whl-link whl-action-delete-document ml-8" title="Delete document" aria-label="Delete document" data-documentid="@document.DocumentId" role="button"><i class="fa-regular fa-trash-can"></i></a>
+                      }
+                    </div>
+                    <div class="col-xs-12 col-md-1 text-center">
+                      @if (document.DisplayOnListingsPageInd)
+                      {
+                        <i class="fa-regular fa-circle-check"></i>
+                      }
+                    </div>
+                    <div class="col-xs-12 col-md-2 text-center">
+                      <small>@document.MimeType</small>
+                    </div>
+                    <div class="col-xs-12 col-md-7">
+                      <small>@document.Title</small>
+                    </div>
+                  </div>
+                }
+              }
+              else
+              {
+                <p class="card-text"><i class="fa-solid fa-triangle-exclamation text-warning"></i>&nbsp;No documents have been
+                  associated with this listing!</p>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row mt-16">
+        <div class="col-sm-12">
+          <div class="card">
+            <div class="card-header">
+              @if (Model.CanEdit)
+              {
+                var img = ((Model.Amenities?.Count() ?? 0) > 0) ? "pencil" : "plus";
+                var tooltip = ((Model.Amenities?.Count() ?? 0) > 0) ? "Edit Amenities" : "Add Amenities";
+                <div style="float: right;">
+                  <a class="whl-link whl-action-edit-amenities ml-8" data-listingid="@Model.ListingId"
+                    title="@tooltip" href="javascript:void(0);"><i class="fa-solid fa-@img"></i></a>
+                </div>
+              }
+              <i class="fa-solid fa-map-pin"></i>&nbsp;Amenities
+            </div>
+            <div class="card-body">
+              @* <h5 class="card-title">@Model.Name</h5> *@
+              @if ((Model.Amenities?.Count() ?? 0) > 0)
+              {
+                <p class="card-text">@string.Join(", ", Model.Amenities.Select(s => s.Name))</p>
+              }
+              else
+              {
+                <p class="card-text"><i class="fa-solid fa-triangle-exclamation text-danger"></i>&nbsp;No amenities have
+                  been
+                  associated with this listing!</p>
+              }
+              @* <a href="#" class="btn btn-primary">Go somewhere</a> *@
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row mt-16">
+        <div class="col-sm-12">
+          <div class="card">
+            <div class="card-header">
+              @if (Model.CanEdit)
+              {
+                var img = ((Model.FundingSources?.Count() ?? 0) > 0) ? "pencil" : "plus";
+                var tooltip = ((Model.FundingSources?.Count() ?? 0) > 0) ? "Edit Funding Sources" : "Add Funding Sources";
+                <div style="float: right;">
+                  <a class="whl-link whl-action-edit-fundingsources ml-8" data-listingid="@Model.ListingId"
+                    title="@tooltip" href="javascript:void(0);"><i class="fa-solid fa-@img"></i></a>
+                </div>
+              }
+              <i class="fa-solid fa-dollar-sign"></i>&nbsp;Funding Sources
+            </div>
+            <div class="card-body">
+              @* <h5 class="card-title">@Model.Name</h5> *@
+              @if ((Model.FundingSources?.Count() ?? 0) > 0)
+              {
+                <p class="card-text">@string.Join(", ", Model.FundingSources.Select(s => s.Name))</p>
+              }
+              else
+              {
+                <p class="card-text"><i class="fa-solid fa-triangle-exclamation text-warning"></i>&nbsp;No funding sources have
+                  been
+                  associated with this listing!</p>
+              }
+              @* <a href="#" class="btn btn-primary">Go somewhere</a> *@
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row mt-16">
+        <div class="col-sm-12">
+          <div class="card">
+            <div class="card-header">
+              @if (Model.CanEdit)
+              {
+                <div style="float: right;">
+                  <a class="whl-link whl-action-add-unit ml-8" data-listingid="@Model.ListingId" title="Add Unit"
+                    href="javascript:void(0);"><i class="fa-solid fa-plus"></i></a>
+                </div>
+              }
+              <i class="fa-solid fa-building-circle-check"></i>&nbsp;Units
+            </div>
+            <div class="card-body">
+              @* <h5 class="card-title">@Model.Name</h5> *@
+              @if ((Model.Units?.Count() ?? 0) > 0)
+              {
+                <table class="table table-sm table-hover">
+                  <thead>
+                    <tr>
+                      <th class="text-center" style="width: 120px;">&nbsp;</th>
+                      <th class="text-center" style="width: 80px;"><small>AMI %</small></th>
+                      <th class="text-left" style="width: 240px;"><small>Unit Type</small></th>
+                      <th class="text-center" style="width: 120px;"><small>Bed/Bath</small></th>
+                      @if (Model.IsRental)
+                      {
+                        <th class="text-center" style="width: 120px;"><small>Monthly Rent ($)</small></th>
+                      }
+                      else
+                      {
+                        <th class="text-center"><small>Est. Price ($)</small></th>
+                        <th class="text-center"><small>Subsidy ($)</small></th>
+                        <th class="text-center"><small>Monthly Taxes ($)</small></th>
+                        <th class="text-center"><small>Monthly Maint. ($)</small></th>
+                        <th class="text-center"><small>Monthly Ins. ($)</small></th>
+                      }
+                      <th class="text-center"><small>Area (sq. ft.)</small></th>
+                      <th class="text-center" style="width: 60px;"><small>Active</small></th>
+                    </tr>
+                  </thead>
+                  <tbody class="table-group-divider">
+                    @foreach (var unit in Model.Units)
+                    {
+                      var bathroomCnt = unit.BathroomCntPart > 0 ? $"{unit.BathroomCnt}.{unit.BathroomCntPart}" : $"{unit.BathroomCnt}";
+                      <tr>
+                        <td class="text-center" style="width: 120px;">
+                          @if (Model.CanEdit && unit.Active)
+                          {
+                            <a class="whl-link whl-action-edit-unit" data-unitid="@unit.UnitId" title="Edit unit"
+                              href="javascript:void(0);"><i class="fa-solid fa-pencil"></i></a>
+                            <a class="whl-link whl-action-delete-unit ml-8" data-unitid="@unit.UnitId" title="Delete unit"
+                              href="javascript:void(0);"><i class="fa-solid fa-trash"></i></a>
+                          }
+                          <a class="whl-link whl-action-view-audit ml-8" data-entitytype="UNIT"
+                            data-entityid="@unit.UnitId" title="View audit log" href="javascript:void(0);"><i
+                              class="fa-solid fa-list"></i></a>
+                        </td>
+                        <td class="text-center">@unit.AreaMedianIncomePct %</td>
+                        <td class="text-left" style="width: 240px;">@unit.UnitTypeDescription</td>
+                        <td class="text-center" style="width: 120px;">@($"{unit.BedroomCnt}/{bathroomCnt}")</td>
+                        @if (Model.IsRental)
+                        {
+                          <td class="text-center">@unit.MonthlyRentAmt.ToString("C0")</td>
+                        }
+                        else
+                        {
+                          <td class="text-center">@unit.EstimatedPriceAmt.ToString("C0")</td>
+                          <td class="text-center">@unit.SubsidyAmt.ToString("C0")</td>
+                          <td class="text-center">@unit.MonthlyTaxesAmt.ToString("C0")</td>
+                          <td class="text-center">@unit.MonthlyMaintenanceAmt.ToString("C0")</td>
+                          <td class="text-center">@unit.MonthlyInsuranceAmt.ToString("C0")</td>
+                        }
+                        <td class="text-center">@(unit.SquareFootage > 0 ? unit.SquareFootage.ToString("N0") : "")</td>
+                        <td class="text-center" style="width: 60px;">
+                          @if (unit.Active)
+                          {
+                            <i class="fa-solid fa-circle text-success"></i>
+                          }
+                        </td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              }
+              else
+              {
+                <p class="card-text"><i class="fa-solid fa-triangle-exclamation text-danger"></i>&nbsp;No units have
+                  been associated with this listing!</p>
+              }
+              @if (Model.IsRental && !string.IsNullOrEmpty(Model.RentIncludesText))
+              {
+                <p><small><strong>*</strong>&nbsp;@Model.RentIncludesText</small></p>
+              }
+              @if (!Model.IsRental && (Model.Units?.Count() ?? 0) > 0)
+              {
+                <p class="small">
+                  <button class="btn btn-sm btn-outline-secondary whl-action-view-affordabilityanalysis"
+                          title="View Affordability Analysis" data-listingid="@Model.ListingId">
+                    View Affordability Analysis</button>
+                </p>
+              }
+              @* <a href="#" class="btn btn-primary">Go somewhere</a> *@
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- <div class="row mt-16">
+        <div class="col-sm-12">
+          <div class="card">
+            <div class="card-header">
+              @if (Model.CanEdit)
+              {
+                var img = ((Model.Accessibilities?.Count() ?? 0) > 0) ? "pencil" : "plus";
+                var tooltip = ((Model.Accessibilities?.Count() ?? 0) > 0) ? "Edit Accessibility" : "Add Accessibility";
+                <div style="float: right;">
+                  <a class="whl-link whl-action-edit-accessibilities ml-8" data-listingid="@Model.ListingId"
+                    title="@tooltip" href="javascript:void(0);"><i class="fa-solid fa-@img"></i></a>
+                </div>
+              }
+              <i class="fa-brands fa-accessible-icon"></i>&nbsp;Accessibility
+            </div>
+            <div class="card-body">
+              @* <h5 class="card-title">@Model.Name</h5> *@
+              @if ((Model.Accessibilities?.Count() ?? 0) > 0)
+              {
+                <p class="card-text">@string.Join(", ", Model.Accessibilities.Select(s => s.Value))</p>
+              }
+              else
+              {
+                <p class="card-text"><i class="fa-solid fa-triangle-exclamation text-danger"></i>&nbsp;No accessibility information associated with this listing!</p>
+              }
+              @* <a href="#" class="btn btn-primary">Go somewhere</a> *@
+            </div>
+          </div>
+        </div>
+      </div> -->
+      <div class="mt-32">&nbsp;</div>
+      <h4 class="fs-4 text-secondary">Application</h4>
+      <div class="row mt-16">
+        <div class="col-sm-12">
+          <div class="card">
+            <div class="card-header">
+              @if (Model.CanEdit)
+              {
+                var img = ((Model.DocumentTypes?.Count() ?? 0) > 0) ? "pencil" : "plus";
+                var tooltip = ((Model.DocumentTypes?.Count() ?? 0) > 0) ? "Edit Document Types" : "Add Document Types";
+                <div style="float: right;">
+                  <a class="whl-link whl-action-edit-documentsreqd ml-8" data-listingid="@Model.ListingId"
+                    title="@tooltip" href="javascript:void(0);"><i class="fa-solid fa-@img"></i></a>
+                </div>
+              }
+              <i class="fa-regular fa-file"></i>&nbsp;Document Types
+            </div>
+            <div class="card-body">
+              @* <h5 class="card-title">@Model.Name</h5> *@
+              @if ((Model.DocumentTypes?.Count() ?? 0) > 0)
+              {
+                <p class="card-text">@string.Join(", ", Model.DocumentTypes.Select(s => s.Name))</p>
+              }
+              else
+              {
+                <p class="card-text"><i class="fa-solid fa-triangle-exclamation text-warning"></i>&nbsp;No document types have
+                  been
+                  associated with this listing!</p>
+              }
+              @* <a href="#" class="btn btn-primary">Go somewhere</a> *@
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row mt-16">
+        <div class="col-sm-12">
+          <div class="card">
+            <div class="card-header">
+              <i class="fa-solid fa-list-check"></i>&nbsp;Declarations
+            </div>
+            <div class="card-body">
+              @* <h5 class="card-title">@Model.Name</h5> *@
+              @if ((Model.Declarations?.Count() ?? 0) > 0)
+              {
+                <table class="table table-sm table-hover">
+                  <thead>
+                    <tr>
+                      <th class="text-center" style="width: 120px;">
+                        @if (Model.CanEdit)
+                        {
+                          <a class="whl-link whl-action-add-declaration" data-listingid="@Model.ListingId"
+                            title="Add a new declaration" href="javascript:void(0);"><i class="fa-solid fa-plus"></i>&nbsp;Add</a>
+                        }
+                      </th>
+                      <th class="text-center" style="width: 120px;"><small>Order</small></th>
+                      <th><small>Declaration</small></th>
+                    </tr>
+                  </thead>
+                  <tbody class="table-group-divider">
+                    @foreach (var declaration in Model.Declarations)
+                    {
+                      <tr>
+                        <td class="text-center" style="width: 120px;">
+                          @if (Model.CanEdit && declaration.UserAdded)
+                          {
+                            <a class="whl-link whl-action-edit-declaration" data-declarationid="@declaration.DeclarationId" title="Edit Declaration"
+                              href="javascript:void(0);"><i class="fa-solid fa-pencil"></i></a>
+                            <a class="whl-link whl-action-delete-declaration ml-8" data-declarationid="@declaration.DeclarationId" title="Delete Declaration"
+                              href="javascript:void(0);"><i class="fa-solid fa-trash"></i></a>
+                          }
+                        </td>
+                        <td class="text-center" style="width: 120px;">@(declaration.SortOrder > 0 ? declaration.SortOrder.ToString() : "")</td>
+                        <td>
+                          @declaration.Text
+                          <textarea style="display: none;" id="txtDeclarationText_@declaration.DeclarationId">@declaration.Text</textarea>
+                        </td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              }
+              else
+              {
+                <p class="card-text"><i class="fa-solid fa-triangle-exclamation text-danger"></i>&nbsp;No declarations associated with this listing!</p>
+              }
+              @* <a href="#" class="btn btn-primary">Go somewhere</a> *@
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row mt-16">
+        <div class="col-sm-12">
+          <div class="card">
+            <div class="card-header">
+              <i class="fa-solid fa-circle-info"></i>&nbsp;Disclosures
+            </div>
+            <div class="card-body">
+              @* <h5 class="card-title">@Model.Name</h5> *@
+              @if ((Model.Disclosures?.Count() ?? 0) > 0)
+              {
+                <table class="table table-sm table-hover">
+                  <thead>
+                    <tr>
+                      <th class="text-center" style="width: 120px;">
+                        @if (Model.CanEdit)
+                        {
+                          <a class="whl-link whl-action-add-disclosure" data-listingid="@Model.ListingId"
+                            title="Add a new disclosure" href="javascript:void(0);"><i class="fa-solid fa-plus"></i>&nbsp;Add</a>
+                        }
+                      </th>
+                      <th class="text-center" style="width: 120px;"><small>Order</small></th>
+                      <th><small>Disclosure</small></th>
+                    </tr>
+                  </thead>
+                  <tbody class="table-group-divider">
+                    @foreach (var disclosure in Model.Disclosures)
+                    {
+                      <tr>
+                        <td class="text-center" style="width: 120px;">
+                          @if (Model.CanEdit && disclosure.UserAdded)
+                          {
+                            <a class="whl-link whl-action-edit-disclosure" data-disclosureid="@disclosure.DisclosureId" title="Edit Disclosure"
+                              href="javascript:void(0);"><i class="fa-solid fa-pencil"></i></a>
+                            <a class="whl-link whl-action-delete-disclosure ml-8" data-disclosureid="@disclosure.DisclosureId" title="Delete Disclosure"
+                              href="javascript:void(0);"><i class="fa-solid fa-trash"></i></a>
+                          }
+                        </td>
+                        <td class="text-center" style="width: 120px;">@(disclosure.SortOrder > 0 ? disclosure.SortOrder.ToString() : "")</td>
+                        <td>
+                          @disclosure.Text
+                          <textarea style="display: none;" id="txtDisclosureText_@disclosure.DisclosureId">@disclosure.Text</textarea>
+                        </td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              }
+              else
+              {
+                <p class="card-text"><i class="fa-solid fa-triangle-exclamation text-danger"></i>&nbsp;No disclosures associated with this listing!</p>
+              }
+              @* <a href="#" class="btn btn-primary">Go somewhere</a> *@
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-12 col-md-3">
+      @* <div class="card">
+        <div class="card-header">
+          <i class="fa-regular fa-circle-dot"></i>&nbsp;Type (Senior Living)
+        </div>
+        <div class="card-body">
+          <!-- <h5 class="card-title">@Model.StatusDescription</h5> -->
+          <p class="card-text">@Model.ListingTypeDescription (@Model.ListingAgeTypeDescription)</p>
+          <!-- <a href="#" class="btn btn-primary">Go somewhere</a> -->
+        </div>
+      </div> *@
+      <div class="card">
+        <div class="card-header">
+          <i class="fa-solid fa-signal"></i>&nbsp;Status
+        </div>
+        <div class="card-body">
+          @* <h5 class="card-title">@Model.StatusDescription</h5> *@
+          <p class="card-text">@Model.StatusDescription</p>
+          @* <a href="#" class="btn btn-primary">Go somewhere</a> *@
+          @if (Model.CanEdit)
+          {
+            <a class="btn btn-sm btn-whl-link whl-action-submit-listing" data-listingid="@Model.ListingId"
+              title="Submit listing for Review" href="javascript:void(0);"><i class="fa-solid fa-share"></i> Submit for Review</a>
+          }
+          @if (Model.CanPublish)
+          {
+            <a class="btn btn-sm btn-whl-link whl-action-publish-listing" data-listingid="@Model.ListingId"
+              title="Publish listing" href="javascript:void(0);"><i class="fa-solid fa-upload"></i> Publish</a>
+            <a class="btn btn-sm btn-secondary whl-action-revise-listing ml-8" data-listingid="@Model.ListingId"
+              title="Send listing back for revision" href="javascript:void(0);"><i class="fa-solid fa-rotate-left"></i> Revise</a>
+          }
+          @if (Model.CanUnpublish)
+          {
+            <a class="btn btn-sm btn-whl-link whl-action-unpublish-listing" data-listingid="@Model.ListingId"
+              title="Unpublish listing" href="javascript:void(0);"><i class="fa-solid fa-reply-all"></i> Unpublish</a>
+          }
+        </div>
+      </div>
+      <div class="card mt-8">
+        <div class="card-header">
+          @if (Model.CanEdit)
+          {
+            <div style="float: right;">
+              <a class="whl-link whl-action-edit-dates ml-8" data-listingid="@Model.ListingId" title="Edit Dates"
+                href="javascript:void(0);"><i class="fa-solid fa-pencil"></i></a>
+            </div>
+          }
+          <i class="fa-regular fa-calendar-days"></i>&nbsp;Dates
+        </div>
+        <div class="card-body">
+          @* <h5 class="card-title">@Model.StatusDescription</h5> *@
+          <p class="card-text">
+            <small class="text-secondary">Listing Start Date</small><br />
+            @if (Model.ListingStartDate.HasValue)
+            {
+              <span>@Model.ListingStartDate.Value.ToString("MM/dd/yyyy")</span>
+            }
+            else
+            {
+              <span class="text-muted">Not Specified</span>
+            }
+            <br />
+            <hr />
+            <small class="text-secondary mt-8">Application Start Date/Time</small><br />
+            @if (Model.ApplicationStartDate.HasValue)
+            {
+              <span>@Model.ApplicationStartDate.Value.ToString("MM/dd/yyyy h:mm tt")</span>
+            }
+            else
+            {
+              <span class="text-muted">Not Specified</span>
+            }
+            <br />
+            <small class="text-secondary mt-8">Application End Date/Time</small><br />
+            @if (Model.ApplicationEndDate.HasValue)
+            {
+              <span>@Model.ApplicationEndDate.Value.ToString("MM/dd/yyyy h:mm tt")</span>
+            }
+            else
+            {
+              <span class="text-muted">Not Specified</span>
+            }
+            <br />
+            <hr />
+            <small class="text-secondary mt-8">Waitlist Eligible</small><br />
+            @if (Model.WaitlistEligible)
+            {
+              <span>Yes</span>
+            }
+            else
+            {
+              <span class="text-muted">No</span>
+            }
+            <br />
+            <small class="text-secondary mt-8">Waitlist Start Date</small><br />
+            @if (Model.WaitlistStartDate.HasValue)
+            {
+              <span>@Model.WaitlistStartDate.Value.ToString("MM/dd/yyyy h:mm tt")</span>
+            }
+            else
+            {
+              <span class="text-muted">Not Specified</span>
+            }
+            <br />
+            <small class="text-secondary mt-8">Waitlist End Date</small><br />
+            @if (Model.WaitlistEndDate.HasValue)
+            {
+              <span>@Model.WaitlistEndDate.Value.ToString("MM/dd/yyyy h:mm tt")</span>
+            }
+            else
+            {
+              <span class="text-muted">Not Specified</span>
+            }
+            <br />
+            <hr />
+            <small class="text-secondary mt-8">Lottery Eligible</small><br />
+            @if (Model.LotteryEligible)
+            {
+              <span>Yes</span>
+            }
+            else
+            {
+              <span class="text-muted">No</span>
+            }
+            <br />
+            <small class="text-secondary mt-8">Lottery Date/Time</small><br />
+            @if (Model.LotteryDate.HasValue)
+            {
+              <span>@Model.LotteryDate.Value.ToString("MM/dd/yyyy h:mm tt")</span>
+            }
+            else
+            {
+              <span class="text-muted">Not Specified</span>
+            }
+            <br />
+            <hr />
+            <small class="text-secondary mt-8">Listing End Date</small><br />
+            @if (Model.ListingEndDate.HasValue)
+            {
+              <span>@Model.ListingEndDate.Value.ToString("MM/dd/yyyy")</span>
+            }
+            else
+            {
+              <span class="text-muted">Not Specified</span>
+            }
+          </p>
+          @* <a href="#" class="btn btn-primary">Go somewhere</a> *@
+        </div>
+      </div>
+      @* <div class="card mt-8">
+        <div class="card-header">
+          <i class="fa-solid fa-user-check"></i>&nbsp;Eligibility
+        </div>
+        <div class="card-body">
+          <!-- <h5 class="card-title">@Model.StatusDescription</h5> -->
+          <p class="card-text">
+            <small class="text-secondary">Income</small><br />
+            @if (Model.MaxHouseholdIncomeAmt > 0)
+            {
+              @Model.MinHouseholdIncomeAmt.ToString("C0")
+
+              <span>&nbsp;&ndash;&nbsp;</span>
+
+              @Model.MaxHouseholdIncomeAmt.ToString("C0")
+            }
+            else
+            {
+              <span class="text-muted">Not Specified</span>
+            }
+            <br />
+            <small class="text-secondary mt-8">Household</small><br />
+            @if (Model.MaxHouseholdSize > 0)
+            {
+              @Model.MinHouseholdSize.ToString("N0")
+
+              <span>&nbsp;&ndash;&nbsp;</span>
+
+              @Model.MaxHouseholdSize.ToString("N0")
+            }
+            else
+            {
+              <span class="text-muted">Not Specified</span>
+            }
+          </p>
+          <!-- <a href="#" class="btn btn-primary">Go somewhere</a> -->
+        </div>
+      </div> *@
+      <div class="card mt-8">
+        <div class="card-header">
+          @if (Model.CanEdit)
+          {
+            var img = ((Model.Accessibilities?.Count() ?? 0) > 0) ? "pencil" : "plus";
+            var tooltip = ((Model.Accessibilities?.Count() ?? 0) > 0) ? "Edit Accessibility" : "Add Accessibility";
+            <div style="float: right;">
+              <a class="whl-link whl-action-edit-accessibilities ml-8" data-listingid="@Model.ListingId"
+                title="@tooltip" href="javascript:void(0);"><i class="fa-solid fa-@img"></i></a>
+            </div>
+          }
+          <i class="fa-brands fa-accessible-icon"></i>&nbsp;Accessibility
+        </div>
+        <div class="card-body">
+          @* <h5 class="card-title">@Model.StatusDescription</h5> *@
+          @if ((Model.Accessibilities?.Count() ?? 0) > 0)
+          {
+            <ul>
+              @foreach (var accessibility in Model.Accessibilities)
+              {
+                <li>@accessibility.Value</li>
+              }
+            </ul>
+          }
+          else
+          {
+            <p class="card-text"><i class="fa-solid fa-triangle-exclamation text-danger"></i>&nbsp;No accessibility information associated with this listing!</p>
+          }
+          @* <a href="#" class="btn btn-primary">Go somewhere</a> *@
+        </div>
+      </div>
+      <div class="card mt-8">
+        <div class="card-header">
+          @if (Model.CanEdit)
+          {
+            <div style="float: right;">
+              <a class="whl-link whl-action-edit-petsallowed ml-8" data-listingid="@Model.ListingId"
+                title="Edit Pet-friendly Setting" href="javascript:void(0);"><i class="fa-solid fa-pencil"></i></a>
+            </div>
+          }
+          <i class="fa-solid fa-dog"></i>&nbsp;Pet Policy
+        </div>
+        <div class="card-body">
+          @* <h5 class="card-title">@Model.StatusDescription</h5> *@
+          @if (Model.PetsAllowedInd)
+          {
+            <p class="card-text">
+              <i class="fa-regular fa-circle-check text-success"></i>&nbsp;Yes, Pets Permitted
+              @if (!string.IsNullOrEmpty((Model.PetsAllowedText ?? "").Trim()))
+              {
+                <br />
+                <small class="text-secondary">@Model.PetsAllowedText</small>
+              }
+            </p>
+          }
+          else
+          {
+            <p class="card-text"><i class="fa-regular fa-circle-xmark text-danger"></i>&nbsp;No, Pets Not Permitted</p>
+          }
+          @* <a href="#" class="btn btn-primary">Go somewhere</a> *@
+        </div>
+      </div>
+      <div class="card mt-8">
+        <div class="card-header">
+          <i class="fa-solid fa-gears"></i>&nbsp;Settings
+        </div>
+        <div class="card-body">
+          <p class="card-text">
+            <small class="text-secondary fw-bolder">Completed Or Initial Occupancy Year</small><br />
+            @if (!string.IsNullOrEmpty((Model.CompletedOrInitialOccupancyYear ?? "").Trim()))
+            {
+              @Model.CompletedOrInitialOccupancyYear.Trim()
+            }
+            else
+            {
+              <span class="text-muted">Not Specified</span>
+            }
+          </p>
+          <p class="card-text mt-4">
+            <small class="text-secondary fw-bolder">Term of Affordability</small><br />
+            @if (!string.IsNullOrEmpty((Model.TermOfAffordability ?? "").Trim()))
+            {
+              @Model.TermOfAffordability.Trim()
+            }
+            else
+            {
+              <span class="text-muted">Not Specified</span>
+            }
+          </p>
+        </div>
+      </div>
+      <div class="card mt-8">
+        <div class="card-header">
+          @if (Model.CanEdit)
+          {
+            <div style="float: right;">
+              <a class="whl-link whl-action-edit-marketingagent ml-8" data-listingid="@Model.ListingId"
+                title="Edit Marketing Agent" href="javascript:void(0);"><i class="fa-solid fa-pencil"></i></a>
+            </div>
+          }
+          <i class="fa-regular fa-address-card"></i>&nbsp;Marketing Agent
+        </div>
+        <div class="card-body">
+          @if (Model.MarketingAgentInd)
+          {
+            <p class="card-text">
+              <small class="text-secondary fw-bolder">Marketing Agent</small><br />
+              <a href="javascript:# void(0);" class="fw-bolder whl-link whl-action-view-marketingagent"
+                  title="View Marketing Agent Details" aria-label="View Marketing Agent Details"
+                  data-agentid="@Model.MarketingAgentId">
+                @Model.MarketingAgentName.Trim()
+              </a>
+            </p>
+            <p class="card-text mt-4">
+              <small class="text-secondary fw-bolder">Application Link</small><br />
+              @if (!string.IsNullOrEmpty((Model.MarketingAgentApplicationLink ?? "").Trim()))
+              {
+                @Model.MarketingAgentApplicationLink.Trim()
+              }
+              else
+              {
+                <span class="text-muted">Not Specified</span>
+              }
+            </p>
+          }
+          else
+          {
+            <p class="card-text"><i class="fa-regular fa-circle-xmark text-danger"></i>&nbsp;Not administered by a Marketing Agent</p>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Listing Editor Modal -->
+<div class="modal fade" id="listingEditorModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+  aria-labelledby="listingEditorModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="listingEditorModalLabel"><span id="whl-title-listing-action">Listing
+            Editor</span></h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+      </div>
+      <div class="modal-footer">
+        <input type="hidden" id="hidListingAction" name="hidListingAction" value="" />
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i
+            class="fa-solid fa-ban"></i>&nbsp;Cancel</button>
+        <button type="button" class="btn btn-primary whl-action-save-listing"><i
+            class="fa-solid fa-floppy-disk"></i>&nbsp;Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Dates Editor Modal -->
+<div class="modal fade" id="datesEditorModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+  aria-labelledby="datesEditorModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="datesEditorModalLabel"><span id="whl-title-dates-action">Dates
+            Editor</span></h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+      </div>
+      <div class="modal-footer">
+        <input type="hidden" id="hidDatesAction" name="hidDatesAction" value="" />
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i
+            class="fa-solid fa-ban"></i>&nbsp;Cancel</button>
+        <button type="button" class="btn btn-primary whl-action-save-dates"><i
+            class="fa-solid fa-floppy-disk"></i>&nbsp;Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Image Editor Modal -->
+<div class="modal fade" id="imageEditorModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+  aria-labelledby="imageEditorModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="imageEditorModalLabel"><span id="whl-title-image-action">Image
+            Editor</span></h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+      </div>
+      <div class="modal-footer">
+        <input type="hidden" id="hidImageAction" name="hidImageAction" value="" />
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i
+            class="fa-solid fa-ban"></i>&nbsp;Cancel</button>
+        <button type="button" class="btn btn-primary whl-action-save-image"><i
+            class="fa-solid fa-floppy-disk"></i>&nbsp;Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Document Editor Modal -->
+<div class="modal fade" id="documentEditorModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+  aria-labelledby="documentEditorModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="documentEditorModalLabel"><span id="whl-title-document-action">Document
+            Editor</span></h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+      </div>
+      <div class="modal-footer">
+        <input type="hidden" id="hidDocumentAction" name="hidDocumentAction" value="" />
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i
+            class="fa-solid fa-ban"></i>&nbsp;Cancel</button>
+        <button type="button" class="btn btn-primary whl-action-save-document"><i
+            class="fa-solid fa-floppy-disk"></i>&nbsp;Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Unit Editor Modal -->
+<div class="modal fade" id="unitEditorModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+  aria-labelledby="unitEditorModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="imageEditorModalLabel"><span id="whl-title-unit-action">Unit
+            Editor</span></h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+      </div>
+      <div class="modal-footer">
+        <input type="hidden" id="hidUnitAction" name="hidUnitAction" value="" />
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i
+            class="fa-solid fa-ban"></i>&nbsp;Cancel</button>
+        <button type="button" class="btn btn-primary whl-action-save-unit"><i
+            class="fa-solid fa-floppy-disk"></i>&nbsp;Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Amenity Editor Modal -->
+<div class="modal fade" id="amenityEditorModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+  aria-labelledby="amenityEditorModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="amenityEditorModalLabel"><span id="whl-title-amenity-action">Amenity
+            Editor</span></h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+      </div>
+      <div class="modal-footer">
+        <input type="hidden" id="hidAmenityAction" name="hidAmenityAction" value="" />
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i
+            class="fa-solid fa-ban"></i>&nbsp;Cancel</button>
+        <button type="button" class="btn btn-primary whl-action-save-amenity"><i
+            class="fa-solid fa-floppy-disk"></i>&nbsp;Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Funding Source Editor Modal -->
+<div class="modal fade" id="fundingSourceEditorModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+  aria-labelledby="fundingSourceEditorModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="fundingSourceEditorModalLabel"><span id="whl-title-fundingsource-action">Funding Source
+            Editor</span></h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+      </div>
+      <div class="modal-footer">
+        <input type="hidden" id="hidFundingSourceAction" name="hidFundingSourceAction" value="" />
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i
+            class="fa-solid fa-ban"></i>&nbsp;Cancel</button>
+        <button type="button" class="btn btn-primary whl-action-save-fundingsource"><i
+            class="fa-solid fa-floppy-disk"></i>&nbsp;Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Accessibility Editor Modal -->
+<div class="modal fade" id="accessibilityEditorModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+  aria-labelledby="accessibilityEditorModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="accessibilityEditorModalLabel"><span id="whl-title-accessibility-action">Accessibility
+            Editor</span></h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+      </div>
+      <div class="modal-footer">
+        <input type="hidden" id="hidAccessibilityAction" name="hidAccessibilityAction" value="" />
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i
+            class="fa-solid fa-ban"></i>&nbsp;Cancel</button>
+        <button type="button" class="btn btn-primary whl-action-save-accessibility"><i
+            class="fa-solid fa-floppy-disk"></i>&nbsp;Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Pets Allowed Editor Modal -->
+<div class="modal fade" id="petsAllowedEditorModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+  aria-labelledby="petsAllowedEditorModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="petsAllowedEditorModalLabel"><span id="whl-title-petsallowed-action">Pet Policy
+            Editor</span></h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+      </div>
+      <div class="modal-footer">
+        <input type="hidden" id="hidPetsAllowedAction" name="hidPetsAllowedAction" value="" />
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i
+            class="fa-solid fa-ban"></i>&nbsp;Cancel</button>
+        <button type="button" class="btn btn-primary whl-action-save-petsallowed"><i
+            class="fa-solid fa-floppy-disk"></i>&nbsp;Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Marketing Agent Editor Modal -->
+<div class="modal fade" id="marketingAgentEditorModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+  aria-labelledby="marketingAgentEditorModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="marketingAgentEditorModalLabel"><span id="whl-title-marketingagent-action">Marketing Agent
+            Editor</span></h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+      </div>
+      <div class="modal-footer">
+        <input type="hidden" id="hidMarketingAgentAction" name="hidMarketingAgentAction" value="" />
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i
+            class="fa-solid fa-ban"></i>&nbsp;Cancel</button>
+        <button type="button" class="btn btn-primary whl-action-save-marketingagent"><i
+            class="fa-solid fa-floppy-disk"></i>&nbsp;Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Affordability Analysis Viewer Modal -->
+<div class="modal fade" id="affordabilityAnalysisViewerModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+  aria-labelledby="affordabilityAnalysisViewerModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="affordabilityAnalysisViewerModalLabel">Affordability Analysis
+          Details</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Marketing Agent Viewer Modal -->
+<div class="modal fade" id="marketingAgentViewerModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+  aria-labelledby="marketingAgentViewerModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="marketingAgentViewerModalLabel">Marketing Agent
+          Details</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Documents Reqd Editor Modal -->
+<div class="modal fade" id="documentsReqdEditorModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+  aria-labelledby="documentsReqdEditorModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="documentsReqdEditorModalLabel"><span id="whl-title-documentsreqd-action">Required Documents
+            Editor</span></h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+      </div>
+      <div class="modal-footer">
+        <input type="hidden" id="hidDocumentsReqdAction" name="hidDocumentsReqdAction" value="" />
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i
+            class="fa-solid fa-ban"></i>&nbsp;Cancel</button>
+        <button type="button" class="btn btn-primary whl-action-save-documentsreqd"><i
+            class="fa-solid fa-floppy-disk"></i>&nbsp;Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Declaration Editor Modal -->
+<div class="modal fade" id="declarationEditorModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+  aria-labelledby="declarationEditorModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="declarationEditorModalLabel"><span id="whl-title-declaration-action">Declaration
+            Editor</span></h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+      </div>
+      <div class="modal-footer">
+        <input type="hidden" id="hidDeclarationAction" name="hidDeclarationAction" value="" />
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i
+            class="fa-solid fa-ban"></i>&nbsp;Cancel</button>
+        <button type="button" class="btn btn-primary whl-action-save-declaration"><i
+            class="fa-solid fa-floppy-disk"></i>&nbsp;Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Disclosure Editor Modal -->
+<div class="modal fade" id="disclosureEditorModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+  aria-labelledby="disclosureEditorModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="disclosureEditorModalLabel"><span id="whl-title-disclosure-action">Disclosure
+            Editor</span></h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+      </div>
+      <div class="modal-footer">
+        <input type="hidden" id="hidDisclosureAction" name="hidDisclosureAction" value="" />
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i
+            class="fa-solid fa-ban"></i>&nbsp;Cancel</button>
+        <button type="button" class="btn btn-primary whl-action-save-disclosure"><i
+            class="fa-solid fa-floppy-disk"></i>&nbsp;Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Listing Actions -->
+@await Html.PartialAsync("~/Views/Listings/_ListingSubmit.cshtml")
+@await Html.PartialAsync("~/Views/Listings/_ListingRevise.cshtml")
+@await Html.PartialAsync("~/Views/Listings/_ListingPublish.cshtml")
+@await Html.PartialAsync("~/Views/Listings/_ListingUnpublish.cshtml")
+
+<!-- Audit Viewer Modal -->
+@await Html.PartialAsync("~/Views/Shared/_AuditViewerModalPartial.cshtml")
+
+@Html.HiddenFor(h => h.ListingId, htmlAttributes: new { id = "PageListingId" })
+
+@section Scripts
+{
+  <script>
+    //<![CDATA[
+
+    // listings
+    const listingAddUrl = '@Url.Action("Add", "Listings")';
+    const listingEditUrl = '@Url.Action("Edit", "Listings")';
+    const listingDeleteUrl = '@Url.Action("Delete", "Listings")';
+    const listingDetailsUrl = '@Url.Action("Details", "Listings")';
+    const listingDetailsPreviewUrl = '@Url.Action("DetailsPreview", "Listings")';
+    const listingViewPaperFormUrl = '@Url.Action("PrintableFormPreview", "Listings")';
+    const auditViewerUrl = '@Url.Action("Index", "Audit")';
+
+    // workflow
+    const listingSubmitUrl = '@Url.Action("Submit", "Listings")?listingId=@Model.ListingId';
+    const listingPublishUrl = '@Url.Action("Publish", "Listings")?listingId=@Model.ListingId';
+    const listingReviseUrl = '@Url.Action("Revise", "Listings")';
+    const listingUnpublishUrl = '@Url.Action("Unpublish", "Listings")';
+
+    // images
+    const listingImageAddUrl = '@Url.Action("AddImage", "Listings")';
+    const listingImageEditUrl = '@Url.Action("EditImage", "Listings")';
+    const listingImageDeleteUrl = '@Url.Action("DeleteImage", "Listings")';
+
+    // documents
+    const listingDocumentAddUrl = '@Url.Action("AddDocument", "Listings")';
+    const listingDocumentEditUrl = '@Url.Action("EditDocument", "Listings")';
+    const listingDocumentDeleteUrl = '@Url.Action("DeleteDocument", "Listings")';
+    const listingDocumentViewUrl = '@Url.Action("ViewDocument", "Listings")';
+
+    // accessibilities
+    const listingAccessibilitiesAddUrl = '@Url.Action("AddAccessibilities", "Listings")';
+    const listingAccessibilitiesEditUrl = '@Url.Action("EditAccessibilities", "Listings")';
+
+    // amenities
+    const amenitiesCount = parseInt('@(Model.Amenities?.Count() ?? 0)');
+    const listingAmenitiesAddUrl = '@Url.Action("AddAmenities", "Listings")';
+    const listingAmenitiesEditUrl = '@Url.Action("EditAmenities", "Listings")';
+
+    // document types
+    const documentTypesCount = parseInt('@(Model.DocumentTypes?.Count() ?? 0)');
+    const listingDocumentTypesAddUrl = '@Url.Action("AddDocumentTypes", "Listings")';
+    const listingDocumentTypesEditUrl = '@Url.Action("EditDocumentsReqd", "Listings")';
+
+    // funding sources
+    const fundingSourcesCount = parseInt('@(Model.FundingSources?.Count() ?? 0)');
+    const listingFundingSourcesAddUrl = '@Url.Action("AddFundingSources", "Listings")';
+    const listingFundingSourcesEditUrl = '@Url.Action("EditFundingSources", "Listings")';
+
+    // units
+    const listingUnitAddUrl = '@Url.Action("AddUnit", "Listings")';
+    const listingUnitEditUrl = '@Url.Action("EditUnit", "Listings")';
+    const listingUnitDeleteUrl = '@Url.Action("DeleteUnit", "Listings")';
+
+    // affordability analysis
+    const affordabilityAnalysisUrl = '@Url.Action("AffordabilityAnalysis", "Listings")';
+
+    // declarations
+    const listingDeclarationAddUrl = '@Url.Action("AddDeclaration", "Listings")';
+    const listingDeclarationEditUrl = '@Url.Action("EditDeclaration", "Listings")';
+    const listingDeclarationDeleteUrl = '@Url.Action("DeleteDeclaration", "Listings")';
+
+    // disclosures
+    const listingDisclosureAddUrl = '@Url.Action("AddDisclosure", "Listings")';
+    const listingDisclosureEditUrl = '@Url.Action("EditDisclosure", "Listings")';
+    const listingDisclosureDeleteUrl = '@Url.Action("DeleteDisclosure", "Listings")';
+
+    // dates
+    const listingDatesEditUrl = '@Url.Action("EditDates", "Listings")';
+
+    // pets allowed
+    const listingPetsAllowedEditUrl = '@Url.Action("EditPetsAllowed", "Listings")';
+
+    // marketing agent
+    const listingMarketingAgentEditUrl = '@Url.Action("EditMarketingAgent", "Listings")';
+    const listingMarketinAgentViewUrl = '@Url.Action("Details", "MarketingAgents")';
+
+    // arcgis
+    const arcGisAddressCandidatesApiUrl = '@(Model.ArcGisSettings?.ApiUrl ?? "")/@(Model.ArcGisSettings?.ApiMethod ?? "")';
+    const arcGisApiToken = '@(Model.ArcGisSettings?.ApiKey ?? "")';
+    let addressCandidates = [];
+    let selectedAddress = {};
+
+    //]]>
+  </script>
+  <script src="~/js/management/common.js" asp-append-version="true"></script>
+  <script src="~/js/listings/listings.js" asp-append-version="true"></script>
+  <script src="~/js/listings/details.js" asp-append-version="true"></script>
+  <script src="~/js/listings/accessibilities.js" asp-append-version="true"></script>
+  <script src="~/js/listings/amenities.js" asp-append-version="true"></script>
+  <script src="~/js/listings/declarations.js" asp-append-version="true"></script>
+  <script src="~/js/listings/disclosures.js" asp-append-version="true"></script>
+  <script src="~/js/listings/documents.js" asp-append-version="true"></script>
+  <script src="~/js/listings/documenttypes.js" asp-append-version="true"></script>
+  <script src="~/js/listings/fundingsources.js" asp-append-version="true"></script>
+  <script src="~/js/listings/images.js" asp-append-version="true"></script>
+  <script src="~/js/listings/units.js" asp-append-version="true"></script>
+  <script src="~/js/listings/dates.js" asp-append-version="true"></script>
+  <script src="~/js/listings/petsallowed.js" asp-append-version="true"></script>
+  <script src="~/js/listings/marketingagent.js" asp-append-version="true"></script>
+  <script src="~/js/listings/workflow.js" asp-append-version="true"></script>
+}

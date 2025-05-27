@@ -1,0 +1,132 @@
+﻿@model FaqsViewModel
+@{
+  ViewData["Title"] = "FAQs";
+  ViewData["MENUID"] = "FAQS";
+
+  var faqsCount = Model.Faqs?.Count() ?? 0;
+}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a class="whl-link" asp-area="" asp-controller="Home" asp-action="Index" title="Home"><i
+          class="fa-solid fa-house"></i></a></li>
+    <li class="breadcrumb-item active" aria-current="page">FAQs</li>
+  </ol>
+</nav>
+
+<div class="text-left mt-32 faqs-page">
+  <h5>Frequently Asked Questions</h5>
+  @if (faqsCount > 0)
+  {
+    <!-- Nav / Text Search -->
+    <div class="row bg-white shadow-sm">
+      <div class="col-xs-12 col-md-8">
+        <div class="card h-100 mb-3 border-0">
+          <div class="card-body">
+            <div class="card-title"><span class="fs-4 fw-semibold">Sections</span></div>
+            <div class="card-text">
+              @foreach (var category in Model.Categories)
+              {
+                var catId = $"#CAT{category.Key}";
+                <a href="@catId" class="btn btn-link whl-link mr-16 border-bottom" title="@category.Value" aria-label="@category.Value"><i class="fa-solid fa-bars-staggered"></i>&nbsp;@category.Value</a>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-xs-12 col-md-4">
+        <div class="card h-100 mb-3 border-0">
+          <div class="card-body">
+            <div class="card-title"><span class="fs-4 fw-semibold">Search FAQs</span></div>
+            <div class="card-text">
+              <div class="input-group">
+                <input type="text" class="form-control whl-formfield-faqtextsearch border-0 border-bottom" placeholder="Enter word to search FAQs" aria-label="Enter word to search FAQs">
+                <button class="btn btn-outline-secondary whl-action-faqtextsearch" type="button">Search</button>
+                <button class="btn btn-outline-secondary whl-action-faqtextsearchreset" type="button">Reset</button>
+              </div>
+              <div class="form-text">Enter one or more words to search within FAQs.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    @foreach (var category in Model.Categories)
+    {
+      <a name="@($"CAT{category.Key}")"></a>
+      <div class="row bg-light shadow-sm mt-16">
+        <div class="col-xs-12">
+          <h4 class="mt-16 text-secondary display-6">@category.Value</h4>
+          @foreach (var faq in Model.Faqs.Where(w => w.CategoryName == category.Value).OrderBy(o => o.DisplayOrder))
+          {
+            var faqId = $"faq{faq.FaqId}";
+            <div class="accordion accordion-flush mt-16 whl-faq-accordion whl-faq-accordion-@faqId">
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button class="accordion-button collapsed fw-semibold text-dark" type="button" data-bs-toggle="collapse" data-bs-target="#@faqId" aria-expanded="false" aria-controls="@faqId">
+                    <span class="fs-4"><i class="fa-regular fa-circle-question"></i>&nbsp;@faq.Title</span>
+                  </button>
+                </h2>
+                <div id="@faqId" class="accordion-collapse collapse whl-faq-accordion-collapse" data-faqid="@faqId">
+                  <div class="accordion-body fs-6">
+                    <div style="white-space: pre-line; text-align: justify;">@faq.Text</div>
+                    @if (!string.IsNullOrEmpty((faq.Url ?? "").Trim()))
+                    {
+                      <div class="mt-16 mb-3"><a class="whl-link" href="@faq.Url" target="_blank"><i class="fa-solid fa-globe"></i> @faq.Url</a></div>
+                    }
+                    @if (!string.IsNullOrEmpty((faq.Url1 ?? "").Trim()))
+                    {
+                      <div class="mt-16 mb-3"><a class="whl-link" href="@faq.Url1" target="_blank"><i class="fa-solid fa-globe"></i> @faq.Url1</a></div>
+                    }
+                    @if (!string.IsNullOrEmpty((faq.Url2 ?? "").Trim()))
+                    {
+                      <div class="mt-16 mb-3"><a class="whl-link" href="@faq.Url2" target="_blank"><i class="fa-solid fa-globe"></i> @faq.Url2</a></div>
+                    }
+                    @if (!string.IsNullOrEmpty((faq.Url3 ?? "").Trim()))
+                    {
+                      <div class="mt-16 mb-3"><a class="whl-link" href="@faq.Url3" target="_blank"><i class="fa-solid fa-globe"></i> @faq.Url3</a></div>
+                    }
+                    @if (!string.IsNullOrEmpty((faq.Url4 ?? "").Trim()))
+                    {
+                      <div class="mt-16 mb-3"><a class="whl-link" href="@faq.Url4" target="_blank"><i class="fa-solid fa-globe"></i> @faq.Url4</a></div>
+                    }
+                    @if (!string.IsNullOrEmpty((faq.Url5 ?? "").Trim()))
+                    {
+                      <div class="mt-16 mb-3"><a class="whl-link" href="@faq.Url5" target="_blank"><i class="fa-solid fa-globe"></i> @faq.Url5</a></div>
+                    }
+                    @if (!string.IsNullOrEmpty((faq.Url6 ?? "").Trim()))
+                    {
+                      <div class="mt-16 mb-3"><a class="whl-link" href="@faq.Url6" target="_blank"><i class="fa-solid fa-globe"></i> @faq.Url6</a></div>
+                    }
+                    @if (!string.IsNullOrEmpty((faq.Url7 ?? "").Trim()))
+                    {
+                      <div class="mt-16 mb-3"><a class="whl-link" href="@faq.Url7" target="_blank"><i class="fa-solid fa-globe"></i> @faq.Url7</a></div>
+                    }
+                    @if (!string.IsNullOrEmpty((faq.Url8 ?? "").Trim()))
+                    {
+                      <div class="mt-16 mb-3"><a class="whl-link" href="@faq.Url8" target="_blank"><i class="fa-solid fa-globe"></i> @faq.Url8</a></div>
+                    }
+                    @if (!string.IsNullOrEmpty((faq.Url9 ?? "").Trim()))
+                    {
+                      <div class="mt-16 mb-3"><a class="whl-link" href="@faq.Url9" target="_blank"><i class="fa-solid fa-globe"></i> @faq.Url9</a></div>
+                    }
+                  </div>
+                </div>
+              </div>
+            </div>
+          }
+          <p class="mb-3">&nbsp;</p>
+        </div>
+      </div>
+    }
+  }
+  else
+  {
+    @await Html.PartialAsync("~/Views/Shared/_ComingSoonContent.cshtml")
+  }
+</div>
+
+@section Scripts
+{
+  <script src="~/js/home/faqs.actions.js" asp-append-version="true"></script>
+}

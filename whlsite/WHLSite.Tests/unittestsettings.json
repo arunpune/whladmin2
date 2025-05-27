@@ -1,0 +1,5 @@
+{
+  "ConnectionStrings": {
+    "SiteDbConnString": "Server=UNITTESTDBSERVER;Database=UNITTESTDB;"
+  }
+}

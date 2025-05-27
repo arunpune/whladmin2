@@ -1,0 +1,147 @@
+﻿@model EditableAmortizationViewModel
+
+<div class="text-left">
+  @using (Html.BeginForm("Add", "Amortizations", FormMethod.Post))
+  {
+    <div id="divSaveErrorMessage" style="display: none;">
+      <h6 class="text-danger"><i class="fa-solid fa-triangle-exclamation"></i>&nbsp;Error</h6>
+      <p id="lblSaveErrorMessage">Failed to save amortization information</p>
+      <hr />
+    </div>
+
+    @if (Model.Mode == "ADD")
+    {
+      <div class="row mb-3">
+        <div class="col-xs-12 col-md-3">
+          <label class="form-label small fw-bolder" asp-for="Rate">Rate <span class="text-danger">*</span></label><br />
+          <input type="text" class="form-control form-control-sm whl-formfield-rate" placeholder="Enter Rate" maxlength="7"
+            asp-for="Rate" />
+        </div>
+      </div>
+    }
+    else
+    {
+      <div class="row mb-3">
+        <div class="col-xs-12 col-md-3">
+          <label class="form-label small fw-bolder" asp-for="Rate">Rate <span class="text-danger">*</span></label><br />
+          <input type="text" class="form-control form-control-sm whl-formfield-rate" placeholder="Enter Rate" maxlength="7"
+            value="@Model.Rate" disabled="disabled" aria-disabled="true" />
+        </div>
+      </div>
+      @Html.HiddenFor(h => h.Rate)
+    }
+
+    <div class="row mb-3">
+      <div class="col-xs-12 col-md-3">
+        <label class="form-label small fw-bolder" asp-for="RateInterestOnly">Interest Only <span
+            class="text-danger">*</span></label><br />
+        <input type="text" class="form-control form-control-sm whl-formfield-rate whl-formfield-interestonly"
+          placeholder="Enter Interest Only Rate" maxlength="7" asp-for="RateInterestOnly" />
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-xs-12 col-md-3">
+        <label class="form-label small fw-bolder" asp-for="Rate10Year">10 Year <span
+            class="text-danger">*</span></label><br />
+        <input type="text" class="form-control form-control-sm whl-formfield-rate whl-formfield-10year"
+          placeholder="Enter 10 Year Rate" maxlength="7" asp-for="Rate10Year" />
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-xs-12 col-md-3">
+        <label class="form-label small fw-bolder" asp-for="Rate15Year">15 Year <span
+            class="text-danger">*</span></label><br />
+        <input type="text" class="form-control form-control-sm whl-formfield-rate whl-formfield-15year"
+          placeholder="Enter 15 Year Rate" maxlength="7" asp-for="Rate15Year" />
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-xs-12 col-md-3">
+        <label class="form-label small fw-bolder" asp-for="Rate20Year">20 Year <span
+            class="text-danger">*</span></label><br />
+        <input type="text" class="form-control form-control-sm whl-formfield-rate whl-formfield-20year"
+          placeholder="Enter 20 Year Rate" maxlength="7" asp-for="Rate20Year" />
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-xs-12 col-md-3">
+        <label class="form-label small fw-bolder" asp-for="Rate25Year">25 Year <span
+            class="text-danger">*</span></label><br />
+        <input type="text" class="form-control form-control-sm whl-formfield-rate whl-formfield-25year"
+          placeholder="Enter 25 Year Rate" maxlength="7" asp-for="Rate25Year" />
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-xs-12 col-md-3">
+        <label class="form-label small fw-bolder" asp-for="Rate30Year">30 Year <span
+            class="text-danger">*</span></label><br />
+        <input type="text" class="form-control form-control-sm whl-formfield-rate whl-formfield-30year"
+          placeholder="Enter 30 Year Rate" maxlength="7" asp-for="Rate30Year" />
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-xs-12 col-md-3">
+        <label class="form-label small fw-bolder" asp-for="Rate40Year">40 Year <span
+            class="text-danger">*</span></label><br />
+        <input type="text" class="form-control form-control-sm whl-formfield-rate whl-formfield-40year"
+          placeholder="Enter 40 Year Rate" maxlength="7" asp-for="Rate40Year" />
+      </div>
+    </div>
+
+  }
+</div>
+
+<script>
+  //<![CDATA[
+  $(function () {
+
+    // Disable submission
+    $('.whl-action-save-amortization').attr('disabled', 'disabled');
+    fnToggleSaveAmortization();
+
+    $('.whl-formfield-rate').on('keypress', function (e) {
+      $(this).removeClass('is-valid');
+      $(this).removeClass('is-invalid');
+      var k = String.fromCharCode(e.keyCode);
+      var v = $(this).val();
+      if (v === undefined || v === null) v = '';
+      if (k === '.') return v.indexOf('.') === -1;
+      return /\d/.test(k);
+    });
+    $('.whl-formfield-rate').on('change', function (e) {
+      $(this).removeClass('is-valid');
+      $(this).removeClass('is-invalid');
+      var v = $(this).val();
+      if (fnIsValidRate(v)) {
+        $(this).addClass('is-valid');
+      } else {
+        $(this).addClass('is-invalid');
+      }
+      fnToggleSaveAmortization();
+    });
+
+    function fnToggleSaveAmortization() {
+      var allowSubmission = true;
+      $('.whl-formfield-rate').each(function (i, elem) {
+        var v = $(elem).val();
+        if (!fnIsValidRate(v)) {
+          allowSubmission = false;
+          return false;
+        }
+      });
+      if (allowSubmission) {
+        $('.whl-action-save-amortization').removeAttr('disabled');
+      }
+      else {
+        $('.whl-action-save-amortization').attr('disabled', 'disabled');
+      }
+    }
+  });
+  //]]>
+</script>

@@ -1,0 +1,196 @@
+﻿@model FaqConfigsViewModel
+@{
+  ViewData["Title"] = "FAQs";
+  var faqsCount = Model.Faqs?.Count() ?? 0;
+}
+
+<div class="row">
+  <div class="col-xs-12 col-md-9">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a class="whl-link" asp-area="" asp-controller="Home" asp-action="Index"
+            title="Home"><small><i class="fa-solid fa-house"></i></small></a></li>
+        <li class="breadcrumb-item"><small>Public Site</small></li>
+        <li class="breadcrumb-item active fs-6 fw-bolder" aria-current="page"><small>@ViewData["Title"]</small></li>
+      </ol>
+    </nav>
+  </div>
+  <div class="col-xs-12 col-md-3 text-end">
+    @if (Model.CanEdit)
+    {
+      <button type="button" class="btn btn-sm btn-link whl-link mr-8 whl-action-add-faq" title="Add a new FAQ"
+        aria-label="Add a new FAQ"><i class="fa-solid fa-plus"></i></button>
+    }
+    <button type="button" class="btn btn-sm btn-link whl-link mr-4 whl-action-refresh-page" title="Refresh"
+      aria-label="Refresh"><i class="fa-solid fa-rotate-right"></i></button>
+  </div>
+</div>
+
+<div class="text-left mt-8">
+  @if (faqsCount > 0)
+  {
+    var categories = Model.Faqs.OrderBy(o => o.DisplayOrder).Select(s => s.CategoryName).Distinct();
+    var categoryCount = categories?.Count() ?? 0;
+    var categoryCtr = 0;
+    <ul class="nav nav-tabs mb-3" id="faqs-tab-content" role="tablist">
+      @foreach (var categoryName in categories)
+      {
+        categoryCtr++;
+        <li class="nav-item" role="presentation">
+          <button type="button" class="nav-link whl-link fw-bold" id="faqs-@categoryCtr-tab" data-bs-toggle="tab"
+            data-bs-target="#faqs-@categoryCtr-tab-pane" role="tab" aria-controls="faqs-@categoryCtr-tab-pane">
+            <small>@categoryName</small>
+          </button>
+        </li>
+      }
+    </ul>
+    <div class="tab-content">
+      @{
+        categoryCtr = 0;
+      }
+      @foreach (var categoryName in categories)
+      {
+        categoryCtr++;
+        var tabIndex = categoryCtr - 1;
+        var faqs = Model.Faqs?.Where(w => w.CategoryName.Equals(categoryName,
+        StringComparison.CurrentCultureIgnoreCase))?.OrderBy(o => o.DisplayOrder);
+        var categoryFaqsCount = faqs?.Count() ?? 0;
+        <div class="tab-pane fade" id="faqs-@categoryCtr-tab-pane" role="tabpanel" aria-labelledby="faqs-@categoryCtr-tab"
+          tabindex="@tabIndex">
+          @if (categoryFaqsCount > 0)
+          {
+            foreach (var faq in faqs)
+            {
+              <div class="card mt-8">
+                <div class="card-header">
+                  <h6>@if (faq.Active)
+                    {
+                      <i class="fa-solid fa-circle-dot text-success" title="FAQ is active"></i>
+                    }
+                        else
+                    {
+                      <i class="fa-solid fa-circle-stop text-danger" title="FAQ is inactive"></i>
+                    }
+                    &nbsp;@($"{faq.DisplayOrder}. {faq.Title}")
+                  </h6>
+                </div>
+                <div class="card-body">
+                  <div class="card-text mb-3">
+                    <div style="white-space: pre-line;">@faq.Text</div>
+                    @if (!string.IsNullOrEmpty((faq.Url ?? "").Trim()))
+                    {
+                      <p class="mt-16 mb-3"><a class="whl-link" href="@faq.Url" target="_blank"><i class="fa-solid fa-globe"></i>
+                          @faq.Url</a></p>
+                    }
+                    @if (!string.IsNullOrEmpty((faq.Url1 ?? "").Trim()))
+                    {
+                      <p class="mt-16 mb-3"><a class="whl-link" href="@faq.Url1" target="_blank"><i class="fa-solid fa-globe"></i>
+                          @faq.Url1</a></p>
+                    }
+                    @if (!string.IsNullOrEmpty((faq.Url2 ?? "").Trim()))
+                    {
+                      <p class="mt-16 mb-3"><a class="whl-link" href="@faq.Url2" target="_blank"><i class="fa-solid fa-globe"></i>
+                          @faq.Url2</a></p>
+                    }
+                    @if (!string.IsNullOrEmpty((faq.Url3 ?? "").Trim()))
+                    {
+                      <p class="mt-16 mb-3"><a class="whl-link" href="@faq.Url3" target="_blank"><i class="fa-solid fa-globe"></i>
+                          @faq.Url3</a></p>
+                    }
+                    @if (!string.IsNullOrEmpty((faq.Url4 ?? "").Trim()))
+                    {
+                      <p class="mt-16 mb-3"><a class="whl-link" href="@faq.Url4" target="_blank"><i class="fa-solid fa-globe"></i>
+                          @faq.Url4</a></p>
+                    }
+                    @if (!string.IsNullOrEmpty((faq.Url5 ?? "").Trim()))
+                    {
+                      <p class="mt-16 mb-3"><a class="whl-link" href="@faq.Url5" target="_blank"><i class="fa-solid fa-globe"></i>
+                          @faq.Url5</a></p>
+                    }
+                    @if (!string.IsNullOrEmpty((faq.Url6 ?? "").Trim()))
+                    {
+                      <p class="mt-16 mb-3"><a class="whl-link" href="@faq.Url6" target="_blank"><i class="fa-solid fa-globe"></i>
+                          @faq.Url6</a></p>
+                    }
+                    @if (!string.IsNullOrEmpty((faq.Url7 ?? "").Trim()))
+                    {
+                      <p class="mt-16 mb-3"><a class="whl-link" href="@faq.Url7" target="_blank"><i class="fa-solid fa-globe"></i>
+                          @faq.Url7</a></p>
+                    }
+                    @if (!string.IsNullOrEmpty((faq.Url8 ?? "").Trim()))
+                    {
+                      <p class="mt-16 mb-3"><a class="whl-link" href="@faq.Url8" target="_blank"><i class="fa-solid fa-globe"></i>
+                          @faq.Url8</a></p>
+                    }
+                    @if (!string.IsNullOrEmpty((faq.Url9 ?? "").Trim()))
+                    {
+                      <p class="mt-16 mb-3"><a class="whl-link" href="@faq.Url9" target="_blank"><i class="fa-solid fa-globe"></i>
+                          @faq.Url9</a></p>
+                    }
+                  </div>
+                  @if (Model.CanEdit)
+                  {
+                    <a href="javascript:void(0);" class="whl-link whl-action-edit-faq" data-faqid="@faq.FaqId"
+                      title="Edit FAQ"><small><i class="fa-solid fa-pencil"></i>&nbsp;Edit</small></a>
+                    @* <a href="javascript:void(0);" class="whl-link whl-action-delete-faq ml-4" data-faqid="@faq.FaqId" data-faqtitle="@faq.Title" title="Delete FAQ"><i
+                        class="fa-solid fa-trash"></i>&nbsp;Delete</a> *@
+                  }
+                  <a class="whl-link whl-action-view-audit ml-8" data-entitytype="FAQ" data-entityid="@faq.FaqId"
+                    title="View audit log" href="javascript:void(0);"><small><i class="fa-solid fa-list"></i>&nbsp;View Audit
+                      Log</small></a>
+                </div>
+              </div>
+            }
+          }
+          else
+          {
+            <div class="text-center">No FAQs found</div>
+          }
+        </div>
+      }
+    </div>
+  }
+  else
+  {
+    <div class="text-center">No FAQs found</div>
+  }
+</div>
+
+<!-- Faq Editor Modal -->
+<div class="modal fade" id="faqEditorModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+  aria-labelledby="faqEditorModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="faqEditorModalLabel"><span id="whl-title-faq-action">FAQ Editor</span></h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+      </div>
+      <div class="modal-footer">
+        <input type="hidden" id="hidFaqAction" name="hidFaqAction" value="" />
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i
+            class="fa-solid fa-ban"></i>&nbsp;Cancel</button>
+        <button type="button" class="btn btn-primary whl-action-save-faq"><i
+            class="fa-solid fa-floppy-disk"></i>&nbsp;Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Audit Viewer Modal -->
+@await Html.PartialAsync("~/Views/Shared/_AuditViewerModalPartial.cshtml")
+
+@section Scripts
+{
+  <script>
+    //<![CDATA[
+    const faqConfigAddUrl = '@Url.Action("Add", "FAQConfigs")';
+    const faqConfigEditUrl = '@Url.Action("Edit", "FAQConfigs")';
+    const faqConfigDeleteUrl = '@Url.Action("Delete", "FAQConfigs")';
+    const auditViewerUrl = '@Url.Action("Index", "Audit")';
+    //]]>
+  </script>
+  <script src="~/js/management/common.js" asp-append-version="true"></script>
+  <script src="~/js/management/faqconfigs.js" asp-append-version="true"></script>
+}

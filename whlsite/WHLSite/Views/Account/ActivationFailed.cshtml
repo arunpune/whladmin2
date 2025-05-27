@@ -1,0 +1,49 @@
+@model ErrorViewModel
+@{
+  ViewData["Title"] = "Activation Failed";
+  ViewData["MENUID"] = "PROFILE";
+}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a class="whl-link" asp-area="" asp-controller="Home" asp-action="Index" title="Home"><i
+          class="fa-solid fa-house"></i></a></li>
+    <li class="breadcrumb-item active" aria-current="page">Register</li>
+  </ol>
+</nav>
+
+<div class="text-left mt-32 registration-page">
+  <div class="card mt-16 mb-3 shadow-sm">
+    <div class="card-body">
+      <h4 class="text-danger">Activation Failed</h4>
+      @if (Model.Code == "R110")
+      {
+        <p>HomeSeeker Account activation link is no longer valid. Please request a
+          <a class="whl-link" asp-area="" asp-controller="Account" asp-action="ResendActivation"
+            title="Click here to request a new activation link via email"
+            aria-label="Click here to request a new activation link via email">new activation link</a>, or email <a
+            href="mailto:homeseeker@westchestercountyny.gov?subject=Account Activation Support">homeseeker@westchestercountyny.gov</a>
+          with the subject <strong>Account Activation Support</strong> &ndash; please have your email address on file
+          ready.
+        </p>
+      }
+      else
+      {
+        <p>HomeSeeker Account activation failed. If you feel this message was shown in error, Please request for a
+          <a class="whl-link" asp-area="" asp-controller="Account" asp-action="ResendActivation"
+            title="Click here to request a new activation link via email"
+            aria-label="Click here to request a new activation link via email">new activation link</a>, or email <a
+            href="mailto:homeseeker@westchestercountyny.gov?subject=Account Activation Support">homeseeker@westchestercountyny.gov</a>
+          with the subject <strong>Account Activation Support</strong> &ndash; please have your email address on file
+          ready.
+        </p>
+      }
+      @if (Model.ShowRequestId)
+      {
+        <p>
+          <strong>Code:</strong> <code>@Model.RequestId</code>
+        </p>
+      }
+    </div>
+  </div>
+</div>

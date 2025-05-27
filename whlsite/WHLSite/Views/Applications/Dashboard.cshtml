@@ -1,0 +1,137 @@
+@model DashboardViewModel
+@{
+  ViewData["Title"] = "Dashboard";
+  ViewData["MENUID"] = "DASHBOARD";
+}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a class="whl-link" asp-area="" asp-controller="Home" asp-action="Index" title="Home"><i
+          class="fa-solid fa-house"></i></a></li>
+    <li class="breadcrumb-item active" aria-current="page">My Dashboard</li>
+  </ol>
+</nav>
+
+<div class="text-left mt-32 dashboard-page">
+  <div class="card text-bg-light shadow-sm">
+    <div class="card-body">
+
+      <div class="row mb-3 border-bottom">
+        <div class="col-xs-12 col-md-2">
+          <small class="fw-bold">Application</small>
+        </div>
+        <div class="col-xs-11 col-md-3">
+          <small class="fw-bold">Opportunity</small>
+        </div>
+        <div class="col-xs-12 col-md-1">
+          <small class="fw-bold">Status</small>
+        </div>
+        <div class="col-xs-12 col-md-2">
+          <small class="fw-bold">Due Date</small>
+        </div>
+        <div class="col-xs-12 col-md-2">
+          <small class="fw-bold">Lottery Date</small>
+        </div>
+        <div class="col-xs-12 col-md-2">
+          <small class="fw-bold">Submitted</small>
+        </div>
+      </div>
+      @if (Model.ApplicationsCount > 0)
+      {
+        foreach (var application in Model.Applications)
+        {
+          <div class="row mb-3">
+            <div class="col-xs-12 col-md-2" style="word-wrap: initial; word-break: initial;">
+              @if (application.IsDraft)
+              {
+                <small><a class="whl-link" asp-area="" asp-controller="Applications" asp-action="ApplicationInfo" asp-route-applicationId="@application.ApplicationId" title="Continue application" aria-label="Continue application">@application.ApplicationId</a></small>
+              }
+              else
+              {
+                <small>
+                  <a class="whl-link" asp-area="" asp-controller="Applications" asp-action="Details" asp-route-applicationId="@application.ApplicationId" title="View submission" aria-label="View submission">@application.ApplicationId</a>
+                  @if (application.IsPotentialDuplicate)
+                  {
+                    <i class="fa-regular fa-flag text-warning ml-4" title="This application has been identified as a Potential Duplicate. You may review/respond to the administrator using the comments section." aria-label="This application has been identified as a Potential Duplicate. You may review/respond to the administrator using the comments section."></i>
+                  }
+                  else if (application.IsDuplicate)
+                  {
+                    <i class="fa-regular fa-flag text-danger ml-4" title="This application has been identified as a Duplicate and has been withdrawn from consideration. You may review the comments section for more details." aria-label="This application has been identified as a Duplicate and has been withdrawn from consideration. You may review the comments section for more details."></i>
+                  }
+                </small>
+              }
+            </div>
+            <div class="col-xs-11 col-md-3">
+              <small>
+                @application.Name<br />
+                <span class="text-secondary">@($"{application.StreetLine1}, {application.City} {application.StateCd} {application.ZipCode}")</span>
+              </small>
+            </div>
+            <div class="col-xs-12 col-md-1">
+              <small>@application.StatusDescription</small>
+            </div>
+            <div class="col-xs-12 col-md-2">
+              <small>
+                @if (application.ApplicationEndDate.GetValueOrDefault(DateTime.MinValue) > DateTime.MinValue)
+                {
+                  @($"{application.ApplicationEndDate.Value:MMM d, yyyy h:mm tt}")
+                }
+                else
+                {
+                  <span>None</span>
+                }
+              </small>
+            </div>
+            <div class="col-xs-12 col-md-2">
+              <small>
+                @if (application.LotteryEligible)
+                {
+                  if (application.LotteryDate.GetValueOrDefault(DateTime.MinValue) > DateTime.MinValue)
+                  {
+                    @($"{application.LotteryDate.Value:MMM d, yyyy h:mm tt}")
+                  }
+                  else
+                  {
+                    <span>None</span>
+                  }
+                }
+                else
+                {
+                  <span>Not based on a Lottery</span>
+                }
+              </small>
+            </div>
+            <div class="col-xs-12 col-md-2">
+              <small>
+                @if (application.SubmittedDate.GetValueOrDefault(DateTime.MinValue) > DateTime.MinValue)
+                {
+                  @($"{application.SubmittedDate.Value:MMM d, yyyy h:mm tt}")
+                }
+              </small>
+            </div>
+          </div>
+        }
+      }
+      else
+      {
+        <div class="row mb-3 mt-32">
+          <div class="col-xs-12 text-center">
+            <p class="lead">You have not drafted or submitted any online housing applications to date.</p>
+          </div>
+        </div>
+      }
+
+    </div>
+  </div>
+</div>
+
+@section Scripts
+{
+  <script>
+    //<![CDATA[
+    $(function () {
+
+    });
+    //]]>
+  </script>
+}

@@ -1,0 +1,886 @@
+@model EditableApplicantInfoViewModel
+@{
+  ViewData["Title"] = Model.ApplicationId > 0 ? "Edit Housing Application" : "New Housing Application";
+  ViewData["MENUID"] = "DASHBOARD";
+}
+
+@await Html.PartialAsync("_Breadcrumb.cshtml", new RailroadViewModel(Model.Username, Model.ApplicationId, Model.ListingId, Model.StepNumber))
+
+<div class="text-left mt-32 bg-white">
+  @await Html.PartialAsync("_Railroad.cshtml", new RailroadViewModel(Model.Username, Model.ApplicationId, Model.ListingId, Model.StepNumber))
+  <div class="row mb-3">
+    <div class="col-xs-12 col-md-9">
+      <div class="card border-0">
+        <div class="card-body">
+          <h5 class="fs-4 border-bottom">Applicant Information</h5>
+          @using (Html.BeginForm("ApplicantInfo", "Applications", FormMethod.Post, new
+          {
+            @class = "form whl-form-applicant-info mt-32",
+            id = "frmApplicantInfo",
+            name = "frmApplicantInfo"
+          }))
+          {
+
+            if (!string.IsNullOrEmpty((Model.Message ?? "").Trim()))
+            {
+              <div id="divSaveErrorMessage">
+                <h6 class="text-danger"><i class="fa-solid fa-triangle-exclamation"></i>&nbsp;Error</h6>
+                <p id="lblSaveErrorMessage">@Model.Message</p>
+                <hr />
+              </div>
+            }
+
+            <div class="row mb-3">
+
+              <div class="col-xs-12 col-md-2" style="display: none;">
+                @Html.LabelFor(l => l.Title, htmlAttributes: new { @class = "form-label small fw-bolder" })<br />
+                @Html.TextBoxFor(e => e.Title, htmlAttributes: new
+                {
+                  @class = "form-control whl-formfield-title",
+                  maxlength = 10,
+                  placeholder = "Enter Title",
+                  autocomplete = "title"
+                })
+                @Html.ValidationMessageFor(v => v.FirstName)
+              </div>
+
+              <div class="col-xs-12 col-md-3">
+                @Html.LabelFor(l => l.FirstName, htmlAttributes: new { @class = "form-label small fw-bolder" })<br />
+                @Html.TextBoxFor(e => e.FirstName, htmlAttributes: new
+                {
+                  @class = "form-control whl-formfield-firstname",
+                  maxlength = 100,
+                  placeholder = "Enter First Name",
+                  autocomplete = "firstname"
+                })
+                @Html.ValidationMessageFor(v => v.FirstName)
+              </div>
+
+              <div class="col-xs-12 col-md-2">
+                @Html.LabelFor(l => l.MiddleName, htmlAttributes: new { @class = "form-label small fw-bolder" })<br />
+                @Html.TextBoxFor(e => e.MiddleName, htmlAttributes: new
+                {
+                  @class = "form-control whl-formfield-middlename",
+                  maxlength = 100,
+                  placeholder = "Enter Middle Name",
+                  autocomplete = "middleinitial"
+                })
+                @Html.ValidationMessageFor(v => v.MiddleName)
+              </div>
+
+              <div class="col-xs-12 col-md-3">
+                @Html.LabelFor(l => l.LastName, htmlAttributes: new { @class = "form-label small fw-bolder" })<br />
+                @Html.TextBoxFor(e => e.LastName, htmlAttributes: new
+                {
+                  @class = "form-control whl-formfield-lastname",
+                  maxlength = 100,
+                  placeholder = "Enter Last Name",
+                  autocomplete = "lastname"
+                })
+                @Html.ValidationMessageFor(v => v.LastName)
+              </div>
+
+              <div class="col-xs-12 col-md-2">
+                @Html.LabelFor(l => l.Suffix, htmlAttributes: new { @class = "form-label small fw-bolder" })<br />
+                @Html.TextBoxFor(e => e.Suffix, htmlAttributes: new
+                {
+                  @class = "form-control whl-formfield-suffix",
+                  maxlength = 10,
+                  placeholder = "Enter Suffix",
+                  autocomplete = "suffix"
+                })
+                @Html.ValidationMessageFor(v => v.Suffix)
+              </div>
+
+            </div>
+
+            <div class="row mb-3 mt-32">
+
+              <div class="col-xs-12 col-md-3">
+                @Html.LabelFor(l => l.Last4SSN, htmlAttributes: new { @class = "form-label small fw-bolder" })<br />
+                @Html.TextBoxFor(e => e.Last4SSN, htmlAttributes: new
+                {
+                  @class = "form-control whl-formfield-last4ssn",
+                  maxlength = 4,
+                  placeholder = "NNNN",
+                  autocomplete = "off"
+                })
+                @Html.ValidationMessageFor(v => v.Last4SSN)
+              </div>
+
+              <div class="col-xs-12 col-md-3">
+                @Html.LabelFor(l => l.DateOfBirth, htmlAttributes: new { @class = "form-label small fw-bolder" })<br />
+                @Html.TextBoxFor(e => e.DateOfBirth, htmlAttributes: new
+                {
+                  type = "date",
+                  @class = "form-control whl-formfield-dateofbirth",
+                  maxlength = 10,
+                  placeholder = "MM/dd/yyyy",
+                  autocomplete = "off"
+                })
+                @Html.ValidationMessageFor(v => v.DateOfBirth)
+              </div>
+
+            </div>
+
+            <div class="row mb-3 mt-32">
+
+              <div class="col-xs-12 col-md-3">
+                @Html.LabelFor(l => l.IdTypeCd, htmlAttributes: new { @class = "form-label small fw-bolder" })<br />
+                @Html.DropDownListFor(e => e.IdTypeCd, new SelectList(Model.IdTypes, "Key", "Value", Model.IdTypeCd),
+                      htmlAttributes: new { @class = "form-select whl-formfield-idtypecd", placeholder = "Select ID Type" })
+                @Html.ValidationMessageFor(v => v.IdTypeCd)
+              </div>
+
+              <div class="col-xs-12 col-md-3">
+                @Html.LabelFor(l => l.IdTypeValue, htmlAttributes: new { @class = "form-label small fw-bolder" })<br />
+                @Html.TextBoxFor(e => e.IdTypeValue, htmlAttributes: new
+                {
+                  @class = "form-control whl-formfield-idtypevalue",
+                  maxlength = 20,
+                  placeholder = "NY 1234567890",
+                  autocomplete = "off"
+                })
+                @Html.ValidationMessageFor(v => v.IdTypeValue)
+              </div>
+
+              <div class="col-xs-12 col-md-3">
+                @Html.LabelFor(l => l.IdIssueDate, htmlAttributes: new { @class = "form-label small fw-bolder" })<br />
+                @Html.TextBoxFor(e => e.IdIssueDate, htmlAttributes: new
+                {
+                  type = "date",
+                  @class = "form-control whl-formfield-idissuedate",
+                  maxlength = 10,
+                  placeholder = "MM/dd/yyyy",
+                  autocomplete = "off"
+                })
+                @Html.ValidationMessageFor(v => v.IdIssueDate)
+              </div>
+
+            </div>
+
+            <div class="row mb-3 mt-32">
+
+              <div class="col-xs-12 col-md-3">
+                @Html.LabelFor(l => l.GenderCd, htmlAttributes: new { @class = "form-label small fw-bolder" })<br />
+                @Html.DropDownListFor(e => e.GenderCd, new SelectList(Model.GenderTypes, "Key", "Value", Model.GenderCd),
+                      htmlAttributes: new { @class = "form-select whl-formfield-gendercd", placeholder = "Select Gender" })
+                @Html.ValidationMessageFor(v => v.GenderCd)
+              </div>
+
+              <div class="col-xs-12 col-md-6">
+                @Html.LabelFor(l => l.RaceCd, htmlAttributes: new { @class = "form-label small fw-bolder" })<br />
+                @Html.DropDownListFor(e => e.RaceCd, new SelectList(Model.RaceTypes, "Key", "Value", Model.RaceCd),
+                      htmlAttributes: new { @class = "form-select whl-formfield-racecd", placeholder = "Select Race" })
+                @Html.ValidationMessageFor(v => v.RaceCd)
+              </div>
+
+              <div class="col-xs-12 col-md-3">
+                @Html.LabelFor(l => l.EthnicityCd, htmlAttributes: new { @class = "form-label small fw-bolder" })<br />
+                @Html.DropDownListFor(e => e.EthnicityCd, new SelectList(Model.EthnicityTypes, "Key", "Value", Model.EthnicityCd),
+                      htmlAttributes: new { @class = "form-select whl-formfield-ethnicitycd", placeholder = "Select Ethnicity" })
+                @Html.ValidationMessageFor(v => v.EthnicityCd)
+              </div>
+
+            </div>
+
+            <div class="row mb-3 mt-32">
+
+              <div class="col-xs-12 col-md-3">
+                <div class="form-check form-switch">
+                  @Html.CheckBoxFor(m => m.StudentInd, htmlAttributes: new { @class = "form-check-input whl-formfield-studentind", role = "switch" })
+                  @Html.LabelFor(l => l.StudentInd, htmlAttributes: new { @class = "form-check-label" })
+                </div>
+              </div>
+
+              <div class="col-xs-12 col-md-3">
+                <div class="form-check form-switch">
+                  @Html.CheckBoxFor(m => m.DisabilityInd, htmlAttributes: new { @class = "form-check-input whl-formfield-disabilityind", role = "switch" })
+                  @Html.LabelFor(l => l.DisabilityInd, htmlAttributes: new { @class = "form-check-label" })
+                </div>
+              </div>
+
+              <div class="col-xs-12 col-md-3">
+                <div class="form-check form-switch">
+                  @Html.CheckBoxFor(m => m.VeteranInd, htmlAttributes: new { @class = "form-check-input whl-formfield-veteranind", role = "switch" })
+                  @Html.LabelFor(l => l.VeteranInd, htmlAttributes: new { @class = "form-check-label" })
+                </div>
+              </div>
+
+            </div>
+
+            <div class="row mb-3 mt-32">
+
+              <div class="col-xs-12 col-md-6">
+                <div class="form-check form-switch">
+                  @Html.CheckBoxFor(m => m.EverLivedInWestchesterInd, htmlAttributes: new { @class = "form-check-input whl-formfield-everlivedinind", role = "switch" })
+                  @Html.LabelFor(l => l.EverLivedInWestchesterInd, htmlAttributes: new { @class = "form-check-label" })
+                </div>
+              </div>
+
+              <div class="col-xs-12 col-md-6">
+                <div class="form-check form-switch">
+                  @Html.CheckBoxFor(m => m.CurrentlyWorkingInWestchesterInd, htmlAttributes: new { @class = "form-check-input whl-formfield-currentlyworkinginind", role = "switch" })
+                  @Html.LabelFor(l => l.CurrentlyWorkingInWestchesterInd, htmlAttributes: new { @class = "form-check-label" })
+                </div>
+              </div>
+
+            </div>
+
+            <div class="row mb-3 mt-64">
+              <div class="col-xs-12">
+                <h5 class="fs5 border-bottom text-secondary">Contact Information</h5>
+              </div>
+            </div>
+
+            <div class="row mb-3">
+
+              <div class="col-xs-12 col-md-3">
+                @Html.LabelFor(l => l.PhoneNumber, htmlAttributes: new { @class = "form-label small fw-bolder" })<br />
+                @Html.TextBoxFor(e => e.PhoneNumber, htmlAttributes: new
+                {
+                  @class = "form-control whl-formfield-phonenumber",
+                  placeholder = "Enter Phone Number",
+                  autocomplete = "phone"
+                })
+                @* <div id="whl-formfield-helptext-phonenumber" class="form-text">This is your primary US phone number.</div> *@
+                @Html.ValidationMessageFor(v => v.PhoneNumber)
+              </div>
+
+              <div class="col-xs-12 col-sm-9 col-md-2">
+                @Html.LabelFor(l => l.PhoneNumberExtn, "Extension", htmlAttributes: new { @class = "form-label small fw-bolder" })<br />
+                @Html.TextBoxFor(e => e.PhoneNumberExtn, htmlAttributes: new
+                {
+                  @class = "form-control whl-formfield-phonenumberextn",
+                  placeholder = "Extn",
+                  autocomplete = "off"
+                })
+                @* <div id="whl-formfield-helptext-phonenumberextn" class="form-text">Enter the extension if you have one.</div> *@
+                @Html.ValidationMessageFor(v => v.PhoneNumberExtn)
+              </div>
+
+              <div class="col-xs-12 col-sm-12 col-md-3">
+                @Html.LabelFor(l => l.PhoneNumberTypeCd, "Type", htmlAttributes: new { @class = "form-label small fw-bolder" })
+                @Html.DropDownListFor(e => e.PhoneNumberTypeCd, new SelectList(Model.PhoneNumberTypes, "Key", "Value", Model.PhoneNumberTypeCd), htmlAttributes: new
+                {
+                  @class = "form-select whl-formfield-phonenumbertypecd",
+                  placeholder = "Select Phone Number Type",
+                  autocomplete = "off"
+                })
+                @* <div id="whl-formfield-helptext-phonenumbertypecd" class="form-text">Specify type of primary US phone number.</div> *@
+                @Html.ValidationMessageFor(v => v.PhoneNumberTypeCd)
+              </div>
+
+            </div>
+
+            <div class="row mb-3 mt-32">
+
+              <div class="col-xs-12 col-md-3">
+                @Html.LabelFor(l => l.AltPhoneNumber, htmlAttributes: new { @class = "form-label small fw-bolder" })<br />
+                @Html.TextBoxFor(e => e.AltPhoneNumber, htmlAttributes: new
+                {
+                  @class = "form-control whl-formfield-altphonenumber",
+                  placeholder = "Enter Alternate Phone Number",
+                  autocomplete = "off"
+                })
+                @* <div id="whl-formfield-helptext-altphonenumber" class="form-text">This is your alternate US phone number.</div> *@
+                @Html.ValidationMessageFor(v => v.AltPhoneNumber)
+              </div>
+
+              <div class="col-xs-12 col-sm-9 col-md-2">
+                @Html.LabelFor(l => l.AltPhoneNumberExtn, "Extension", htmlAttributes: new { @class = "form-label small fw-bolder" })<br />
+                @Html.TextBoxFor(e => e.AltPhoneNumberExtn, htmlAttributes: new
+                {
+                  @class = "form-control whl-formfield-altphonenumberextn",
+                  placeholder = "Extn",
+                  autocomplete = "off"
+                })
+                @* <div id="whl-formfield-helptext-altphonenumberextn" class="form-text">Enter the extension if you have one.</div> *@
+                @Html.ValidationMessageFor(v => v.AltPhoneNumberExtn)
+              </div>
+
+              <div class="col-xs-12 col-sm-12 col-md-3">
+                @Html.LabelFor(l => l.AltPhoneNumberTypeCd, "Type", htmlAttributes: new { @class = "form-label small fw-bolder" })
+                @Html.DropDownListFor(e => e.AltPhoneNumberTypeCd, new SelectList(Model.PhoneNumberTypes, "Key", "Value", Model.AltPhoneNumberTypeCd), htmlAttributes: new
+                {
+                  @class = "form-select whl-formfield-altphonenumbertypecd",
+                  placeholder = "Select Phone Number Type",
+                  autocomplete = "off"
+                })
+                @* <div id="whl-formfield-helptext-altphonenumbertypecd" class="form-text">Specify type of alternate US phone number.</div> *@
+                @Html.ValidationMessageFor(v => v.AltPhoneNumberTypeCd)
+              </div>
+
+            </div>
+
+            <div class="row mb-3 mt-32">
+
+              <div class="col-xs-12 col-md-6">
+                @Html.LabelFor(l => l.EmailAddress, htmlAttributes: new { @class = "form-label small fw-bolder" })<br />
+                @Html.TextBoxFor(e => e.EmailAddress, htmlAttributes: new
+                {
+                  @class = "form-control whl-formfield-emailaddress",
+                  placeholder = "Enter Email Address",
+                  autocomplete = "email",
+                  disabled = "disabled"
+                })
+                @* <div id="whl-formfield-helptext-emailaddress" class="form-text">Enter your primary email address if you
+                  have one.</div> *@
+                @Html.ValidationMessageFor(v => v.AltEmailAddress)
+              </div>
+
+              <div class="col-xs-12 col-md-6">
+                @Html.LabelFor(l => l.AltEmailAddress, htmlAttributes: new { @class = "form-label small fw-bolder" })<br />
+                @Html.TextBoxFor(e => e.AltEmailAddress, htmlAttributes: new
+                {
+                  @class = "form-control whl-formfield-altemailaddress",
+                  placeholder = "Enter Alternate Email Address",
+                  autocomplete = "email"
+                })
+                @* <div id="whl-formfield-helptext-altemailaddress" class="form-text">Enter an alternate email address if you
+                  have one. This email address should not match your primary email address on file.</div> *@
+                @Html.ValidationMessageFor(v => v.AltEmailAddress)
+              </div>
+
+            </div>
+
+            <div class="row mb-3 mt-64">
+              <div class="col-xs-12">
+                <h5 class="fs5 border-bottom text-secondary">Income &amp; Assets Information</h5>
+              </div>
+            </div>
+
+            <div class="row mb-3">
+
+              <div class="col-xs-12 col-md-6">
+                @Html.LabelFor(l => l.IncomeValueAmt, htmlAttributes: new { @class = "form-label small fw-bolder" })<br />
+                @Html.TextBoxFor(e => e.IncomeValueAmt, htmlAttributes: new
+                {
+                  @class = "form-control whl-formfield-incomevalueamt",
+                  placeholder = "Enter Total Annual Gross Income",
+                  maxlength = 9,
+                  autocomplete = "off"
+                })
+                @* <div id="whl-formfield-helptext-incomevalueamt" class="form-text">Enter the gross value of all income you receive annually.</div> *@
+                @Html.ValidationMessageFor(v => v.IncomeValueAmt)
+              </div>
+
+              @* <div class="col-xs-12 col-md-6">
+                @Html.LabelFor(l => l.AssetValueAmt, htmlAttributes: new { @class = "form-label small fw-bolder" })<br />
+                @Html.TextBoxFor(e => e.AssetValueAmt, htmlAttributes: new
+                {
+                  @class = "form-control whl-formfield-assetvalueamt",
+                  placeholder = "Enter Total Value of all Owned Assets excluding Real Estate",
+                  maxlength = 9,
+                  autocomplete = "off"
+                })
+                <div id="whl-formfield-helptext-assetvalueamt" class="form-text">Enter the total value of all non-real estate assets you own.</div>
+                @Html.ValidationMessageFor(v => v.AssetValueAmt)
+              </div> *@
+
+            </div>
+
+            <div class="row mb-3">
+
+              <div class="col-xs-12 col-md-6">
+                <div class="form-check form-switch mt-32">
+                  @Html.CheckBoxFor(m => m.OwnRealEstateInd, htmlAttributes: new { @class = "form-check-input whl-formfield-ownrealestateind", role = "switch" })
+                  @Html.LabelFor(l => l.OwnRealEstateInd, htmlAttributes: new { @class = "form-check-label" })
+                </div>
+              </div>
+
+              <div class="col-xs-12 col-md-6 whl-formfieldcol-realestatevalueamt" style="display: none;">
+                @Html.LabelFor(l => l.RealEstateValueAmt, htmlAttributes: new { @class = "form-label small fw-bolder" })<br />
+                @Html.TextBoxFor(e => e.RealEstateValueAmt, htmlAttributes: new
+                {
+                  @class = "form-control whl-formfield-realestatevalueamt",
+                  placeholder = "Enter Total Value of Owned Real Estate",
+                  maxlength = 9,
+                  autocomplete = "off"
+                })
+                @* <div id="whl-formfield-helptext-realestatevalueamt" class="form-text">Enter the total value of any real estate or shares in a Co-op you own.</div> *@
+                @Html.ValidationMessageFor(v => v.RealEstateValueAmt)
+              </div>
+
+            </div>
+
+            <div class="row mb-3">
+
+              <div class="col-xs-12 col-md-6">
+                <div class="form-check form-switch mt-32">
+                  @Html.CheckBoxFor(m => m.UpdateProfileInd, htmlAttributes: new { @class = "form-check-input whl-formfield-updateprofileind", role = "switch" })
+                  @Html.LabelFor(l => l.UpdateProfileInd, htmlAttributes: new { @class = "form-check-label" })
+                </div>
+              </div>
+
+            </div>
+
+            <div class="mt-32">
+              @await Html.PartialAsync("_Actions.cshtml", new ApplicationActionsViewModel(Model.Username, Model.ApplicationId, Model.ListingId, Model.StepNumber))
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+    <div class="col-xs-12 col-md-3">
+      @await Html.PartialAsync("_ListingDetails.cshtml", Model.ListingDetails)
+    </div>
+  </div>
+</div>
+
+@await Html.PartialAsync("~/Views/Applications/_WithdrawApplication.cshtml")
+
+@section Scripts
+{
+  <script>
+    //<![CDATA[
+    $(function () {
+
+      // Disable submission
+      $('.whl-action-save-draft').attr('disabled', 'disabled');
+      $('.whl-action-save-next').attr('disabled', 'disabled');
+      fnToggleRealEstateValueAmt();
+      fnToggleSave();
+
+      $('.whl-formfield-firstname').on('change', function (e) {
+        $(this).removeClass('is-valid');
+        $(this).removeClass('is-invalid');
+        var v = $(this).val();
+        if (v !== undefined && v !== null && v.trim().length > 0) {
+          $(this).addClass('is-valid');
+        } else {
+          $(this).addClass('is-invalid');
+        }
+        fnToggleSave();
+      });
+
+      $('.whl-formfield-lastname').on('change', function (e) {
+        $(this).removeClass('is-valid');
+        $(this).removeClass('is-invalid');
+        var v = $(this).val();
+        if (v !== undefined && v !== null && v.trim().length > 0) {
+          $(this).addClass('is-valid');
+        } else {
+          $(this).addClass('is-invalid');
+        }
+        fnToggleSave();
+      });
+
+      $('.whl-formfield-last4ssn').on('keypress', function (e) {
+        var reg = /^\d+$/;
+        var k = e.key;
+        return reg.test(e.key);
+      });
+
+      $('.whl-formfield-last4ssn').on('change', function (e) {
+        $(this).removeClass('is-valid');
+        $(this).removeClass('is-invalid');
+        var v = $(this).val();
+        if (v !== undefined && v !== null && v.trim().length === 4) {
+          $(this).addClass('is-valid');
+        } else {
+          $(this).addClass('is-invalid');
+        }
+        fnToggleSave();
+      });
+
+      $('.whl-formfield-dateofbirth').on('change', function (e) {
+        $(this).removeClass('is-valid');
+        $(this).removeClass('is-invalid');
+        var v = $(this).val();
+        if (v !== undefined && v !== null && v.trim().length > 0) {
+          $(this).addClass('is-valid');
+        } else {
+          $(this).addClass('is-invalid');
+        }
+        fnToggleSave();
+      });
+
+      $('.whl-formfield-idtypecd').on('change', function (e) {
+        $(this).removeClass('is-valid');
+        $(this).removeClass('is-invalid');
+        var v = $(this).val();
+        if (v !== undefined && v !== null && v.trim().length > 0) {
+          $(this).addClass('is-valid');
+        } else {
+          $(this).addClass('is-invalid');
+        }
+        fnToggleSave();
+      });
+
+      $('.whl-formfield-idtypevalue').on('change', function (e) {
+        $(this).removeClass('is-valid');
+        $(this).removeClass('is-invalid');
+        var v = $(this).val();
+        if (v !== undefined && v !== null && v.trim().length > 0) {
+          $(this).addClass('is-valid');
+        } else {
+          $(this).addClass('is-invalid');
+        }
+        fnToggleSave();
+      });
+
+      $('.whl-formfield-idissuedate').on('change', function (e) {
+        $(this).removeClass('is-valid');
+        $(this).removeClass('is-invalid');
+        var v = $(this).val();
+        if (v !== undefined && v !== null && v.trim().length > 0) {
+          $(this).addClass('is-valid');
+        } else {
+          $(this).addClass('is-invalid');
+        }
+        fnToggleSave();
+      });
+
+      $('.whl-formfield-gendercd').on('change', function (e) {
+        $(this).removeClass('is-valid');
+        $(this).removeClass('is-invalid');
+        var v = $(this).val();
+        if (v !== undefined && v !== null && v.trim().length > 0) {
+          $(this).addClass('is-valid');
+        } else {
+          $(this).addClass('is-invalid');
+        }
+        fnToggleSave();
+      });
+
+      $('.whl-formfield-racecd').on('change', function (e) {
+        $(this).removeClass('is-valid');
+        $(this).removeClass('is-invalid');
+        var v = $(this).val();
+        if (v !== undefined && v !== null && v.trim().length > 0) {
+          $(this).addClass('is-valid');
+        } else {
+          $(this).addClass('is-invalid');
+        }
+        fnToggleSave();
+      });
+
+      $('.whl-formfield-ethnicitycd').on('change', function (e) {
+        $(this).removeClass('is-valid');
+        $(this).removeClass('is-invalid');
+        var v = $(this).val();
+        if (v !== undefined && v !== null && v.trim().length > 0) {
+          $(this).addClass('is-valid');
+        } else {
+          $(this).addClass('is-invalid');
+        }
+        fnToggleSave();
+      });
+
+      $('.whl-formfield-phonenumber').on('keypress', function (e) {
+        var reg = /^\d+$/;
+        var k = e.key;
+        return reg.test(e.key);
+      });
+
+      $('.whl-formfield-phonenumber').on('change', function (e) {
+        $(this).removeClass('is-valid');
+        $(this).removeClass('is-invalid');
+        var v = $(this).val();
+        if (fnIsValidPhoneNumber(v)) {
+          $(this).addClass('is-valid');
+        } else {
+          $(this).addClass('is-invalid');
+        }
+        fnToggleSave();
+      });
+
+      $('.whl-formfield-phonenumberextn').on('keypress', function (e) {
+        var reg = /^\d+$/;
+        var k = e.key;
+        return reg.test(e.key);
+      });
+
+      $('.whl-formfield-phonenumberextn').on('change', function (e) {
+        $(this).removeClass('is-valid');
+        $(this).removeClass('is-invalid');
+        var v = $(this).val();
+        if (v === '') {
+          // do nothing
+        } else {
+          if (v === '' || !isNaN(parseInt(v))) {
+            $(this).addClass('is-valid');
+          } else {
+            $(this).addClass('is-invalid');
+          }
+        }
+        fnToggleSave();
+      });
+
+      $('.whl-formfield-phonenumbertypecd').on('change', function (e) {
+        $(this).removeClass('is-valid');
+        $(this).removeClass('is-invalid');
+        var v = $(this).val();
+        if (v !== undefined && v !== null && v.trim().length > 0) {
+          $(this).addClass('is-valid');
+        } else {
+          $(this).addClass('is-invalid');
+        }
+        fnToggleSave();
+      });
+
+      $('.whl-formfield-altphonenumber').on('keypress', function (e) {
+        var reg = /^\d+$/;
+        var k = e.key;
+        return reg.test(e.key);
+      });
+
+      $('.whl-formfield-altphonenumber').on('change', function (e) {
+        $(this).removeClass('is-valid');
+        $(this).removeClass('is-invalid');
+        var v = $(this).val();
+        if (v !== undefined && v !== null && v.trim().length > 0) {
+          if (fnIsValidPhoneNumber(v)) {
+            $(this).addClass('is-valid');
+          } else {
+            $(this).addClass('is-invalid');
+          }
+        }
+        fnToggleSave();
+      });
+
+      $('.whl-formfield-altphonenumberextn').on('keypress', function (e) {
+        var reg = /^\d+$/;
+        var k = e.key;
+        return reg.test(e.key);
+      });
+
+      $('.whl-formfield-altphonenumberextn').on('change', function (e) {
+        $(this).removeClass('is-valid');
+        $(this).removeClass('is-invalid');
+        var v = $(this).val();
+        if (v === '') {
+          // do nothing
+        } else {
+          if (v === '' || !isNaN(parseInt(v))) {
+            $(this).addClass('is-valid');
+          } else {
+            $(this).addClass('is-invalid');
+          }
+        }
+        fnToggleSave();
+      });
+
+      $('.whl-formfield-altphonenumbertypecd').on('change', function (e) {
+        $(this).removeClass('is-valid');
+        $(this).removeClass('is-invalid');
+        var v = $(this).val();
+        if (v !== undefined && v !== null && v.trim().length >= 0) {
+          $(this).addClass('is-valid');
+        } else {
+          $(this).addClass('is-invalid');
+        }
+        fnToggleSave();
+      });
+
+      $('.whl-formfield-altemailaddress').on('change', function (e) {
+        $(this).removeClass('is-valid');
+        $(this).removeClass('is-invalid');
+        var v = $(this).val();
+        var u = $('.whl-formfield-primaryemailaddress').val();
+        if (v !== undefined && v !== null && v.trim().length > 0) {
+          if (fnIsValidEmailAddress(v) && u.toLowerCase() !== v.toLowerCase()) {
+            $(this).addClass('is-valid');
+          } else {
+            $(this).addClass('is-invalid');
+          }
+        }
+        fnToggleSave();
+      });
+
+      $('.whl-formfield-incomevalueamt').on('keypress', function (e) {
+        var reg = /^\d+$/;
+        var k = e.key;
+        return reg.test(e.key);
+      });
+
+      $('.whl-formfield-incomevalueamt').on('change', function (e) {
+        $(this).removeClass('is-valid');
+        $(this).removeClass('is-invalid');
+        var v = $(this).val();
+        if (v === '') {
+          $(this).val('0');
+        } else {
+          if (v === '' || !isNaN(parseFloat(v))) {
+            $(this).addClass('is-valid');
+          } else {
+            $(this).addClass('is-invalid');
+          }
+        }
+        fnToggleSave();
+      });
+
+      $('.whl-formfield-assetvalueamt').on('keypress', function (e) {
+        var reg = /^\d+$/;
+        var k = e.key;
+        return reg.test(e.key);
+      });
+
+      $('.whl-formfield-assetvalueamt').on('change', function (e) {
+        $(this).removeClass('is-valid');
+        $(this).removeClass('is-invalid');
+        var v = $(this).val();
+        if (v === '') {
+          $(this).val(0);
+        } else {
+          if (v === '' || !isNaN(parseFloat(v))) {
+            $(this).addClass('is-valid');
+          } else {
+            $(this).addClass('is-invalid');
+          }
+        }
+        fnToggleSave();
+      });
+
+      $('.whl-formfield-ownrealestateind').on('change', function (e) {
+        fnToggleRealEstateValueAmt();
+      });
+
+      $('.whl-formfield-realestatevalueamt').on('keypress', function (e) {
+        var reg = /^\d+$/;
+        var k = e.key;
+        return reg.test(e.key);
+      });
+
+      $('.whl-formfield-realestatevalueamt').on('change', function (e) {
+        $(this).removeClass('is-valid');
+        $(this).removeClass('is-invalid');
+        var v = $(this).val();
+        if (v === '') {
+          $(this).val('0');
+        } else {
+          if (v === '' || !isNaN(parseFloat(v))) {
+            $(this).addClass('is-valid');
+          } else {
+            $(this).addClass('is-invalid');
+          }
+        }
+        fnToggleSave();
+      });
+
+      function fnToggleRealEstateValueAmt() {
+        var ore = $('.whl-formfield-ownrealestateind').prop('checked');
+        if (ore) {
+          $('.whl-formfieldcol-realestatevalueamt').show();
+        } else {
+          $('.whl-formfieldcol-realestatevalueamt').hide();
+          $('.whl-formfield-realestatevalueamt').val('0');
+        }
+        fnToggleSave();
+      }
+
+      function fnToggleSave() {
+        var ti = $('.whl-formfield-title').val();
+        var fn = $('.whl-formfield-firstname').val();
+        var mn = $('.whl-formfield-middlename').val();
+        var ln = $('.whl-formfield-lastname').val();
+        var sf = $('.whl-formfield-suffix').val();
+        var ss = $('.whl-formfield-last4ssn').val();
+        var db = $('.whl-formfield-dateofbirth').val();
+        var idtc = $('.whl-formfield-idtypecd').val();
+        var idtv = $('.whl-formfield-idtypevalue').val();
+        var idid = $('.whl-formfield-idissuedate').val();
+        var gc = $('.whl-formfield-gendercd').val();
+        var rc = $('.whl-formfield-racecd').val();
+        var ec = $('.whl-formfield-ethnicitycd').val();
+        var pr = $('.whl-formfield-pronouns').val();
+        var st = $('.whl-formfield-studentind').val();
+        var ds = $('.whl-formfield-disabilityind').val();
+        var vt = $('.whl-formfield-veteranind').val();
+        var allowSubmission = fn !== undefined && fn !== null && fn.trim().length > 0
+                                && ln !== undefined && ln !== null && ln.trim().length > 0
+                                && ss !== undefined && ss !== null && ss.trim().length === 4
+                                && db !== undefined && db !== null && db.trim().length > 0
+                                && idtc !== undefined && idtc !== null && idtc.trim().length > 0
+                                && idtv !== undefined && idtv !== null && idtv.trim().length > 0
+                                && idid !== undefined && idid !== null && idid.trim().length > 0
+                                && gc !== undefined && gc !== null && gc.trim().length > 0
+                                && rc !== undefined && rc !== null && rc.trim().length > 0
+                                && ec !== undefined && ec !== null && ec.trim().length > 0;
+        if (allowSubmission) {
+          var pn = $('.whl-formfield-phonenumber').val();
+          var pne = $('.whl-formfield-phonenumberextn').val();
+          var pt = $('.whl-formfield-phonenumbertypecd').val();
+          var apn = $('.whl-formfield-altphonenumber').val();
+          var apne = $('.whl-formfield-altphonenumberextn').val();
+          var apt = $('.whl-formfield-altphonenumbertypecd').val();
+          var ae = $('.whl-formfield-altemailaddress').val();
+          var u = $('.whl-formfield-emailaddress').val();
+          allowSubmission = fnIsValidPhoneNumber(pn)
+                                  && (pne === '' || !isNaN(parseInt(pne)))
+                                  && (pt !== undefined && pt !== null && pt.trim().length > 0)
+                                  && (apn === '' || (fnIsValidPhoneNumber(apn)
+                                                      && (apne === '' || !isNaN(parseInt(apne)))
+                                                      && (apt !== undefined && apt !== null && apt.trim().length > 0)))
+                                  && (ae === '' || (fnIsValidEmailAddress(ae) && u.toLowerCase() !== ae.toLowerCase()));
+        }
+        if (allowSubmission) {
+          var ore = $('.whl-formfield-ownrealestateind').prop('checked');
+          var re = $('.whl-formfield-realestatevalueamt').val();
+          var inc = $('.whl-formfield-incomevalueamt').val();
+          //var ast = $('.whl-formfield-assetvalueamt').val();
+          allowSubmission = !isNaN(parseFloat(re)) && re >= 0.0
+                                  && !isNaN(parseFloat(inc)) && inc >= 0.0;
+          if (allowSubmission && ore) {
+            allowSubmission = re >= 1.0;
+          }
+        }
+        if (allowSubmission) {
+          $('.whl-action-save-draft').removeAttr('disabled');
+          $('.whl-action-save-next').removeAttr('disabled');
+        }
+        else {
+          $('.whl-action-save-draft').attr('disabled', 'disabled');
+          $('.whl-action-save-next').attr('disabled', 'disabled');
+        }
+      }
+
+      $('.whl-action-save-draft').on('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        $('.whl-formfield-savemode').val('DRAFT');
+        $('.whl-form-applicant-info').submit();
+      });
+
+      $('.whl-action-save-next').on('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        $('.whl-formfield-savemode').val('NEXT');
+        $('.whl-form-applicant-info').submit();
+      });
+
+      $('.whl-action-withdraw-application').on('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        $('#withdrawApplicationModal').modal('show');
+        $('.whl-action-cancel-withdraw-application').show();
+        $('.whl-action-confirm-withdraw-application').show();
+        $('.whl-label-confirm-withdraw-application-inprogress').hide();
+      });
+      $('.whl-action-confirm-withdraw-application').on('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        const applicationId = $(e.currentTarget).data('applicationid');
+        $('.whl-action-cancel-withdraw-application').hide();
+        $('.whl-action-confirm-withdraw-application').hide();
+        $('.whl-label-confirm-withdraw-application-inprogress').show();
+        $.post('@Url.Action("Withdraw", "Applications")?applicationId=' + applicationId)
+          .done(function (response) {
+            $('#withdrawApplicationModal').modal('hide');
+            window.location.href = '@Url.Action("Dashboard", "Applications")';
+          })
+          .fail(function (error) {
+            $('#withdrawApplicationModal').modal('hide');
+            var message = error.responseJSON && error.responseJSON.message && error.responseJSON.message.length > 0 ? error.responseJSON.message : 'Failed to withdraw application due to one or more errors';
+            if (error.responseJSON && error.responseJSON.details && error.responseJSON.details.length > 0) {
+              message += '<br />' + error.responseJSON.details;
+            }
+            alert('Failed to withdraw application due to one or more errors!');
+          });
+      });
+
+    });
+    //]]>
+  </script>
+}

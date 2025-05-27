@@ -1,0 +1,136 @@
+﻿@model NotificationConfigsViewModel
+@{
+  ViewData["Title"] = "Notifications";
+  var categories = new Dictionary<string, string> { { "APPLICANT", "Applicant Notifications" }, { "INTERNAL", "Internal Notifications" } };
+  var currentCategoryCd = ViewData["CATEGORYCD"]?.ToString() == "INTERNAL" ? "INTERNAL" : "APPLICANT";
+}
+
+<div class="row">
+  <div class="col-xs-12 col-md-9">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a class="whl-link" asp-area="" asp-controller="Home" asp-action="Index"
+            title="Home"><small><i class="fa-solid fa-house"></i></small></a></li>
+        <li class="breadcrumb-item"><small>Admin Site</small></li>
+        <li class="breadcrumb-item active fs-6 fw-bolder" aria-current="page"><small>@ViewData["Title"]</small></li>
+      </ol>
+    </nav>
+  </div>
+  <div class="col-xs-12 col-md-3 text-end">
+    <button type="button" class="btn btn-sm btn-link whl-link mr-4 whl-action-refresh-page" title="Refresh"
+      aria-label="Refresh"><i class="fa-solid fa-rotate-right"></i></button>
+  </div>
+</div>
+
+<div class="text-left mt-8">
+  <ul class="nav nav-tabs mb-3" id="notifications-tab-content" role="tablist">
+    @foreach (var category in categories)
+    {
+      <li class="nav-item" role="presentation">
+        <button type="button" class="nav-link whl-link fw-bold" id="notifications-@category.Key.ToLower()-tab"
+              data-bs-toggle="tab" data-bs-target="#notifications-@category.Key.ToLower()-tab-pane"
+              role="tab" aria-controls="notifications-@category.Key.ToLower()-tab-pane">
+          <small>@category.Value</small>
+        </button>
+      </li>
+    }
+  </ul>
+  <div class="tab-content">
+    @foreach (var category in categories)
+    {
+      var tabIndex = category.Key == "INTERNAL" ? 1 : 0;
+      var notifications = Model.Notifications?.Where(w => w.CategoryCd.Equals(category.Key, StringComparison.CurrentCultureIgnoreCase));
+      var notificationsCount = notifications?.Count() ?? 0;
+      <div class="tab-pane fade" id="notifications-@category.Key.ToLower()-tab-pane" role="tabpanel"
+          aria-labelledby="notifications-@category.Key.ToLower()-tab" tabindex="@tabIndex">
+        @if (notificationsCount > 0)
+        {
+          foreach (var notification in notifications)
+          {
+            <div class="card mt-8">
+              <div class="card-header">
+                <h6>@if (notification.Active)
+                  {
+                    <i class="fa-solid fa-circle-dot text-success" title="Notification is active"></i>
+                  }
+                  else
+                  {
+                    <i class="fa-solid fa-circle-stop text-danger" title="Notification is inactive"></i>
+                  }
+                  &nbsp;@notification.Title
+                </h6>
+              </div>
+              <div class="card-body">
+                <p class="card-subtitle mb-2 text-body-secondary"><i
+                    class="fa-regular fa-clock"></i>&nbsp;@notification.FrequencyIntervalDescription</p>
+                @if (!string.IsNullOrEmpty(notification.NotificationList))
+                {
+                  <p class="card-subtitle mb-2 text-body-secondary"><i
+                      class="fa-solid fa-at"></i>&nbsp;@notification.NotificationList</p>
+                }
+                <p class="card-text">
+                <blockquote>@notification.Text</blockquote>
+                </p>
+                @if (Model.CanEdit)
+                {
+                  <a href="javascript:void(0);" class="whl-link whl-action-edit-notification"
+                    data-notificationid="@notification.NotificationId" title="Edit notification"><i
+                      class="fa-solid fa-pencil"></i>&nbsp;Edit</a>
+                }
+                <a href="javascript:void(0);" class="whl-link whl-action-view-audit ml-8"
+                    data-entitytype="NOTIFICATION"
+                    data-entityid="@notification.NotificationId" title="View audit log"><i
+                    class="fa-solid fa-list"></i>&nbsp;View Audit Log</a>
+              </div>
+            </div>
+          }
+        }
+        else
+        {
+          <div class="text-center">No notifications found</div>
+        }
+      </div>
+    }
+  </div>
+
+</div>
+
+<!-- Notification Editor Modal -->
+<div class="modal fade" id="notificationEditorModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+  aria-labelledby="notificationEditorModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="notificationEditorModalLabel"><span
+            id="whl-title-notification-action">Notification Editor</span></h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+      </div>
+      <div class="modal-footer">
+        <input type="hidden" id="hidNotificationAction" name="hidNotificationAction" value="" />
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i
+            class="fa-solid fa-ban"></i>&nbsp;Cancel</button>
+        <button type="button" class="btn btn-primary whl-action-save-notification"><i
+            class="fa-solid fa-floppy-disk"></i>&nbsp;Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Audit Viewer Modal -->
+@await Html.PartialAsync("~/Views/Shared/_AuditViewerModalPartial.cshtml")
+
+@section Scripts
+{
+  <script>
+    //<![CDATA[
+    const notificationConfigAddUrl = '@Url.Action("Add", "NotificationConfigs")';
+    const notificationConfigEditUrl = '@Url.Action("Edit", "NotificationConfigs")';
+    const notificationConfigDeleteUrl = '@Url.Action("Delete", "NotificationConfigs")';
+    const auditViewerUrl = '@Url.Action("Index", "Audit")';
+    //]]>
+  </script>
+  <script src="~/js/management/common.js" asp-append-version="true"></script>
+  <script src="~/js/management/notificationconfigs.js" asp-append-version="true"></script>
+}

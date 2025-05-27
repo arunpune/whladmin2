@@ -1,0 +1,132 @@
+﻿@model AmiConfigsViewModel
+@{
+  ViewData["Title"] = "AMIs";
+  var amisCount = Model.Amis?.Count() ?? 0;
+}
+
+<div class="row">
+  <div class="col-xs-12 col-md-9">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a class="whl-link" asp-area="" asp-controller="Home" asp-action="Index"
+            title="Home"><small><i class="fa-solid fa-house"></i></small></a></li>
+        <li class="breadcrumb-item"><small>Admin Site</small></li>
+        <li class="breadcrumb-item active fs-6 fw-bolder" aria-current="page"><small>@ViewData["Title"]</small></li>
+      </ol>
+    </nav>
+  </div>
+  <div class="col-xs-12 col-md-3 text-end">
+    <button type="button" class="btn btn-sm btn-link whl-link mr-4 whl-action-refresh-page" title="Refresh"
+      aria-label="Refresh"><i class="fa-solid fa-rotate-right"></i></button>
+  </div>
+</div>
+
+<div class="text-left mt-8">
+  <div class="card bg-light">
+    <table class="table table-sm table-hover">
+      <thead class="bg-whlgreen text-white">
+        <tr>
+          <th class="text-center" style="width: 120px;">
+            <small>
+              @if (Model.CanEdit)
+              {
+                <a class="whl-link text-white fw-bold whl-action-add-ami" title="Add a new AMI"
+                  href="javascript:void(0);"><i class="fa-solid fa-plus"></i>&nbsp;Add</a>
+              }
+            </small>
+          </th>
+          <th class="text-center"><small>Effective Date</small></th>
+          <th class="text-center"><small>4P HH AMI ($)</small></th>
+          <th class="text-center"><small>1P HH</small></th>
+          <th class="text-center"><small>2P HH</small></th>
+          <th class="text-center"><small>3P HH</small></th>
+          <th class="text-center"><small>4P HH</small></th>
+          <th class="text-center"><small>5P HH</small></th>
+          <th class="text-center"><small>6P HH</small></th>
+          <th class="text-center"><small>7P HH</small></th>
+          <th class="text-center"><small>8P HH</small></th>
+          <th class="text-center"><small>9P HH</small></th>
+          <th class="text-center"><small>10P HH</small></th>
+        </tr>
+      </thead>
+      <tbody class="table-group-divider">
+        @if (amisCount == 0)
+        {
+          <tr>
+            <td colspan="13" class="text-center">No AMIs found</td>
+          </tr>
+        }
+        else
+        {
+          foreach (var ami in Model.Amis.OrderByDescending(o => o.EffectiveDate))
+          {
+            <tr>
+              <td class="text-center" style="width: 120px;">
+                <small>
+                  @if (Model.CanEdit)
+                  {
+                    <a class="whl-link whl-action-edit-ami" data-amiid="@ami.EffectiveDate" title="Edit AMI"
+                      href="javascript:void(0);"><i class="fa-solid fa-pencil"></i></a>
+                    @* <a class="whl-link whl-action-delete-ami ml-8" data-amiid="@amenity.EffectiveDate" title="Delete AMI"
+                        href="javascript:void(0);"><i class="fa-solid fa-trash"></i></a> *@
+                  }
+                  <a class="whl-link whl-action-view-audit ml-8" data-entitytype="AMI"
+                    data-entityid="@ami.EffectiveDate" title="View audit log" href="javascript:void(0);"><i
+                      class="fa-solid fa-list"></i></a>
+                </small>
+              </td>
+              <td class="text-center"><small>@ami.EffectiveDate.ToString().Insert(6, "-").Insert(4, "-")</small></td>
+              <td class="text-center"><small>@ami.IncomeAmt.ToString("C0")</small></td>
+              @for (var hhSizeCtr = 0; hhSizeCtr < 10; hhSizeCtr++)
+              {
+                <td class="text-center">
+                  <small>@ami.HhPctAmts[hhSizeCtr].Pct%</small><br />
+                  <small class="badge bg-whlgreen text-white mt-8">@ami.HhPctAmts[hhSizeCtr].Amt.ToString("C0")</small>
+                </td>
+              }
+            </tr>
+          }
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Ami Editor Modal -->
+<div class="modal fade" id="amiEditorModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+  aria-labelledby="amiEditorModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="amiEditorModalLabel"><span id="whl-title-ami-action">AMI Editor</span></h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+      </div>
+      <div class="modal-footer">
+        <input type="hidden" id="hidAmiAction" name="hidAmiAction" value="" />
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i
+            class="fa-solid fa-ban"></i>&nbsp;Cancel</button>
+        <button type="button" class="btn btn-primary whl-action-save-ami"><i
+            class="fa-solid fa-floppy-disk"></i>&nbsp;Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Audit Viewer Modal -->
+@await Html.PartialAsync("~/Views/Shared/_AuditViewerModalPartial.cshtml")
+
+@section Scripts
+{
+  <script>
+    //<![CDATA[
+    const amiConfigAddUrl = '@Url.Action("Add", "AmiConfigs")';
+    const amiConfigEditUrl = '@Url.Action("Edit", "AmiConfigs")';
+    const amiConfigDeleteUrl = '@Url.Action("Delete", "AmiConfigs")';
+    const auditViewerUrl = '@Url.Action("Index", "Audit")';
+    //]]>
+  </script>
+  <script src="~/js/management/common.js" asp-append-version="true"></script>
+  <script src="~/js/management/amiconfigs.js" asp-append-version="true"></script>
+}

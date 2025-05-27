@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UX - Housing Lottery - Westchester County</title>
+  <link rel="stylesheet" href="../css/sandstone.bootstrap.min.css" />
+  <link rel="stylesheet" href="../lib/fontawesome/css/all.min.css" />
+  <link rel="stylesheet" href="../css/site.css" asp-append-version="true" />
+</head>
+
+<body>
+  <header>
+    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+      <div class="container">
+        <a class="navbar-brand" href="https://www.westchestergov.com/" title="Westchester County, NY"
+          aria-label="Westchester County, NY" target="_blank"><img src="../images/temp-countylogo-green-300dpi.jpg"
+            width="160" height="60"></a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
+          aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+          <ul class="navbar-nav flex-grow-1">
+            <li class="nav-item">
+              <a class="nav-link text-dark" href="./index.html" title="Home" aria-label="Home">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-dark" href="./about.html" title="About" aria-label="About">About</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-dark" href="./faqs.html" title="FAQs" aria-label="FAQs">FAQs</a>
+            </li>
+          </ul>
+        </div>
+        <div class="d-flex justify-content-end">
+          <button class="btn btn-sm btn-link whl-link" type="button" data-bs-toggle="offcanvas"
+            data-bs-target="#offcanvasLogin" aria-controls="offcanvasLogin" title="Log In" aria-label="Log In"><i
+              class="fa-solid fa-right-to-bracket"></i>&nbsp;Log In</button>
+          <button type="button" class="btn btn-sm btn-link whl-link" data-bs-toggle="offcanvas"
+            data-bs-target="#offcanvasRegister" aria-controls="offcanvasRegister" title="Register"
+            aria-label="Register"><i class="fa-solid fa-user-plus"></i>&nbsp;Register</a>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <div class="container">
+
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="./index.html"><i class="fa-solid fa-house"></i></a></li>
+      <li class="breadcrumb-item active">About</li>
+    </ol>
+
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+      <div class="card border-light mb-3" style="max-width: 20rem;">
+        <div class="card-header">Header</div>
+        <div class="card-body">
+          <h4 class="card-title">Light card title</h4>
+          <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's
+            content.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Login Modal -->
+  <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasLogin" aria-labelledby="offcanvasLoginLabel">
+    <div class="offcanvas-header">
+      <h5 class="offcanvas-title" id="offcanvasLoginLabel">Log In</h5>
+      <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+      <div id="frmLogin">
+        <form class="form">
+          <div>
+            <div class="input-group input-group-sm mb-3">
+              <span class="input-group-text"><i class="fa-solid fa-at"></i></span>
+              <input type="text" class="form-control form-control-sm" aria-label="Username" placeholder="john@smith.com"
+                id="username">
+            </div>
+            <div class="input-group input-group-sm mb-3">
+              <span class="input-group-text"><i class="fa-solid fa-key"></i></span>
+              <input type="password" class="form-control form-control-sm" aria-label="Password" autocomplete="off"
+                id="password">
+            </div>
+            <div class="mt-4">
+              <button type="button" class="btn btn-sm btn-primary" title="Log In" aria-label="Log In"><i
+                  class="fa-solid fa-right-to-bracket"></i>&nbsp;Log
+                In</button>
+              <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-toggle="offcanvas"
+                data-bs-target="#offcanvasResetPassword" aria-controls="offcanvasResetPassword" title="Forgot Password"
+                aria-label="Forgot Password"><i class="fa-regular fa-circle-question"></i>&nbsp;Forgot Password</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reset Password Modal -->
+  <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasResetPassword"
+    aria-labelledby="offcanvasResetPassword">
+    <div class="offcanvas-header">
+      <h5 class="offcanvas-title" id="offcanvasResetPassword">Reset Password</h5>
+      <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+      <div id="frmResetPassword">
+        <form class="form">
+          <div>
+            <div class="input-group input-group-sm mb-3">
+              <span class="input-group-text"><i class="fa-solid fa-at"></i></span>
+              <input type="text" class="form-control form-control-sm" aria-label="Username" placeholder="john@smith.com"
+                id="username">
+            </div>
+            <div class="mt-4">
+              <button type="button" class="btn btn-sm btn-primary" title="Request Reset" aria-label="Request Reset"><i
+                  class="fa-regular fa-paper-plane"></i>&nbsp;Request</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Registration Modal -->
+  <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRegister" aria-labelledby="offcanvasRegister">
+    <div class="offcanvas-header">
+      <h5 class="offcanvas-title" id="offcanvasRegister">Register</h5>
+      <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+      <div id="frmRegister">
+        <form class="form">
+          <div>
+            <h6 class="text-primary-emphasis">Required Fields</h6>
+            <div class="input-group input-group-sm mb-3">
+              <span class="input-group-text"><i class="fa-solid fa-at"></i></span>
+              <input type="text" class="form-control form-control-sm" aria-label="Username" placeholder="john@smith.com"
+                id="username">
+            </div>
+            <div class="input-group input-group-sm mb-3">
+              <span class="input-group-text"><i class="fa-solid fa-key"></i></span>
+              <input type="password" class="form-control form-control-sm" aria-label="Password" autocomplete="off"
+                id="password">
+            </div>
+            <div class="input-group input-group-sm mb-3">
+              <span class="input-group-text"><i class="fa-solid fa-key"></i></span>
+              <input type="password" class="form-control form-control-sm" aria-label="Confirm Password"
+                autocomplete="off" id="confirmationpassword">
+            </div>
+            <h6 class="text-secondary-emphasis">Optional Fields</h6>
+            <div class="input-group input-group-sm mb-3">
+              <span class="input-group-text"><i class="fa-regular fa-at"></i></span>
+              <input type="text" class="form-control form-control-sm" aria-label="Alternate Email Address"
+                placeholder="jane@smith.com" id="altusername">
+            </div>
+            <div class="input-group input-group-sm mb-3">
+              <span class="input-group-text"><i class="fa-solid fa-mobile-screen"></i></span>
+              <input type="text" class="form-control form-control-sm" aria-label="Phone Number" placeholder="6461234567"
+                id="phonenumber">
+            </div>
+            <div class="mt-4">
+              <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="acceptterms">
+                <label class="form-check-label" for="acceptterms">I have read and understand the terms and
+                  conditions</label>
+              </div>
+            </div>
+            <div class="mt-4">
+              <button type="button" class="btn btn-sm btn-primary" title="Register" aria-label="Register"><i
+                  class="fa-regular fa-paper-plane"></i>&nbsp;Register</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="../lib/jquery/dist/jquery.min.js"></script>
+  <script src="../lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    //<![CDATA[
+    $(function () {
+      $('.forgot-password').on('click', function (e) {
+        $('#frmLogin').hide();
+        $('#frmResetPassword').show();
+      });
+    });
+    //]]>
+  </script>
+</body>
+
+</html>

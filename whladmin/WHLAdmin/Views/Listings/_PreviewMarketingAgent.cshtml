@@ -1,0 +1,11 @@
+@model ListingViewModel
+
+@if (Model.MarketingAgentInd)
+{
+  <p class="fs-5 mt-32 border-bottom">Marketing Agent</p>
+  <p class="text-dark">@Model.MarketingAgentName.Trim()</p>
+  @if (!string.IsNullOrEmpty((Model.MarketingAgentApplicationLink ?? "").Trim()))
+  {
+    <p class="text-secondary"><small>@Model.MarketingAgentApplicationLink.Trim()</small></p>
+  }
+}

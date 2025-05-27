@@ -1,0 +1,14 @@
+@model ListingViewModel
+
+<p class="fs-5 mt-32 border-bottom">Documents Required</p>
+@if ((Model.DocumentTypes?.Count() ?? 0) > 0)
+{
+  foreach (var docType in Model.DocumentTypes.Select(s => s.Name))
+  {
+    <p class="text-dark"><i class="fa-regular fa-file"></i>&nbsp;@docType</p>
+  }
+}
+else
+{
+  <p class="text-secondary"><i class="fa-regular fa-circle-xmark"></i>&nbsp;None at this time</p>
+}

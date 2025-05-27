@@ -1,0 +1,14 @@
+-- SET NOCOUNT ON;
+-- GO
+
+-- IF NOT EXISTS (SELECT 1 FROM dbo.tblMasterRoles WHERE RoleCD = 'SYSADMIN')
+--     INSERT INTO dbo.tblMasterRoles (RoleCD, RoleDescription) VALUES ('SYSADMIN', 'System Administrator');
+-- IF NOT EXISTS (SELECT 1 FROM dbo.tblMasterRoles WHERE RoleCD = 'OPSADMIN')
+--     INSERT INTO dbo.tblMasterRoles (RoleCD, RoleDescription) VALUES ('OPSADMIN', 'Operations Administrator');
+-- IF NOT EXISTS (SELECT 1 FROM dbo.tblMasterRoles WHERE RoleCD = 'OPSVIEWER')
+--     INSERT INTO dbo.tblMasterRoles (RoleCD, RoleDescription) VALUES ('OPSVIEWER', 'Operations Viewer');
+-- IF NOT EXISTS (SELECT 1 FROM dbo.tblMasterRoles WHERE RoleCD = 'LOTADMIN')
+--     INSERT INTO dbo.tblMasterRoles (RoleCD, RoleDescription) VALUES ('LOTADMIN', 'Lottery Administrator');
+-- IF NOT EXISTS (SELECT 1 FROM dbo.tblMasterRoles WHERE RoleCD = 'LOTVIEWER')
+--     INSERT INTO dbo.tblMasterRoles (RoleCD, RoleDescription) VALUES ('LOTVIEWER', 'Lottery Viewer');
+-- GO

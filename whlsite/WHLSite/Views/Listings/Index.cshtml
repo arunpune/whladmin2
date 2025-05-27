@@ -1,0 +1,274 @@
+﻿@model ListingsViewModel
+@{
+  ViewData["Title"] = "Listings";
+  ViewData["MENUID"] = "LISTINGS";
+
+  var showRentals = "BOTH|RENTAL".Contains((Model.ListingTypeOptionCd ?? "BOTH").Trim().ToUpper());
+  var showSales = "BOTH|SALE".Contains((Model.ListingTypeOptionCd ?? "BOTH").Trim().ToUpper());
+
+  var rentalListingsCount = Model.RentalListings?.Count() ?? 0;
+  var saleListingsCount = Model.SaleListings?.Count() ?? 0;
+}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a class="whl-link" asp-area="" asp-controller="Home" asp-action="Index" title="Home"><i
+          class="fa-solid fa-house"></i></a></li>
+    <li class="breadcrumb-item active" aria-current="page">Listings</li>
+  </ol>
+</nav>
+
+<div class="text-left mt-32 listings-page">
+  <div class="card mb-16 whl-listings-search-container">
+    <div class="card-header">
+      <!-- <button type="button" class="btn btn-light btn-sm whl-listings-search-close" style="float: right;" title="Close"
+        aria-label="Close"><i class="fa-solid fa-xmark"></i></button> -->
+      <h6 class="text-secondary">Search</h6>
+    </div>
+    <div class="card-body">
+      @using (Html.BeginForm("Index", "Listings", FormMethod.Post, new
+      {
+        @class = "form whl-form-listings-search",
+        id = "frmListingsSearch",
+        name = "frmListingsSearch"
+      }))
+      {
+        <div class="row mb-3">
+          <div class="col-xs-12 col-md-3">
+            <label class="form-label small fw-bolder" asp-for="ListingTypeOptionCd">Listing Type</label><br />
+            <select class="form-select form-select-sm whl-formfield-listingviewoptioncd" placeholder="Select One"
+              asp-for="ListingTypeOptionCd"
+              asp-items="@(new SelectList(Model.ListingTypeOptions, "Key", "Value", Model.ListingTypeOptionCd))"></select>
+          </div>
+          <div class="col-xs-12 col-md-3">
+            <label class="form-label small fw-bolder" asp-for="CityOptionCd">City</label><br />
+            <select class="form-select form-select-sm whl-formfield-cityoptioncd text-capitalize" placeholder="Select One"
+              asp-for="CityOptionCd"
+              asp-items="@(new SelectList(Model.CityOptions, "Key", "Value", Model.CityOptionCd))"></select>
+          </div>
+          <div class="col-xs-12 col-md-3">
+            <label class="form-label small fw-bolder" asp-for="SeniorLivingOptionCd">Age Restricted Living</label><br />
+            <select class="form-select form-select-sm whl-formfield-seniorlivingoptioncd" placeholder="Select One"
+              asp-for="SeniorLivingOptionCd"
+              asp-items="@(new SelectList(Model.SeniorLivingOptions, "Key", "Value", Model.SeniorLivingOptionCd))"></select>
+          </div>
+          @* <div class="col-xs-12 col-md-2">
+            <label class="form-label small fw-bolder" asp-for="AdaptedForDisabilityOptionCd">Adapted for
+              Disability</label><br />
+            <select class="form-select form-select-sm whl-formfield-adaptedfordisabilityoptioncd" placeholder="Select One"
+              asp-for="AdaptedForDisabilityOptionCd"
+              asp-items="@(new SelectList(Model.AdaptedForDisabilityOptions, "Key", "Value", Model.AdaptedForDisabilityOptionCd))"></select>
+          </div> *@
+          <input type="hidden" asp-for="AdaptedForDisabilityOptionCd" value="ALL" />
+          <div class="col-xs-12 col-md-3">
+            <label class="form-label small fw-bolder" asp-for="PetsAllowedOptionCd">Pet Policy</label><br />
+            <select class="form-select form-select-sm whl-formfield-petsallowedoptioncd" placeholder="Select One"
+              asp-for="PetsAllowedOptionCd"
+              asp-items="@(new SelectList(Model.PetsAllowedOptions, "Key", "Value", Model.PetsAllowedOptionCd))"></select>
+          </div>
+        </div>
+        <div class="row mb-3 mt-16">
+          <div class="col-xs-12">
+            <label class="form-label small fw-bolder" asp-for="ListingDateFilterOptionCd">Listing Date Filter</label>
+          </div>
+          <div class="col-xs-12">
+            @foreach (var listingDateFilterOption in Model.ListingDateFilterOptions)
+            {
+              var rdoName = "rdoListingDateFilterCd";
+              var rdoId = $"{rdoName}{listingDateFilterOption.Key}";
+              @Html.RadioButtonFor(r => r.ListingDateFilterOptionCd, listingDateFilterOption.Key, htmlAttributes: new
+                {
+                  id = rdoId,
+                  @class = "form-check-input whl-formfield-listingdatefilteroptioncd"
+                })
+              <label class="form-check-label ml-8 mr-16 small" for="@rdoId" title="@listingDateFilterOption.Value"
+                aria-label="@listingDateFilterOption.Value">@listingDateFilterOption.Value</label>
+            }
+          </div>
+        </div>
+        <div class="mt-16">
+          <button type="reset" class="btn btn-sm btn-outline-secondary whl-listings-search-reset">Reset</button>
+          <button type="submit" class="btn btn-sm btn-primary whl-listings-search-submit ml-4">Search</button>
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- Current filters -->
+  <div class="card border-0 mt-32 whl-listings-current-filters" style="display: none;">
+    <div class="card-body">
+      <h6 class="text-secondary whl-card-title">Current Filters</h6>
+      <div class="row">
+        <div class="col-xs-12 col-md-10">
+          @foreach (var currentFilter in Model.CurrentFilters.Values)
+          {
+            <span class="badge bg-light text-secondary mr-4">@currentFilter</span>
+          }
+        </div>
+        <div class="col-xs-12 col-md-2 text-end">
+          <button type="button" class="btn btn-outline-secondary btn-sm whl-listings-show-filter" title="Search"
+            aria-label="Search"><i class="fa-solid fa-filter"></i>&nbsp;Search</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <ul class="nav nav-tabs mt-16" id="listings-tab" role="tablist">
+    @if (showRentals)
+    {
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="listings-rentals-tab" data-bs-toggle="tab"
+          data-bs-target="#listings-rentals-tab-pane" type="button" role="tab" aria-controls="listings-rentals-tab-pane"
+          aria-selected="true">Rentals</button>
+      </li>
+    }
+    @if (showSales)
+    {
+      <li class="nav-item">
+        <button class="nav-link @(showRentals ? "" : "active") id=" listings-sales-tab" data-bs-toggle="tab"
+          data-bs-target="#listings-sales-tab-pane" type="button" role="tab" aria-controls="listings-sales-tab-pane"
+          aria-selected="@(showRentals ? "false" : "true")">Sales</button>
+      </li>
+    }
+  </ul>
+  <div class="tab-content" id="listings-tab-content">
+    @if (showRentals)
+    {
+      <div class="tab-pane fade show active" id="listings-rentals-tab-pane" role="tabpanel"
+        aria-labelledby="listings-rentals-tab" tabindex="1">
+        <div class="card card-light">
+          <div class="card-body">
+            @if (rentalListingsCount > 0)
+            {
+              <div class="row row-cols-1 row-cols-md-3 g-4">
+                @foreach (var listing in Model.RentalListings)
+                {
+                  var imageSrc = listing.ImageContents ?? Url.Content("~/images/listings-default-image.png");
+                  <div class="col">
+                    <div class="card mt-8 h-100">
+                      <div class="whl-listing-container">
+                        <a class="whl-listing-link" asp-area="" asp-controller="Listings" asp-action="Details"
+                          asp-route-listingId="@listing.ListingId" title="View/Apply" aria-label="View/Apply"><img
+                            class="w-100" src="@imageSrc" alt="@listing.Name" style="height: 240px; object-fit: cover;" /></a>
+                        <div class="whl-listing-link-text">Details</div>
+                      </div>
+                      <div class="card-body">
+                        <h5 class="card-title text-uppercase">@listing.Name</h5>
+                        <p><i class="fa-solid fa-location-dot"></i>&nbsp;@listing.StreetLine1 @listing.City @listing.StateCd
+                          @listing.ZipCode</p>
+                        <p>
+                          @if (!string.IsNullOrEmpty(listing.DisplayApplicationStartDate))
+                          {
+                            <small>Application Start Date: @listing.DisplayApplicationStartDate</small>
+                          }
+                          else
+                          {
+                            <small>Application Start Date: N/A</small>
+                          }
+                          <br />
+                          @if (!string.IsNullOrEmpty(listing.DisplayApplicationEndDate))
+                          {
+                            <small>Application End Date: @listing.DisplayApplicationEndDate</small>
+                          }
+                          else
+                          {
+                            <small>Application End Date: N/A</small>
+                          }
+                          <br />
+                          @if (!string.IsNullOrEmpty(listing.DisplayLotteryDate))
+                          {
+                            <small>Lottery Date/Time: @listing.DisplayLotteryDate</small>
+                          }
+                          else
+                          {
+                            <small>Lottery Date/Time: N/A</small>
+                          }
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                }
+              </div>
+            }
+            else
+            {
+              <div class="mt-8">
+                @await Html.PartialAsync("~/Views/Listings/_NoListingsContent.cshtml")
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    }
+    @if (showSales)
+    {
+      <div class="tab-pane fade @(showRentals ? "" : "show active")" id="listings-sales-tab-pane" role="tabpanel"
+        aria-labelledby="listings-sales-tab" tabindex="0">
+        <div class="card card-light">
+          <div class="card-body">
+            @if (saleListingsCount > 0)
+            {
+              <div class="row row-cols-1 row-cols-md-3 g-4">
+                @foreach (var listing in Model.SaleListings)
+                {
+                  var imageSrc = listing.ImageContents ?? Url.Content("~/images/listings-default-image.png");
+                  <div class="col">
+                    <div class="card mt-8 h-100">
+                      <a class="whl-listing-link" asp-area="" asp-controller="Listings" asp-action="Details"
+                        asp-route-listingId="@listing.ListingId" title="View/Apply" aria-label="View/Apply"><img
+                          class="w-100" src="@imageSrc" alt="@listing.Name" style="height: 240px; object-fit: cover;" /></a>
+                      <div class="card-body">
+                        <h5 class="card-title text-uppercase">@listing.Name</h5>
+                        <p><i class="fa-solid fa-location-dot"></i>&nbsp;@listing.StreetLine1 @listing.City @listing.StateCd
+                          @listing.ZipCode</p>
+                        <p>
+                          @if (!string.IsNullOrEmpty(listing.DisplayApplicationStartDate))
+                          {
+                            <small>Application Start Date: @listing.DisplayApplicationStartDate</small>
+                          }
+                          else
+                          {
+                            <small>Application Start Date: N/A</small>
+                          }
+                          <br />
+                          @if (!string.IsNullOrEmpty(listing.DisplayApplicationEndDate))
+                          {
+                            <small>Application End Date: @listing.DisplayApplicationEndDate</small>
+                          }
+                          else
+                          {
+                            <small>Application End Date: N/A</small>
+                          }
+                          <br />
+                          @if (!string.IsNullOrEmpty(listing.DisplayLotteryDate))
+                          {
+                            <small>Lottery Date/Time: @listing.DisplayLotteryDate</small>
+                          }
+                          else
+                          {
+                            <small>Lottery Date/Time: N/A</small>
+                          }
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                }
+              </div>
+            }
+            else
+            {
+              <div class="mt-8">
+                @await Html.PartialAsync("~/Views/Listings/_NoListingsContent.cshtml")
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+</div>
+
+@section Scripts
+{
+  <script src="~/js/listings/home.actions.js" asp-append-version="true"></script>
+}

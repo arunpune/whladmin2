@@ -1,0 +1,560 @@
+﻿@model DuplicateApplicationsViewModel
+@{
+  ViewData["Title"] = $"Potential Duplicate Applications by {Model.TypeDescription}";
+  var duplicateCount = Model.Applications?.Count() ?? 0;
+  var applications = new Dictionary<string, IEnumerable<HousingApplicationViewModel>>()
+{
+{ "-", Model.Applications.Where(w => (w.DuplicateCheckCd ?? "").Equals("-")) ?? [] },
+{ "P", Model.Applications.Where(w => (w.DuplicateCheckCd ?? "").Equals("P", StringComparison.CurrentCultureIgnoreCase))
+?? [] },
+{ "D", Model.Applications.Where(w => (w.DuplicateCheckCd ?? "").Equals("D", StringComparison.CurrentCultureIgnoreCase))
+?? [] }
+};
+}
+
+<div class="row">
+  <div class="col-xs-12 col-md-9">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a class="whl-link" asp-area="" asp-controller="Home" asp-action="Index"
+            title="Home"><small><i class="fa-solid fa-house"></i></small></a></li>
+        <li class="breadcrumb-item"><small>Listings, Applications &amp; Lotteries</small></li>
+        <li class="breadcrumb-item"><small><a class="whl-link" asp-area="" asp-action="Duplicates"
+            asp-controller="Applications" asp-route-listingId="@Model.ListingId"
+            title="Back to duplicates page">Potential Duplicates</a></small></li>
+        <li class="breadcrumb-item active fs-6 fw-bolder" aria-current="page"><small>@ViewData["Title"]</small></li>
+      </ol>
+    </nav>
+  </div>
+  <div class="col-xs-12 col-md-3 text-end">
+    <button type="button" class="btn btn-sm btn-link whl-link mr-4 whl-action-refresh-page" title="Refresh"
+      aria-label="Refresh"><i class="fa-solid fa-rotate-right"></i></button>
+  </div>
+</div>
+
+<div class="text-left mt-8">
+  <div class="card bg-light mb-3">
+    <div class="card-body">
+      <div class="row">
+        <div class="col-xs-12 col-md-6">
+          <small>
+            @Model.ListingId<br />
+            @Model.ListingDetails.Name<br />
+            @Model.ListingDetails.DisplayAddress
+          </small>
+        </div>
+        <div class="col-xs-12 col-md-6">
+          <small>
+            Listing potential duplicate applications by @Model.TypeDescription<br />
+            <strong>@Model.TypeValue</strong><br />
+          </small>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  @if (duplicateCount == 0)
+  {
+    <div class="card mt-2">
+      <div class="card-body">
+        <p class="text-secondary">No potential duplicate applications found!</p>
+      </div>
+    </div>
+    return;
+  }
+
+  @foreach (var key in applications.Keys)
+  {
+    var appCount = applications[key]?.Count() ?? 0;
+    <div class="card mt-2">
+      @switch (key)
+      {
+        case "-":
+          <h6 class="card-header">Pending Classification</h6>
+          break;
+        case "P":
+          <h6 class="card-header">Potential Duplicate</h6>
+          break;
+        case "D":
+          <h6 class="card-header">Duplicate</h6>
+          break;
+      }
+      <div class="card-body">
+        @if (appCount > 0)
+        {
+          int applicationCount = 0;
+          <div class="row mb-3 bg-whlgreen text-white">
+            <div class="col-xs-12 col-md-1 text-center" style="min-width: 80px;"><small class="fw-bold">Actions</small>
+            </div>
+            <div class="col-xs-12 col-md-1 text-center" style="min-width: 80px;"><small class="fw-bold">Comments</small>
+            </div>
+            <div class="col-xs-12 col-md-2"><small class="fw-bold">Application #</small></div>
+            <div class="col-xs-12 col-md-4"><small class="fw-bold">Address</small></div>
+            <div class="col-xs-12 col-md-3"><small class="fw-bold">Submitted</small></div>
+            <div class="col-xs-12 col-md-1"><small class="fw-bold">Type</small></div>
+          </div>
+          @foreach (var application in applications[key])
+          {
+            var physicalAddress = (application.PhysicalStreetLine1 ?? "").Trim().Length > 0 ?
+            (application.PhysicalStreetLine1.Trim() + ", " + application.PhysicalCity.Trim() + ", " +
+            application.PhysicalStateCd.Trim() + " " + application.PhysicalZipCode.Trim()) : "";
+            var mailingAddress = (application.MailingStreetLine1 ?? "").Trim().Length > 0 ?
+            (application.MailingStreetLine1.Trim() + ", " + application.MailingCity.Trim() + ", " +
+            application.MailingStateCd.Trim() + " " + application.MailingZipCode.Trim()) : "";
+            applicationCount++;
+            var bgColor = applicationCount % 2 == 0 ? "bg-light" : "";
+            var borderTop = applicationCount > 1 ? "border-top" : "";
+            <div class="row mb-3 @bgColor @borderTop">
+              <div class="col-xs-12">
+                <div class="row mb-1">
+                  <div class="col-xs-12 col-md-1 text-center" style="min-width: 80px;">
+                    <small>
+                      @if (key == "D")
+                      {
+                        <button type="button" class="btn btn-sm btn-link whl-action-mark-duplicate"
+                          data-applicationid="@application.ApplicationId" data-duplicatetypecd="N" title="Not a duplicate"><i
+                            class="fa-regular fa-circle-check text-success"></i></button>
+                      }
+                      else if (key == "P")
+                      {
+                        <button type="button" class="btn btn-sm btn-link whl-action-mark-duplicate"
+                          data-applicationid="@application.ApplicationId" data-duplicatetypecd="N" title="Not a duplicate"><i
+                            class="fa-regular fa-circle-check text-success"></i></button>
+                        <button type="button" class="btn btn-sm btn-link whl-action-mark-duplicate"
+                          data-applicationid="@application.ApplicationId" data-duplicatetypecd="D" title="Mark as duplicate"><i
+                            class="fa-solid fa-ban text-danger"></i></button>
+                      }
+                      else if (key == "-")
+                      {
+                        <button type="button" class="btn btn-sm btn-link whl-action-mark-duplicate"
+                          data-applicationid="@application.ApplicationId" data-duplicatetypecd="P"
+                          title="Flag as potential duplicate"><i class="fa-regular fa-flag text-warning"></i></button>
+                        <button type="button" class="btn btn-sm btn-link whl-action-mark-duplicate"
+                          data-applicationid="@application.ApplicationId" data-duplicatetypecd="D" title="Mark as duplicate"><i
+                            class="fa-solid fa-ban text-danger"></i></button>
+                      }
+                    </small>
+                  </div>
+                  <div class="col-xs-12 col-md-1 text-center" style="min-width: 80px;">
+                    <small>
+                      <button type="button" class="btn btn-sm whl-link whl-action-add-comment"
+                        data-applicationid="@application.ApplicationId" title="Add Comment"><i
+                          class="fa-solid fa-comment-medical"></i></button>
+                      <button type="button" class="btn btn-sm whl-link whl-action-view-comments"
+                        data-applicationid="@application.ApplicationId" title="View Comments"><i
+                          class="fa-regular fa-comment-dots"></i></button>
+                    </small>
+                  </div>
+                  <div class="col-xs-12 col-md-2 fw-bold"><small>@application.ApplicationId</small></div>
+                  <div class="col-xs-12 col-md-4 fw-bold">
+                    @if (physicalAddress.Length > 0)
+                    {
+                      <span class="badge bg-whlgreen text-white mr-4">P</span>
+                      @if (Model.TypeCd == "ADDRESS" && Model.TypeValue.Trim().Equals(physicalAddress.Trim(),
+                                    StringComparison.CurrentCultureIgnoreCase))
+                      {
+                        <small class="bg-match-highlight">@application.DisplayPhysicalAddress</small>
+                      }
+                      else
+                      {
+                        <small>@application.DisplayPhysicalAddress</small>
+                      }
+                    }
+                    @if (mailingAddress.Length > 0)
+                    {
+                      if (physicalAddress.Length > 0)
+                      {
+                        <br />
+                      }
+                      <span class="badge bg-whlgreen text-white mr-4">M</span>
+                      @if (Model.TypeCd == "ADDRESS" && Model.TypeValue.Trim().Equals(mailingAddress.Trim(),
+                                    StringComparison.CurrentCultureIgnoreCase))
+                      {
+                        <small class="bg-match-highlight">@application.DisplayMailingAddress</small>
+                      }
+                      else
+                      {
+                        <small>@application.DisplayMailingAddress</small>
+                      }
+                    }
+                  </div>
+                  <div class="col-xs-12 col-md-3 fw-bold"><small>@application.DisplaySubmittedDate</small></div>
+                  <div class="col-xs-12 col-md-1 fw-bold"><small>@application.SubmissionTypeDescription</small></div>
+                </div>
+                @if ((application.ApplicationMembers?.Count() ?? 0) == 0) continue;
+                <div class="row mb-1">
+                  <div class="col-xs-12 col-md-1 text-center" style="min-width: 80px;">&nbsp;</div>
+                  <div class="col-xs-12 col-md-2 bg-whlgreen-light text-white"><small>Type</small></div>
+                  <div class="col-xs-12 col-md-3 bg-whlgreen-light text-white"><small>Applicant Name</small></div>
+                  <div class="col-xs-12 col-md-1 bg-whlgreen-light text-white"><small>DOB</small></div>
+                  <div class="col-xs-12 col-md-1 bg-whlgreen-light text-white"><small>Tax ID</small></div>
+                  <div class="col-xs-12 col-md-2 bg-whlgreen-light text-white"><small>Phone(s)</small></div>
+                  <div class="col-xs-12 col-md-2 bg-whlgreen-light text-white"><small>Email(s)</small></div>
+                </div>
+                @foreach (var applicant in application.ApplicationMembers)
+                {
+                  <div class="row mb-1">
+                    <div class="col-xs-12 col-md-1 text-center" style="min-width: 80px;">&nbsp;</div>
+                    <div class="col-xs-12 col-md-2"><small>@applicant.DisplayRelation</small></div>
+                    @if (Model.TypeCd == "NAME" && Model.TypeValue.Trim().Equals(applicant.FirstName.Trim() + " " +
+                                applicant.LastName.Trim(), StringComparison.CurrentCultureIgnoreCase))
+                    {
+                      <div class="col-xs-12 col-md-3"><small><span
+                            class="bg-match-highlight fw-bold">@applicant.DisplayName</span></small></div>
+                    }
+                    else
+                    {
+                      <div class="col-xs-12 col-md-3"><small>@applicant.DisplayName</small></div>
+                    }
+                    @if (Model.TypeCd == "DOBSSN" && Model.DateOfBirth.Trim().Equals(applicant.DisplayDateOfBirth.Trim(),
+                                StringComparison.CurrentCultureIgnoreCase))
+                    {
+                      <div class="col-xs-12 col-md-1"><small
+                          class="bg-match-highlight fw-bold">@applicant.DisplayDateOfBirth</small></div>
+                    }
+                    else
+                    {
+                      <div class="col-xs-12 col-md-1"><small>@applicant.DisplayDateOfBirth</small></div>
+                    }
+                    @if (Model.TypeCd == "DOBSSN" && Model.Last4SSN.Trim().Equals(applicant.Last4SSN.Trim(),
+                                StringComparison.CurrentCultureIgnoreCase))
+                    {
+                      <div class="col-xs-12 col-md-1"><small class="bg-match-highlight fw-bold">@applicant.Last4SSN</small></div>
+                    }
+                    else
+                    {
+                      <div class="col-xs-12 col-md-1"><small>@applicant.Last4SSN</small></div>
+                    }
+                    <div class="col-xs-12 col-md-2">
+                      <small>
+                        @if ((applicant.PhoneNumber ?? "").Trim().Length > 0)
+                        {
+                          <span class="badge bg-whlgreen text-white mr-4">P</span>
+                          if (Model.TypeCd == "PHONE" && Model.TypeValue.Trim().Equals((applicant.PhoneNumber ?? "").Trim(),
+                          StringComparison.CurrentCultureIgnoreCase))
+                          {
+                            <span class="bg-match-highlight fw-bold">@applicant.PhoneNumber</span>
+                          }
+                          else
+                          {
+                            @applicant.PhoneNumber
+                          }
+                        }
+                        @if ((applicant.AltPhoneNumber ?? "").Trim().Length > 0)
+                        {
+                          if ((applicant.PhoneNumber ?? "").Trim().Length > 0)
+                          {
+                            <br />
+                          }
+                          <span class="badge bg-whlgreen text-white mr-4">A</span>
+                          @if (Model.TypeCd == "PHONE" && Model.TypeValue.Trim().Equals((applicant.AltPhoneNumber ?? "").Trim(),
+                                          StringComparison.CurrentCultureIgnoreCase))
+                          {
+                            <span class="bg-match-highlight fw-bold">@applicant.AltPhoneNumber</span>
+                          }
+                          else
+                          {
+                            @applicant.AltPhoneNumber
+                          }
+                        }
+                      </small>
+                    </div>
+                    <div class="col-xs-12 col-md-2">
+                      <small>
+                        @if ((applicant.EmailAddress ?? "").Trim().Length > 0)
+                        {
+                          <span class="badge bg-whlgreen text-white mr-4">P</span>
+                          if (Model.TypeCd == "EMAIL" && Model.TypeValue.Trim().Equals((applicant.EmailAddress ?? "").Trim(),
+                          StringComparison.CurrentCultureIgnoreCase))
+                          {
+                            <span class="bg-match-highlight fw-bold">@applicant.EmailAddress</span>
+                          }
+                          else
+                          {
+                            @applicant.EmailAddress
+                          }
+                        }
+                        @if ((applicant.AltEmailAddress ?? "").Trim().Length > 0)
+                        {
+                          if ((applicant.EmailAddress ?? "").Trim().Length > 0)
+                          {
+                            <br />
+                          }
+                          <span class="badge bg-whlgreen text-white mr-4">A</span>
+                          @if (Model.TypeCd == "EMAIL" && Model.TypeValue.Trim().Equals((applicant.AltEmailAddress ?? "").Trim(),
+                                          StringComparison.CurrentCultureIgnoreCase))
+                          {
+                            <span class="bg-match-highlight fw-bold">@applicant.AltEmailAddress</span>
+                          }
+                          else
+                          {
+                            @applicant.AltEmailAddress
+                          }
+                        }
+                      </small>
+                    </div>
+                  </div>
+                }
+              </div>
+            </div>
+          }
+        }
+        else
+        {
+          <p class="text-secondary"><small>None</small></p>
+        }
+      </div>
+    </div>
+  }
+
+</div>
+
+<!-- Duplicate Modal -->
+<div class="modal fade" id="duplicateModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+  aria-labelledby="duplicateModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="duplicateModalLabel">Confirmation Required</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p class="lead">Are you sure you want to mark Application <strong>#<span
+              id="whl-label-duplicate-applicationid"></span></strong> as a <span class="fw-bold"
+            id="whl-label-duplicatetypedescription"></span>?</p>
+        <div class="form whl-form-duplicate-application">
+          <div class="form-group form-group-sm mb-3">
+            <label class="form-label small fw-bolder">Reason <span class="text-danger">*</span></label><br />
+            <textarea class="form-control form-control-sm" id="whl-duplicate-reason" name="whl-duplicate-reason"
+              rows="5" maxlength="1000"></textarea>
+          </div>
+          <div class="form-group form-group-sm mb-3 whl-formfieldrow-duplicate-responseduedate">
+            <label class="form-label small fw-bolder">Response Due Date <span class="text-danger">*</span></label><br />
+            <input type="date" class="form-control form-control-sm" id="whl-duplicate-responseduedate"
+              name="whl-duplicate-responseduedate" maxlength="10"></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer whl-modal-actions-duplicate">
+        <input type="hidden" id="whl-duplicate-applicationid" name="whl-duplicate-applicationid" value="" />
+        <input type="hidden" id="whl-duplicate-duplicatetypecd" name="whl-duplicate-duplicatetypecd" value="" />
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i
+            class="fa-regular fa-thumbs-down"></i>&nbsp;No</button>
+        <button type="button" class="btn btn-primary whl-action-confirm-duplicate" disabled="disabled"
+          aria-disabled="true"><i class="fa-regular fa-thumbs-up"></i>&nbsp;Yes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Comments Viewer Modal -->
+<div class="modal fade" id="commentsViewerModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+  aria-labelledby="commentsViewerModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="commentsViewerModalLabel">Comments</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Comment Editor Modal -->
+<div class="modal fade" id="commentEditorModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+  aria-labelledby="commentEditorModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="commentEditorModalLabel"><span id="whl-title-comment-action">Add Comment</span>
+        </h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i
+            class="fa-solid fa-ban"></i>&nbsp;Cancel</button>
+        <button type="button" class="btn btn-primary whl-action-save-comment"><i
+            class="fa-solid fa-floppy-disk"></i>&nbsp;Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+@section Scripts
+{
+  <script>
+    //<![CDATA[
+    $(document).ready(function () {
+
+      $('.whl-action-mark-duplicate').on('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        let applicationId = 0;
+        let id = $(e.currentTarget).data('applicationid');
+        if (id === undefined || id === null || isNaN(parseFloat(id)) || parseFloat(id) < 0) {
+          applicationId = 0;
+        } else {
+          applicationId = parseFloat(id);
+          const duplicateTypeCd = $(e.currentTarget).data('duplicatetypecd');
+          $('#whl-duplicate-applicationid').val(applicationId);
+          $('#whl-label-duplicate-applicationid').html(applicationId);
+          $('#whl-duplicate-duplicatetypecd').val(duplicateTypeCd);
+          switch (duplicateTypeCd) {
+            case 'N':
+              $('#whl-label-duplicatetypedescription').html('not duplicate');
+              $('.whl-form-duplicate-application').show();
+              $('#whl-duplicate-reason').val('');
+              $('#whl-duplicate-reason').removeClass('is-valid');
+              $('#whl-duplicate-reason').removeClass('is-invalid');
+              $('.whl-action-confirm-duplicate').attr('disabled', 'disabled');
+              $('.whl-formfieldrow-duplicate-responseduedate').hide();
+              $('#whl-duplicate-responseduedate').val('0001-01-01');
+              $('#whl-duplicate-responseduedate').attr('min', '0001-01-01');
+              break;
+
+            case 'P':
+              $('#whl-label-duplicatetypedescription').html('potential duplicate');
+              $('.whl-form-duplicate-application').show();
+              $('#whl-duplicate-reason').val('');
+              $('#whl-duplicate-reason').removeClass('is-valid');
+              $('#whl-duplicate-reason').removeClass('is-invalid');
+              $('.whl-action-confirm-duplicate').attr('disabled', 'disabled');
+              $('.whl-formfieldrow-duplicate-responseduedate').show();
+              let d = new Date();
+              d.setDate(d.getDate() + 5);
+              let mm = d.getMonth() + 1;
+              let dd = d.getDate();
+              $('#whl-duplicate-responseduedate').val(d.getFullYear().toString() + '-' + ((mm < 10 ? '0' : '') + mm.toString()) + '-' + ((dd < 10 ? '0' : '') + dd.toString()));
+              let md = new Date();
+              md.setDate(md.getDate() + 3);
+              mm = md.getMonth() + 1;
+              dd = md.getDate();
+              $('#whl-duplicate-responseduedate').attr('min', d.getFullYear().toString() + '-' + ((mm < 10 ? '0' : '') + mm.toString()) + '-' + ((dd < 10 ? '0' : '') + dd.toString()));
+              break;
+
+            case 'D':
+              $('#whl-label-duplicatetypedescription').html('duplicate');
+              $('.whl-form-duplicate-application').show();
+              $('#whl-duplicate-reason').val('');
+              $('#whl-duplicate-reason').removeClass('is-valid');
+              $('#whl-duplicate-reason').removeClass('is-invalid');
+              $('.whl-action-confirm-duplicate').attr('disabled', 'disabled');
+              $('.whl-formfieldrow-duplicate-responseduedate').hide();
+              $('#whl-duplicate-responseduedate').val('0001-01-01');
+              $('#whl-duplicate-responseduedate').attr('min', '0001-01-01');
+              break;
+          }
+          $('.whl-modal-actions-duplicate').show();
+          $('#duplicateModal').modal('show');
+        }
+      });
+
+      $('#whl-duplicate-reason').on('change', function (e) {
+        $('.whl-action-confirm-duplicate').removeAttr('disabled');
+        $(this).removeClass('is-valid');
+        $(this).removeClass('is-invalid');
+        let v = $(this).val();
+        if (v !== undefined && v !== null && v.trim().length > 0) {
+          $(this).addClass('is-valid');
+        } else {
+          $(this).addClass('is-invalid');
+          $('.whl-action-confirm-duplicate').attr('disabled', 'disabled');
+        }
+      });
+
+      $('.whl-action-confirm-duplicate').on('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const applicationId = $('#whl-duplicate-applicationid').val();
+        const duplicateTypeCd = $('#whl-duplicate-duplicatetypecd').val();
+        let reason = $('#whl-duplicate-reason').val();
+        if (reason === undefined || reason === null || ('' + reason).trim().length === 0) {
+          alert('Please specify reason!');
+          return false;
+        }
+
+        $('.whl-modal-actions-duplicate').hide();
+        var data = {
+          ApplicationId: applicationId,
+          DuplicateCheckCd: duplicateTypeCd,
+          DuplicateReason: ('' + reason).trim(),
+          DuplicateCheckResponseDueDate: $('#whl-duplicate-responseduedate').val()
+        };
+        $.post('@Url.Action("UpdateDuplicateStatus", "Applications")', data)
+          .done(function (response) {
+            $('#whl-duplicate-applicationid').val('');
+            $('#whl-label-duplicate-applicationid').html('');
+            $('#whl-duplicate-reason').val('');
+            $('#whl-duplicate-responseduedate').val('0001-01-01');
+            $('#whl-duplicate-responseduedate').attr('min', '0001-01-01');
+            $('#duplicateModal').modal('hide');
+            fnShowToast('SUCCESS', 'Updated status for application #' + applicationId + ' as a' + (duplicateTypeCd === 'N' ? ' non-' : (duplicateTypeCd === 'P' ? ' potential ' : ' ')) + 'duplicate, refreshing page.');
+          })
+          .fail(function (e) {
+            $('#whl-duplicate-applicationid').val('');
+            $('#whl-label-duplicate-applicationid').html('');
+            $('#whl-duplicate-reason').val('');
+            $('#whl-duplicate-responseduedate').val('0001-01-01');
+            $('#whl-duplicate-responseduedate').attr('min', '0001-01-01');
+            $('#duplicateModal').modal('hide');
+            var message = e.responseJSON && e.responseJSON.message && e.responseJSON.message.length > 0 ? e.responseJSON.message : 'Failed to update status for application #' + applicationId + ' as a' + (duplicateTypeCd === 'N' ? ' non-' : (duplicateTypeCd === 'P' ? ' potential ' : ' ')) + 'duplicate';
+            fnShowToastForPage('FAILURE', message);
+          });
+      });
+
+      $('.whl-action-view-comments').on('click', function (e) {
+        e.preventDefault();
+        const applicationId = $(e.currentTarget).data('applicationid');
+        $.get('@Url.Action("Comments", "Applications")?applicationId=' + applicationId)
+          .done(function (response) {
+            $('#commentsViewerModal').find('div.modal-body').html(response);
+            $('#commentsViewerModal').modal('show');
+          });
+      });
+
+      $('.whl-action-add-comment').on('click', function (e) {
+        e.preventDefault();
+        const applicationId = $(e.currentTarget).data('applicationid');
+        $.get('@Url.Action("AddComment", "Applications")?applicationId=' + applicationId)
+          .done(function (response) {
+            $('#commentEditorModal').find('div.modal-body').html(response);
+            $('#commentEditorModal').modal('show');
+            $('#lblSaveErrorMessage').html('');
+            $('#divSaveErrorMessage').hide();
+          });
+      });
+
+      $('.whl-action-save-comment').on('click', function (e) {
+        e.preventDefault();
+        $('#lblSaveErrorMessage').html('');
+        $('#divSaveErrorMessage').hide();
+        var url = '@Url.Action("AddComment", "Applications")';
+        var data = {
+          ApplicationId: $('#CommentApplicationId').val(),
+          CommentId: $('#CommentId').val(),
+          Comments: $('#Comments').val(),
+          InternalOnlyInd: $('#InternalOnlyInd').prop('checked')
+        };
+        $.post(url, data)
+          .done(function (response) {
+            $('#commentEditorModal').find('div.modal-body').html('');
+            $('#commentEditorModal').modal('hide');
+            fnShowToast('SUCCESS', 'Comment added.');
+          })
+          .fail(function (e) {
+            var message = e.responseJSON && e.responseJSON.message && e.responseJSON.message.length > 0 ? e.responseJSON.message : 'Failed to save comment';
+            $('#lblSaveErrorMessage').html(e.responseJSON.message);
+            $('#divSaveErrorMessage').show();
+          });
+      });
+
+    });
+    //]]>
+  </script>
+}

@@ -1,0 +1,354 @@
+﻿@model DuplicatesViewModel
+@{
+  ViewData["Title"] = "Potential Duplicate Applications";
+}
+
+<div class="row">
+  <div class="col-xs-12 col-md-9">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a class="whl-link" asp-area="" asp-controller="Home" asp-action="Index"
+            title="Home"><small><i class="fa-solid fa-house"></i></small></a></li>
+        <li class="breadcrumb-item"><small>Listings, Applications &amp; Lotteries</small></li>
+        <li class="breadcrumb-item active fs-6 fw-bolder" aria-current="page"><small>@ViewData["Title"]</small></li>
+      </ol>
+    </nav>
+  </div>
+  <div class="col-xs-12 col-md-3 text-end">
+    <button type="button" class="btn btn-sm btn-link whl-link mr-4 whl-action-refresh-page" title="Refresh"
+      aria-label="Refresh"><i class="fa-solid fa-rotate-right"></i></button>
+  </div>
+</div>
+
+<div class="text-left mt-8">
+  <div class="card bg-light mb-3">
+    <div class="card-body">
+      <form asp-area="" asp-action="Duplicates" asp-controller="Applications" method="get" novalidate="novalidate">
+        <div class="row">
+          <div class="col-xs-12 col-md-11">
+            <label class="form-label text-secondary"><small>Select a listing to view and manage duplicate applications
+                for:</small></label><br />
+            <select class="form-select form-select-sm whl-formfield-listingid" asp-for="ListingId"
+              asp-items="@(new SelectList(Model.Listings, "Key", "Value", Model.ListingId))"></select>
+          </div>
+          <div class="col-xs-12 col-md-1">
+            <button type="submit" class="btn btn-sm btn-outline-primary mt-32 whl-action-filter-applications"
+              title="Filter applications" aria-label="Filter applications">Filter</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="card mt-2">
+    <h6 class="card-header">Duplicates by Date of Birth/Tax ID</h6>
+    <table class="table table-sm table-hover">
+      <thead class="bg-whlgreen text-white">
+        <tr>
+          <th class="text-center" style="width: 60px;">&nbsp;</th>
+          <th class="text-start" style="width: 180px;"><small>Date of Birth</small></th>
+          <th class="text-start"><small>Last 4 SSN/ITIN</small></th>
+          <th class="text-center" style="width: 120px;"><small>Count</small></th>
+        </tr>
+      </thead>
+      <tbody class="table-group-divider">
+        @if ((Model.DuplicatesBySsn?.Count() ?? 0) == 0)
+        {
+          <tr>
+            <td colspan="4" class="text-center"><small class="text-secondary">No duplicates found by Date of Birth/Tax ID</small></td>
+          </tr>
+        }
+        else
+        {
+          foreach (var item in Model.DuplicatesBySsn)
+          {
+            <tr>
+              <td class="text-center" style="width: 60px;">
+                <small><a class="whl-link whl-action-view-applications-tax ml-8" data-last4ssn="@item.Last4SSN"
+                    data-dateofbirth="@item.DateOfBirth"
+                    title="View Applications" href="javascript:void(0);"><i
+                      class="fa-solid fa-magnifying-glass"></i></a></small>
+              </td>
+              <td class="text-start" style="width: 180px;">
+                <small>
+                  @if (!string.IsNullOrEmpty(item.DateOfBirth))
+                  {
+                    @item.DateOfBirth
+                  }
+                </small>
+              </td>
+              <td class="text-start"><small>@item.Last4SSN</small></td>
+              <td class="text-center" style="width: 120px;"><small>@item.Count</small></td>
+            </tr>
+          }
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card mt-2">
+    <h6 class="card-header">Duplicates by Name</h6>
+    <table class="table table-sm table-hover">
+      <thead class="bg-whlgreen text-white">
+        <tr>
+          <th class="text-center" style="width: 60px;">&nbsp;</th>
+          <th class="text-start"><small>Name</small></th>
+          <th class="text-center" style="width: 120px;"><small>Count</small></th>
+        </tr>
+      </thead>
+      <tbody class="table-group-divider">
+        @if ((Model.DuplicatesByName?.Count() ?? 0) == 0)
+        {
+          <tr>
+            <td colspan="3" class="text-center"><small class="text-secondary">No duplicates found by Name</small></td>
+          </tr>
+        }
+        else
+        {
+          foreach (var item in Model.DuplicatesByName)
+          {
+            <tr>
+              <td class="text-center" style="width: 60px;">
+                <small><a class="whl-link whl-action-view-applications-name ml-8" data-name="@item.Name"
+                    title="View Applications" href="javascript:void(0);"><i
+                      class="fa-solid fa-magnifying-glass"></i></a></small>
+              </td>
+              <td class="text-start"><small>@item.Name</small></td>
+              <td class="text-center" style="width: 120px;"><small>@item.Count</small></td>
+            </tr>
+          }
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card mt-2">
+    <h6 class="card-header">Duplicates by Email Address</h6>
+    <table class="table table-sm table-hover">
+      <thead class="bg-whlgreen text-white">
+        <tr>
+          <th class="text-center" style="width: 60px;">&nbsp;</th>
+          <th class="text-start"><small>Email Address</small></th>
+          <th class="text-center" style="width: 120px;"><small>Count</small></th>
+        </tr>
+      </thead>
+      <tbody class="table-group-divider">
+        @if ((Model.DuplicatesByEmailAddress?.Count() ?? 0) == 0)
+        {
+          <tr>
+            <td colspan="3" class="text-center"><small class="text-secondary">No duplicates found by Email Address</small>
+            </td>
+          </tr>
+        }
+        else
+        {
+          foreach (var item in Model.DuplicatesByEmailAddress)
+          {
+            <tr>
+              <td class="text-center" style="width: 60px;">
+                <small><a class="whl-link whl-action-view-applications-email ml-8" data-emailaddress="@item.EmailAddress"
+                    title="View Applications" href="javascript:void(0);"><i
+                      class="fa-solid fa-magnifying-glass"></i></a></small>
+              </td>
+              <td class="text-start"><small>@item.EmailAddress</small></td>
+              <td class="text-center" style="width: 120px;"><small>@item.Count</small></td>
+            </tr>
+          }
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card mt-2">
+    <h6 class="card-header">Duplicates by Phone Number</h6>
+    <table class="table table-sm table-hover">
+      <thead class="bg-whlgreen text-white">
+        <tr>
+          <th class="text-center" style="width: 60px;">&nbsp;</th>
+          <th class="text-start"><small>Phone Number</small></th>
+          <th class="text-center" style="width: 120px;"><small>Count</small></th>
+        </tr>
+      </thead>
+      <tbody class="table-group-divider">
+        @if ((Model.DuplicatesByPhoneNumber?.Count() ?? 0) == 0)
+        {
+          <tr>
+            <td colspan="3" class="text-center"><small class="text-secondary">No duplicates found by Phone Number</small>
+            </td>
+          </tr>
+        }
+        else
+        {
+          foreach (var item in Model.DuplicatesByPhoneNumber)
+          {
+            <tr>
+              <td class="text-center" style="width: 60px;">
+                <small><a class="whl-link whl-action-view-applications-phone ml-8" data-phonenumber="@item.PhoneNumber"
+                    title="View Applications" href="javascript:void(0);"><i
+                      class="fa-solid fa-magnifying-glass"></i></a></small>
+              </td>
+              <td class="text-start"><small>@item.PhoneNumber</small></td>
+              <td class="text-center" style="width: 120px;"><small>@item.Count</small></td>
+            </tr>
+          }
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card mt-2">
+    <h6 class="card-header">Duplicates by Street Address</h6>
+    <table class="table table-sm table-hover">
+      <thead class="bg-whlgreen text-white">
+        <tr>
+          <th class="text-center" style="width: 60px;">&nbsp;</th>
+          <th class="text-start"><small>Street Address</small></th>
+          <th class="text-center" style="width: 120px;"><small>Count</small></th>
+        </tr>
+      </thead>
+      <tbody class="table-group-divider">
+        @if ((Model.DuplicatesByStreetAddress?.Count() ?? 0) == 0)
+        {
+          <tr>
+            <td colspan="3" class="text-center"><small class="text-secondary">No duplicates found by Street
+                Address</small></td>
+          </tr>
+        }
+        else
+        {
+          foreach (var item in Model.DuplicatesByStreetAddress)
+          {
+            <tr>
+              <td class="text-center" style="width: 60px;">
+                <small><a class="whl-link whl-action-view-applications-address ml-8"
+                    data-streetaddress="@item.StreetAddress" title="View Applications" href="javascript:void(0);"><i
+                      class="fa-solid fa-magnifying-glass"></i></a></small>
+              </td>
+              <td class="text-start"><small>@item.StreetAddress</small></td>
+              <td class="text-center" style="width: 120px;"><small>@item.Count</small></td>
+            </tr>
+          }
+        }
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+@section Scripts
+{
+  <script>
+    //<![CDATA[
+    $(document).ready(function () {
+
+      $('.whl-action-filter-applications').on('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        let id = $('.whl-formfield-listingid').val();
+        let listingId = 0;
+        if (id === undefined || id === null || isNaN(parseFloat(id)) || parseFloat(id) < 0) {
+          listingId = 0;
+        } else {
+          listingId = parseFloat(id);
+        }
+        window.location.href = '@Url.Action("Duplicates", "Applications")?listingId=' + listingId;
+      });
+
+      $('.whl-action-view-applications-tax').on('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        let id = $('.whl-formfield-listingid').val();
+        let listingId = 0;
+        if (id === undefined || id === null || isNaN(parseFloat(id)) || parseFloat(id) < 0) {
+          listingId = 0;
+        } else {
+          listingId = parseFloat(id);
+        }
+
+        let last4Ssn = $(e.currentTarget).data('last4ssn');
+        if (last4Ssn === undefined || last4Ssn === null) last4Ssn = '';
+        last4Ssn = (''  + last4Ssn).trim();
+
+        let dateOfBirth = $(e.currentTarget).data('dateofbirth');
+        if (dateOfBirth === undefined || dateOfBirth === null) dateOfBirth = '';
+        dateOfBirth = dateOfBirth.trim();
+
+        window.location.href = '@Url.Action("DuplicateApplicationsByDoBLast4Ssn", "Applications")?listingId=' + listingId + '&dateOfBirth=' + dateOfBirth + '&last4Ssn=' + last4Ssn;
+      });
+
+      $('.whl-action-view-applications-name').on('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        let id = $('.whl-formfield-listingid').val();
+        let listingId = 0;
+        if (id === undefined || id === null || isNaN(parseFloat(id)) || parseFloat(id) < 0) {
+          listingId = 0;
+        } else {
+          listingId = parseFloat(id);
+        }
+
+        let name = $(e.currentTarget).data('name');
+        if (name === undefined || name === null) name = '';
+        name = name.trim();
+
+        window.location.href = '@Url.Action("DuplicateApplicationsByName", "Applications")?listingId=' + listingId + '&name=' + encodeURIComponent(name);
+      });
+
+      $('.whl-action-view-applications-email').on('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        let id = $('.whl-formfield-listingid').val();
+        let listingId = 0;
+        if (id === undefined || id === null || isNaN(parseFloat(id)) || parseFloat(id) < 0) {
+          listingId = 0;
+        } else {
+          listingId = parseFloat(id);
+        }
+
+        let emailAddress = $(e.currentTarget).data('emailaddress');
+        if (emailAddress === undefined || emailAddress === null) emailAddress = '';
+        emailAddress = emailAddress.trim();
+
+        window.location.href = '@Url.Action("DuplicateApplicationsByEmailAddress", "Applications")?listingId=' + listingId + '&emailAddress=' + encodeURIComponent(emailAddress);
+      });
+
+      $('.whl-action-view-applications-phone').on('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        let id = $('.whl-formfield-listingid').val();
+        let listingId = 0;
+        if (id === undefined || id === null || isNaN(parseFloat(id)) || parseFloat(id) < 0) {
+          listingId = 0;
+        } else {
+          listingId = parseFloat(id);
+        }
+
+        let phoneNumber = $(e.currentTarget).data('phonenumber');
+        if (phoneNumber === undefined || phoneNumber === null) phoneNumber = '';
+        phoneNumber = ('' + phoneNumber).trim();
+
+        window.location.href = '@Url.Action("DuplicateApplicationsByPhoneNumber", "Applications")?listingId=' + listingId + '&phoneNumber=' + encodeURIComponent(phoneNumber);
+      });
+
+      $('.whl-action-view-applications-address').on('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        let id = $('.whl-formfield-listingid').val();
+        let listingId = 0;
+        if (id === undefined || id === null || isNaN(parseFloat(id)) || parseFloat(id) < 0) {
+          listingId = 0;
+        } else {
+          listingId = parseFloat(id);
+        }
+
+        let streetAddress = $(e.currentTarget).data('streetaddress');
+        if (streetAddress === undefined || streetAddress === null) streetAddress = '';
+        streetAddress = streetAddress.trim();
+
+        window.location.href = '@Url.Action("DuplicateApplicationsByStreetAddress", "Applications")?listingId=' + listingId + '&streetAddress=' + encodeURIComponent(streetAddress);
+      });
+
+    });
+    //]]>
+  </script>
+}

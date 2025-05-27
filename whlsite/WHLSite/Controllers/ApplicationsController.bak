@@ -1,0 +1,694 @@
+using System;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using Google.Rpc;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using WHLSite.Common.Services;
+using WHLSite.Extensions;
+using WHLSite.Services;
+using WHLSite.ViewModels;
+
+namespace WHLSite.Controllers;
+
+[Authorize]
+public class ApplicationsController : Controller
+{
+    private readonly ILogger<ApplicationsController> _logger;
+    private readonly IMessageService _messageService;
+    private readonly IHousingApplicationService _applicationsService;
+
+    public ApplicationsController(ILogger<ApplicationsController> logger, IHousingApplicationService applicationsService, IMessageService messageService)
+    {
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _messageService = messageService ?? throw new ArgumentNullException(nameof(messageService));
+        _applicationsService = applicationsService ?? throw new ArgumentNullException(nameof(applicationsService));
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Dashboard([FromHeader] string username)
+    {
+        var correlationId = username ?? Guid.NewGuid().ToString();
+        var requestId = Activity.Current?.Id ?? HttpContext?.TraceIdentifier ?? correlationId;
+        _logger.LogDebug($"RequestId: {requestId}, CorrelationId: {correlationId}, Message: Started");
+
+        try
+        {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return LocalRedirect("/");
+            }
+
+            var usernameClaim = User.Claims.FirstOrDefault(f => f.Type == "Username");
+            var model = await _applicationsService.GetForDashboard(requestId, correlationId, usernameClaim.Value);
+            return View(model);
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, $"RequestId: {requestId}, CorrelationId: {correlationId}, Message: Unhandled exception");
+            return View("Error", new ErrorViewModel { RequestId = requestId, CorrelationId = correlationId, Code = "EX000", Message = exception.Message, Details = exception.StackTrace });
+        }
+        finally
+        {
+            _logger.LogDebug($"RequestId: {requestId}, CorrelationId: {correlationId}, Message: Ended");
+        }
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> ApplicantInfo([FromHeader] string username, [FromQuery] int listingId, [FromQuery] long applicationId)
+    {
+        var correlationId = username ?? Guid.NewGuid().ToString();
+        var requestId = Activity.Current?.Id ?? HttpContext?.TraceIdentifier ?? correlationId;
+        _logger.LogDebug($"RequestId: {requestId}, CorrelationId: {correlationId}, Message: Started");
+
+        try
+        {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return LocalRedirect("/");
+            }
+
+            var usernameClaim = User.Claims.FirstOrDefault(f => f.Type == "Username");
+            var model = await _applicationsService.GetForApplicationEdit(requestId, correlationId, usernameClaim.Value, listingId, applicationId);
+            if (model == null)
+            {
+                return View("Error", new ErrorViewModel { RequestId = requestId, CorrelationId = correlationId, Code = "EX000" });
+            }
+
+            if (!model.Editable)
+            {
+                return RedirectToAction("Submitted", new { applicationId = model.ApplicationId });
+            }
+
+            return View(model);
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, $"RequestId: {requestId}, CorrelationId: {correlationId}, Message: Unhandled exception");
+            return View("Error", new ErrorViewModel { RequestId = requestId, CorrelationId = correlationId, Code = "EX000", Message = exception.Message, Details = exception.StackTrace });
+        }
+        finally
+        {
+            _logger.LogDebug($"RequestId: {requestId}, CorrelationId: {correlationId}, Message: Ended");
+        }
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> ApplicantInfo([FromHeader] string username, [FromForm] EditableApplicantInfoViewModel model)
+    {
+        var correlationId = username ?? Guid.NewGuid().ToString();
+        var requestId = Activity.Current?.Id ?? HttpContext?.TraceIdentifier ?? correlationId;
+        _logger.LogDebug($"RequestId: {requestId}, CorrelationId: {correlationId}, Message: Started");
+
+        try
+        {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return LocalRedirect("/");
+            }
+
+            var usernameClaim = User.Claims.FirstOrDefault(f => f.Type == "Username");
+
+            var returnCode = await _applicationsService.SaveApplicantInfo(requestId, correlationId, usernameClaim.Value, model);
+            if (returnCode.Length > 0)
+            {
+                model.Code = returnCode;
+                model.Message = _messageService.GetMessage(returnCode);
+                model.RequestId = requestId;
+                return View(model);
+            }
+
+            if ((model.SaveMode ?? "").Trim().Equals("DRAFT", StringComparison.CurrentCultureIgnoreCase))
+            {
+                return View(model);
+            }
+
+            return RedirectToAction("HouseholdInfo", new { applicationId = model.ApplicationId });
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, $"RequestId: {requestId}, CorrelationId: {correlationId}, Message: Unhandled exception");
+            return View("Error", new ErrorViewModel { RequestId = requestId, CorrelationId = correlationId, Code = "EX000", Message = exception.Message, Details = exception.StackTrace });
+        }
+        finally
+        {
+            _logger.LogDebug($"RequestId: {requestId}, CorrelationId: {correlationId}, Message: Ended");
+        }
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> HouseholdInfo([FromHeader] string username, [FromQuery] long applicationId)
+    {
+        var correlationId = username ?? Guid.NewGuid().ToString();
+        var requestId = Activity.Current?.Id ?? HttpContext?.TraceIdentifier ?? correlationId;
+        _logger.LogDebug($"RequestId: {requestId}, CorrelationId: {correlationId}, Message: Started");
+
+        try
+        {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return LocalRedirect("/");
+            }
+
+            var usernameClaim = User.Claims.FirstOrDefault(f => f.Type == "Username");
+            var model = await _applicationsService.GetForHouseholdEdit(requestId, correlationId, usernameClaim.Value, applicationId);
+            if (model == null)
+            {
+                return View("Error", new ErrorViewModel { RequestId = requestId, CorrelationId = correlationId, Code = "EX000" });
+            }
+
+            if (!model.Editable)
+            {
+                return RedirectToAction("Submitted", new { applicationId = model.ApplicationId });
+            }
+
+            return View(model);
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, $"RequestId: {requestId}, CorrelationId: {correlationId}, Message: Unhandled exception");
+            return View("Error", new ErrorViewModel { RequestId = requestId, CorrelationId = correlationId, Code = "EX000", Message = exception.Message, Details = exception.StackTrace });
+        }
+        finally
+        {
+            _logger.LogDebug($"RequestId: {requestId}, CorrelationId: {correlationId}, Message: Ended");
+        }
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> HouseholdInfo([FromHeader] string username, [FromForm] EditableHouseholdInfoViewModel model)
+    {
+        var correlationId = username ?? Guid.NewGuid().ToString();
+        var requestId = Activity.Current?.Id ?? HttpContext?.TraceIdentifier ?? correlationId;
+        _logger.LogDebug($"RequestId: {requestId}, CorrelationId: {correlationId}, Message: Started");
+
+        try
+        {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return LocalRedirect("/");
+            }
+
+            var usernameClaim = User.Claims.FirstOrDefault(f => f.Type == "Username");
+
+            var returnCode = await _applicationsService.SaveHouseholdInfo(requestId, correlationId, usernameClaim.Value, model);
+            if (returnCode.Length > 0)
+            {
+                model.Code = returnCode;
+                model.Message = _messageService.GetMessage(returnCode);
+                model.RequestId = requestId;
+                return View(model);
+            }
+
+            if ((model.SaveMode ?? "").Trim().Equals("DRAFT", StringComparison.CurrentCultureIgnoreCase))
+            {
+                return View(model);
+            }
+
+            return RedirectToAction("AdditionalMembersInfo", new { applicationId = model.ApplicationId });
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, $"RequestId: {requestId}, CorrelationId: {correlationId}, Message: Unhandled exception");
+            return View("Error", new ErrorViewModel { RequestId = requestId, CorrelationId = correlationId, Code = "EX000", Message = exception.Message, Details = exception.StackTrace });
+        }
+        finally
+        {
+            _logger.LogDebug($"RequestId: {requestId}, CorrelationId: {correlationId}, Message: Ended");
+        }
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> AdditionalMembersInfo([FromHeader] string username, [FromQuery] long applicationId)
+    {
+        var correlationId = username ?? Guid.NewGuid().ToString();
+        var requestId = Activity.Current?.Id ?? HttpContext?.TraceIdentifier ?? correlationId;
+        _logger.LogDebug($"RequestId: {requestId}, CorrelationId: {correlationId}, Message: Started");
+
+        try
+        {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return LocalRedirect("/");
+            }
+
+            var usernameClaim = User.Claims.FirstOrDefault(f => f.Type == "Username");
+            var model = await _applicationsService.GetForAdditionalMembersEdit(requestId, correlationId, usernameClaim.Value, applicationId);
+            if (model == null)
+            {
+                return View("Error", new ErrorViewModel { RequestId = requestId, CorrelationId = correlationId, Code = "EX000" });
+            }
+
+            if (!model.Editable)
+            {
+                return RedirectToAction("Submitted", new { applicationId = model.ApplicationId });
+            }
+
+            return View(model);
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, $"RequestId: {requestId}, CorrelationId: {correlationId}, Message: Unhandled exception");
+            return View("Error", new ErrorViewModel { RequestId = requestId, CorrelationId = correlationId, Code = "EX000", Message = exception.Message, Details = exception.StackTrace });
+        }
+        finally
+        {
+            _logger.LogDebug($"RequestId: {requestId}, CorrelationId: {correlationId}, Message: Ended");
+        }
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> AdditionalMembersInfo([FromHeader] string username, [FromForm] EditableAdditionalMembersInfoViewModel model)
+    {
+        var correlationId = username ?? Guid.NewGuid().ToString();
+        var requestId = Activity.Current?.Id ?? HttpContext?.TraceIdentifier ?? correlationId;
+        _logger.LogDebug($"RequestId: {requestId}, CorrelationId: {correlationId}, Message: Started");
+
+        try
+        {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return LocalRedirect("/");
+            }
+
+            var usernameClaim = User.Claims.FirstOrDefault(f => f.Type == "Username");
+
+            var returnCode = await _applicationsService.SaveAdditionalMembersInfo(requestId, correlationId, usernameClaim.Value, model);
+            if (returnCode.Length > 0)
+            {
+                model.Code = returnCode;
+                model.Message = _messageService.GetMessage(returnCode);
+                model.RequestId = requestId;
+                return View(model);
+            }
+
+            if ((model.SaveMode ?? "").Trim().Equals("DRAFT", StringComparison.CurrentCultureIgnoreCase))
+            {
+                return View(model);
+            }
+
+            return RedirectToAction("IncomeAssetsInfo", new { applicationId = model.ApplicationId });
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, $"RequestId: {requestId}, CorrelationId: {correlationId}, Message: Unhandled exception");
+            return View("Error", new ErrorViewModel { RequestId = requestId, CorrelationId = correlationId, Code = "EX000", Message = exception.Message, Details = exception.StackTrace });
+        }
+        finally
+        {
+            _logger.LogDebug($"RequestId: {requestId}, CorrelationId: {correlationId}, Message: Ended");
+        }
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> IncomeAssetsInfo([FromHeader] string username, [FromQuery] long applicationId)
+    {
+        var correlationId = username ?? Guid.NewGuid().ToString();
+        var requestId = Activity.Current?.Id ?? HttpContext?.TraceIdentifier ?? correlationId;
+        _logger.LogDebug($"RequestId: {requestId}, CorrelationId: {correlationId}, Message: Started");
+
+        try
+        {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return LocalRedirect("/");
+            }
+
+            var usernameClaim = User.Claims.FirstOrDefault(f => f.Type == "Username");
+            var model = await _applicationsService.GetForIncomeAssetsEdit(requestId, correlationId, usernameClaim.Value, applicationId);
+            if (model == null)
+            {
+                return View("Error", new ErrorViewModel { RequestId = requestId, CorrelationId = correlationId, Code = "EX000" });
+            }
+
+            if (!model.Editable)
+            {
+                return RedirectToAction("Submitted", new { applicationId = model.ApplicationId });
+            }
+
+            return View(model);
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, $"RequestId: {requestId}, CorrelationId: {correlationId}, Message: Unhandled exception");
+            return View("Error", new ErrorViewModel { RequestId = requestId, CorrelationId = correlationId, Code = "EX000", Message = exception.Message, Details = exception.StackTrace });
+        }
+        finally
+        {
+            _logger.LogDebug($"RequestId: {requestId}, CorrelationId: {correlationId}, Message: Ended");
+        }
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> IncomeAssetsInfo([FromHeader] string username, [FromForm] EditableIncomeAssetsInfoViewModel model)
+    {
+        var correlationId = username ?? Guid.NewGuid().ToString();
+        var requestId = Activity.Current?.Id ?? HttpContext?.TraceIdentifier ?? correlationId;
+        _logger.LogDebug($"RequestId: {requestId}, CorrelationId: {correlationId}, Message: Started");
+
+        try
+        {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return LocalRedirect("/");
+            }
+
+            var usernameClaim = User.Claims.FirstOrDefault(f => f.Type == "Username");
+
+            var returnCode = await _applicationsService.SaveIncomeAssetsInfo(requestId, correlationId, usernameClaim.Value, model);
+            if (returnCode.Length > 0)
+            {
+                model.Code = returnCode;
+                model.Message = _messageService.GetMessage(returnCode);
+                model.RequestId = requestId;
+                return View(model);
+            }
+
+            if ((model.SaveMode ?? "").Trim().Equals("DRAFT", StringComparison.CurrentCultureIgnoreCase))
+            {
+                return View(model);
+            }
+
+            return RedirectToAction("ReviewSubmitInfo", new { applicationId = model.ApplicationId });
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, $"RequestId: {requestId}, CorrelationId: {correlationId}, Message: Unhandled exception");
+            return View("Error", new ErrorViewModel { RequestId = requestId, CorrelationId = correlationId, Code = "EX000", Message = exception.Message, Details = exception.StackTrace });
+        }
+        finally
+        {
+            _logger.LogDebug($"RequestId: {requestId}, CorrelationId: {correlationId}, Message: Ended");
+        }
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> ReviewSubmitInfo([FromHeader] string username, [FromQuery] long applicationId)
+    {
+        var correlationId = username ?? Guid.NewGuid().ToString();
+        var requestId = Activity.Current?.Id ?? HttpContext?.TraceIdentifier ?? correlationId;
+        _logger.LogDebug($"RequestId: {requestId}, CorrelationId: {correlationId}, Message: Started");
+
+        try
+        {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return LocalRedirect("/");
+            }
+
+            var usernameClaim = User.Claims.FirstOrDefault(f => f.Type == "Username");
+            var model = await _applicationsService.GetForReviewSubmit(requestId, correlationId, usernameClaim.Value, applicationId);
+            if (model == null)
+            {
+                return View("Error", new ErrorViewModel { RequestId = requestId, CorrelationId = correlationId, Code = "EX000" });
+            }
+
+            if (!model.Editable)
+            {
+                return RedirectToAction("Submitted", new { applicationId = model.ApplicationId });
+            }
+
+            return View(model);
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, $"RequestId: {requestId}, CorrelationId: {correlationId}, Message: Unhandled exception");
+            return View("Error", new ErrorViewModel { RequestId = requestId, CorrelationId = correlationId, Code = "EX000", Message = exception.Message, Details = exception.StackTrace });
+        }
+        finally
+        {
+            _logger.LogDebug($"RequestId: {requestId}, CorrelationId: {correlationId}, Message: Ended");
+        }
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> ReviewSubmitInfo([FromHeader] string username, [FromForm] HousingApplicationReviewSubmitViewModel model)
+    {
+        var correlationId = username ?? Guid.NewGuid().ToString();
+        var requestId = Activity.Current?.Id ?? HttpContext?.TraceIdentifier ?? correlationId;
+        _logger.LogDebug($"RequestId: {requestId}, CorrelationId: {correlationId}, Message: Started");
+
+        try
+        {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return LocalRedirect("/");
+            }
+
+            var siteUrl = Request?.SiteUrl();
+            var usernameClaim = User.Claims.FirstOrDefault(f => f.Type == "Username");
+            var returnCode = await _applicationsService.SubmitApplication(requestId, correlationId, usernameClaim.Value, siteUrl, model);
+            if (returnCode.Length > 0)
+            {
+                model.Code = returnCode;
+                model.Message = _messageService.GetMessage(returnCode);
+                model.RequestId = requestId;
+                return View(model);
+            }
+
+            return RedirectToAction("Submitted", new { applicationId = model.ApplicationId });
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, $"RequestId: {requestId}, CorrelationId: {correlationId}, Message: Unhandled exception");
+            return View("Error", new ErrorViewModel { RequestId = requestId, CorrelationId = correlationId, Code = "EX000", Message = exception.Message, Details = exception.StackTrace });
+        }
+        finally
+        {
+            _logger.LogDebug($"RequestId: {requestId}, CorrelationId: {correlationId}, Message: Ended");
+        }
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Submitted([FromHeader] string username, [FromQuery] long applicationId)
+    {
+        var correlationId = username ?? Guid.NewGuid().ToString();
+        var requestId = Activity.Current?.Id ?? HttpContext?.TraceIdentifier ?? correlationId;
+        _logger.LogDebug($"RequestId: {requestId}, CorrelationId: {correlationId}, Message: Started");
+
+        try
+        {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return LocalRedirect("/");
+            }
+
+            var usernameClaim = User.Claims.FirstOrDefault(f => f.Type == "Username");
+            var model = await _applicationsService.GetForReviewSubmit(requestId, correlationId, usernameClaim.Value, applicationId);
+            if (model == null)
+            {
+                return View("Error", new ErrorViewModel { RequestId = requestId, CorrelationId = correlationId, Code = "EX000" });
+            }
+
+            return View(model);
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, $"RequestId: {requestId}, CorrelationId: {correlationId}, Message: Unhandled exception");
+            return View("Error", new ErrorViewModel { RequestId = requestId, CorrelationId = correlationId, Code = "EX000", Message = exception.Message, Details = exception.StackTrace });
+        }
+        finally
+        {
+            _logger.LogDebug($"RequestId: {requestId}, CorrelationId: {correlationId}, Message: Ended");
+        }
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetDocument([FromHeader] string username, [FromQuery] long applicationId, [FromQuery] long docId)
+    {
+        var correlationId = username ?? Guid.NewGuid().ToString();
+        var requestId = Activity.Current?.Id ?? HttpContext?.TraceIdentifier ?? correlationId;
+        _logger.LogDebug($"RequestId: {requestId}, CorrelationId: {correlationId}, Message: Started");
+
+        try
+        {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return LocalRedirect("/");
+            }
+
+            var usernameClaim = User.Claims.FirstOrDefault(f => f.Type == "Username");
+            var model = await _applicationsService.GetDocument(requestId, correlationId, usernameClaim.Value, applicationId, docId);
+            if (model == null)
+            {
+                return View("Error", new ErrorViewModel { RequestId = requestId, CorrelationId = correlationId, Code = "EX000" });
+            }
+
+            return File(model.DocContents, model.MimeType, model.FileName);
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, $"RequestId: {requestId}, CorrelationId: {correlationId}, Message: Unhandled exception");
+            return View("Error", new ErrorViewModel { RequestId = requestId, CorrelationId = correlationId, Code = "EX000", Message = exception.Message, Details = exception.StackTrace });
+        }
+        finally
+        {
+            _logger.LogDebug($"RequestId: {requestId}, CorrelationId: {correlationId}, Message: Ended");
+        }
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> AddDocument([FromHeader] string username, [FromQuery] long applicationId)
+    {
+        var correlationId = username ?? Guid.NewGuid().ToString();
+        var requestId = Activity.Current?.Id ?? HttpContext?.TraceIdentifier ?? correlationId;
+        _logger.LogDebug($"RequestId: {requestId}, CorrelationId: {correlationId}, Message: Started");
+
+        try
+        {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return LocalRedirect("/");
+            }
+
+            var usernameClaim = User.Claims.FirstOrDefault(f => f.Type == "Username");
+            var model = await _applicationsService.GetForAddDocument(requestId, correlationId, usernameClaim.Value, applicationId);
+            if (model == null)
+            {
+                return View("Error", new ErrorViewModel { RequestId = requestId, CorrelationId = correlationId, Code = "EX000" });
+            }
+
+            return View("EditDocument", model);
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, $"RequestId: {requestId}, CorrelationId: {correlationId}, Message: Unhandled exception");
+            return View("Error", new ErrorViewModel { RequestId = requestId, CorrelationId = correlationId, Code = "EX000", Message = exception.Message, Details = exception.StackTrace });
+        }
+        finally
+        {
+            _logger.LogDebug($"RequestId: {requestId}, CorrelationId: {correlationId}, Message: Ended");
+        }
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> AddDocument([FromHeader] string username, [FromForm] EditableApplicationDocumentViewModel model)
+    {
+        var correlationId = username ?? Guid.NewGuid().ToString();
+        var requestId = Activity.Current?.Id ?? HttpContext?.TraceIdentifier ?? correlationId;
+        _logger.LogDebug($"RequestId: {requestId}, CorrelationId: {correlationId}, Message: Started");
+
+        try
+        {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return Unauthorized();
+            }
+
+            var usernameClaim = User.Claims.FirstOrDefault(f => f.Type == "Username");
+
+            if (model.File != null)
+            {
+                model.FileName = model.File.FileName;
+                using var memoryStream = new MemoryStream();
+                await model.File.CopyToAsync(memoryStream);
+                model.DocContents = memoryStream.ToArray();
+            }
+
+            var returnCode = await _applicationsService.AddDocument(requestId, correlationId, usernameClaim.Value, model);
+            if (returnCode.Length > 0)
+            {
+                model.Code = returnCode;
+                model.Message = _messageService.GetMessage(returnCode);
+                model.RequestId = requestId;
+
+                return View("EditDocument", model);
+            }
+
+            return RedirectToAction("Submitted", "Applications", new { applicationId = model.ApplicationId }, "DOCS");
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, $"RequestId: {requestId}, CorrelationId: {correlationId}, Message: Unhandled exception");
+            return View("Error", new ErrorViewModel { RequestId = requestId, CorrelationId = correlationId, Code = "EX000", Message = exception.Message, Details = exception.StackTrace });
+        }
+        finally
+        {
+            _logger.LogDebug($"RequestId: {requestId}, CorrelationId: {correlationId}, Message: Ended");
+        }
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> DeleteDocument([FromHeader] string username, [FromQuery] long applicationId, [FromQuery] long docId)
+    {
+        var correlationId = username ?? Guid.NewGuid().ToString();
+        var requestId = Activity.Current?.Id ?? HttpContext?.TraceIdentifier ?? correlationId;
+        _logger.LogDebug($"RequestId: {requestId}, CorrelationId: {correlationId}, Message: Started");
+
+        try
+        {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return Unauthorized();
+            }
+
+            var usernameClaim = User.Claims.FirstOrDefault(f => f.Type == "Username");
+
+            var returnCode = await _applicationsService.DeleteDocument(requestId, correlationId, usernameClaim.Value, applicationId, docId);
+            if (returnCode.Length > 0)
+            {
+                var erorModel = new ErrorViewModel()
+                {
+                    Code = returnCode,
+                    Message = _messageService.GetMessage(returnCode),
+                    RequestId = requestId
+                };
+                return "|D101|D001|".Contains($"|{returnCode}|") ? BadRequest(erorModel) : StatusCode(500, erorModel);
+            }
+
+            return Ok();
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, $"RequestId: {requestId}, CorrelationId: {correlationId}, Message: Unhandled exception");
+            return View("Error", new ErrorViewModel { RequestId = requestId, CorrelationId = correlationId, Code = "EX000", Message = exception.Message, Details = exception.StackTrace });
+        }
+        finally
+        {
+            _logger.LogDebug($"RequestId: {requestId}, CorrelationId: {correlationId}, Message: Ended");
+        }
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Withdraw([FromHeader] string username, [FromQuery] long applicationId)
+    {
+        var correlationId = username ?? Guid.NewGuid().ToString();
+        var requestId = Activity.Current?.Id ?? HttpContext?.TraceIdentifier ?? correlationId;
+        _logger.LogDebug($"RequestId: {requestId}, CorrelationId: {correlationId}, Message: Started");
+
+        try
+        {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return StatusCode(500);
+            }
+
+            var siteUrl = Request?.SiteUrl();
+            var usernameClaim = User.Claims.FirstOrDefault(f => f.Type == "Username");
+            var returnCode = await _applicationsService.WithdrawApplication(requestId, correlationId, usernameClaim.Value, siteUrl, applicationId);
+            if (returnCode.Length > 0)
+            {
+                return BadRequest(new ErrorViewModel
+                {
+                    Code = returnCode,
+                    Message = _messageService.GetMessage(returnCode),
+                    RequestId = requestId
+                });
+            }
+
+            return Ok();
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, $"RequestId: {requestId}, CorrelationId: {correlationId}, Message: Unhandled exception");
+            return StatusCode(500, new ErrorViewModel { RequestId = requestId, CorrelationId = correlationId, Code = "EX000", Message = exception.Message, Details = exception.StackTrace });
+        }
+        finally
+        {
+            _logger.LogDebug($"RequestId: {requestId}, CorrelationId: {correlationId}, Message: Ended");
+        }
+    }
+}

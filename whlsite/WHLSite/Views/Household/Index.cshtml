@@ -1,0 +1,409 @@
+@model HouseholdViewModel
+@{
+  ViewData["Title"] = "Household";
+  ViewData["MENUID"] = "HOUSEHOLD";
+}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a class="whl-link" asp-area="" asp-controller="Home" asp-action="Index" title="Home"><i
+          class="fa-solid fa-house"></i></a></li>
+    <li class="breadcrumb-item active" aria-current="page">Household</li>
+  </ol>
+</nav>
+
+<div class="text-left mt-32 household-page">
+  @if (Model.IsIncomplete)
+  {
+    <div class="alert alert-danger d-flex align-items-center mt-32" role="alert">
+      <div><i class="fa-solid fa-triangle-exclamation"></i>&nbsp;Your household information is incomplete.</div>
+    </div>
+    @* <span class="text-danger fst-normal" style="font-size: 0.8em;"><i class="fa-solid fa-triangle-exclamation"></i>&nbsp;Your profile is incomplete</span> *@
+  }
+
+@* <div class="text-left mt-32">
+  <div class="card text-bg-light shadow-sm">
+    <!-- <div class="card-header">
+      <a class="whl-link text-dark" asp-area="" asp-controller="Household" asp-action="EditHousehold" title="Edit Household"
+        aria-label="Edit Household" style="float: right;"><i class="fa-solid fa-pencil"></i></a>
+      <h5>Summary</h5>
+    </div> -->
+    <div class="card-body">
+      <h4 class="text-secondary whl-card-title"><i class="fa-solid fa-house-user"></i>&nbsp;Summary</h4>
+      <div class="card-text">
+        <div class="row mb-3">
+          <div class="col-xs-12 col-sm-6 col-md-3"><small class="border-bottom">Household Size</small><br />
+            <span class="fs-5 fw-semibold text-dark">@(Model.HouseholdSize)</span>
+          </div>
+          <div class="col-xs-12 col-sm-6 col-md-3"><small class="border-bottom">Household Total Annual Gross
+              Income</small><br />
+            <span class="fs-5 fw-semibold text-dark">@(Model.HouseholdIncomeAmt.ToString("C0"))</span>
+          </div>
+          <div class="col-xs-12 col-sm-6 col-md-3"><small class="border-bottom">Household Assets</small><br />
+            <span class="fs-5 fw-semibold text-dark">@(Model.HouseholdAssetAmt.ToString("C0"))</span>
+          </div>
+          <div class="col-xs-12 col-sm-6 col-md-3"><small class="border-bottom">Household Real Estate</small><br />
+            <span class="fs-5 fw-semibold text-dark">@(Model.HouseholdRealEstateAmt.ToString("C0"))</span>
+          </div>
+        </div>
+      </div>
+      <!-- <a class="btn btn-sm btn-outline-primary mt-16" asp-area="" asp-controller="Household" asp-action="EditHousehold"
+        title="Edit Household" aria-label="Edit Household">Edit Household</a> -->
+    </div>
+  </div>
+</div> *@
+
+@* <div class="text-left mt-16">
+  <div class="card text-bg-light shadow-sm">
+    <!-- <div class="card-header">
+      <a class="whl-link text-dark" asp-area="" asp-controller="Household" asp-action="EditAddressInfo" title="Edit Address Information"
+        aria-label="Add Address Member" style="float: right;"><i class="fa-solid fa-pencil"></i></a>
+      <h5>Members</h5>
+    </div> -->
+    <div class="card-body">
+      <a name="ADDR"></a>
+      <h4 class="text-secondary whl-card-title">Address Information</h4>
+      <div class="card-text mt-16">
+        <div class="row mb-3">
+          <div class="col-xs-12 col-md-6">
+            <small class="border-bottom">Physical Address</small><br />
+            @if (!string.IsNullOrEmpty(Model.PhysicalStreetLine1))
+            {
+              @await Html.PartialAsync("~/Views/Household/_AddressDisplay.cshtml", new AddressViewModel() {
+                StreetLine1 = Model.PhysicalStreetLine1,
+                StreetLine2 = Model.PhysicalStreetLine2,
+                StreetLine3 = Model.PhysicalStreetLine3,
+                City = Model.PhysicalCity,
+                StateCd = Model.PhysicalStateCd,
+                ZipCode = Model.PhysicalZipCode,
+                County = Model.PhysicalCounty
+              });
+            }
+            else
+            {
+              <span class="fs-5 fw-light text-secondary">Not Specified</span>
+            }
+          </div>
+          @if (!string.IsNullOrEmpty(Model.PhysicalStreetLine1))
+          {
+            <div class="col-xs-12 col-md-6">
+              <small class="border-bottom">Mailing Address</small><br />
+              @if (Model.DifferentMailingAddressInd)
+              {
+                if (!string.IsNullOrEmpty(Model.MailingStreetLine1))
+                {
+                  @await Html.PartialAsync("~/Views/Household/_AddressDisplay.cshtml", new AddressViewModel() {
+                    StreetLine1 = Model.MailingStreetLine1,
+                    StreetLine2 = Model.MailingStreetLine2,
+                    StreetLine3 = Model.MailingStreetLine3,
+                    City = Model.MailingCity,
+                    StateCd = Model.MailingStateCd,
+                    ZipCode = Model.MailingZipCode,
+                  });
+                }
+                else
+                {
+                  <span class="fs-5 fw-light text-secondary">Not Specified</span>
+                }
+              }
+              else
+              {
+                <span class="fs-5 fw-semibold text-dark">Same as Physical Address</span>
+              }
+            </div>
+          }
+        </div>
+      </div>
+      <a class="btn btn-sm btn-outline-primary mt-16" asp-area="" asp-controller="Household" asp-action="EditAddressInfo"
+        title="Edit Address Information" aria-label="Edit Address Information">Edit Address Information</a>
+    </div>
+  </div>
+</div> *@
+
+  <div class="card text-bg-light shadow-sm">
+    <!-- <div class="card-header">
+      <a class="whl-link text-dark" asp-area="" asp-controller="Household" asp-action="AddMember" title="Add Household Member"
+        aria-label="Add Household Member" style="float: right;"><i class="fa-solid fa-plus"></i></a>
+      <h5>Members</h5>
+    </div> -->
+    <div class="card-body">
+      <a name="MBR"></a>
+      <h4 class="text-secondary whl-card-title">Members <small class="badge bg-light text-secondary">@Model.HouseholdSize</small></h4>
+      <div class="card-text mt-16">
+        <div class="row mb-3 border-bottom">
+          <div class="col-xs-1 col-md-1 text-center">&nbsp;</div>
+          <div class="col-xs-11 col-md-2">
+            <small class="fw-bold">Relation Type</small>
+          </div>
+          <div class="col-xs-12 col-md-3">
+            <small class="fw-bold">Name</small>
+          </div>
+          <div class="col-xs-12 col-md-2 text-end">
+            <small class="fw-bold">Total Annual Gross Income</small>
+          </div>
+          <div class="col-xs-12 col-md-2 text-end">
+            <small class="fw-bold">Real Estate</small>
+          </div>
+          <div class="col-xs-12 col-md-2 text-end">
+            <small class="fw-bold">Assets</small>
+          </div>
+        </div>
+        @foreach (var member in Model.Members)
+        {
+          <div class="row mb-3">
+            <div class="col-xs-1 col-md-1 text-center">
+              @if (member.RelationTypeCd != "SELF")
+              {
+                <a class="btn btn-sm btn-link whl-link" asp-area="" asp-controller="Household" asp-action="EditMember"
+                  asp-route-memberId="@member.MemberId" title="Edit member information" aria-label="Edit member information"
+                  data-memberid="@member.MemberId"><i class="fa-solid fa-pencil"></i></a>
+                <a href="javascript:void(0);" class="btn btn-sm btn-link whl-link whl-action-deletemember"
+                  title="Remove member from household" aria-label="Remove member from household"
+                  data-memberid="@member.MemberId" data-membername="@member.DisplayName"
+                  data-accountcount="@member.AccountCount"><i class="fa-solid fa-trash"></i></a>
+              }
+            </div>
+            <div class="col-xs-11 col-md-2">
+              @member.RelationTypeDescription
+            </div>
+            <div class="col-xs-12 col-md-3">
+              @member.DisplayName
+            </div>
+            <div class="col-xs-12 col-md-2 text-end">
+              @member.IncomeValueAmt.ToString("C0")
+            </div>
+            <div class="col-xs-12 col-md-2 text-end">
+              @member.RealEstateValueAmt.ToString("C0")
+            </div>
+            <div class="col-xs-12 col-md-2 text-end">
+              @member.AssetValueAmt.ToString("C0")
+            </div>
+          </div>
+        }
+        <div class="row mb-3 bg-light border-top">
+          <div class="col-xs-1 col-md-1 text-center">&nbsp;</div>
+          <div class="col-xs-11 col-md-5">
+            <span class="fw-bolder">Total</span>
+          </div>
+          <div class="col-xs-12 col-md-2 text-end">
+            <span class="fw-bolder">@Model.HouseholdIncomeAmt.ToString("C0")</span>
+          </div>
+          <div class="col-xs-12 col-md-2 text-end">
+            <span class="fw-bolder">@Model.HouseholdRealEstateAmt.ToString("C0")</span>
+          </div>
+          <div class="col-xs-12 col-md-2 text-end">
+            <span class="fw-bolder">@Model.HouseholdAssetAmt.ToString("C0")</span>
+          </div>
+        </div>
+      </div>
+      <a class="btn btn-sm btn-outline-primary mt-8" asp-area="" asp-controller="Household" asp-action="EditMember"
+        title="Add Household Member" aria-label="Add Household Member">Add Household
+        Member</a>
+    </div>
+  </div>
+</div>
+
+<div class="text-left mt-16">
+  <div class="card text-bg-light shadow-sm">
+    <!-- <div class="card-header">
+      <a class="whl-link text-dark" asp-area="" asp-controller="Household" asp-action="AddAccount" title="Add Household Account"
+        aria-label="Add Household Account" style="float: right;"><i class="fa-solid fa-plus"></i></a>
+      <h5>Accounts</h5>
+    </div> -->
+    <div class="card-body">
+      <a name="ACT"></a>
+      <h4 class="text-secondary whl-card-title">Accounts &amp; Other Assets <small class="badge bg-light text-secondary">@(Model.Accounts?.Count ?? 0)</small></h4>
+      <div class="card-text mt-16">
+        <div class="row mb-3 border-bottom">
+          <div class="col-xs-1 col-md-1 text-center">&nbsp;</div>
+          <div class="col-xs-11 col-md-3">
+            <small class="fw-bold">Account/Asset Type</small>
+          </div>
+          <div class="col-xs-12 col-md-2">
+            <small class="fw-bold">Institution/Instrument Name</small>
+          </div>
+          <div class="col-xs-12 col-md-2">
+            <small class="fw-bold">Account Number</small>
+          </div>
+          <div class="col-xs-12 col-md-2">
+            <small class="fw-bold">Primary Holder</small>
+          </div>
+          <div class="col-xs-12 col-md-2 text-end">
+            <small class="fw-bold">Asset Value</small>
+          </div>
+        </div>
+        @if (Model.Accounts.Any())
+        {
+          foreach (var account in Model.Accounts)
+          {
+            <div class="row mb-3">
+              <div class="col-xs-1 col-md-1 text-center">
+                <a class="btn btn-sm btn-link whl-link" asp-area="" asp-controller="Household" asp-action="EditAccount"
+                  asp-route-accountid="@account.AccountId" title="Edit account or asset information"
+                  aria-label="Edit account or asset information" data-accountid="@account.AccountId"><i
+                    class="fa-solid fa-pencil"></i></a>
+                <a href="javascript:void(0);" class="btn btn-sm btn-link whl-link whl-action-deleteaccount"
+                  title="Remove account or asset from household" aria-label="Remove account or asset from household"
+                  data-accountid="@account.AccountId" data-accountnumber="@account.AccountNumber"
+                  data-accounttype="@account.DisplayAccountType"><i class="fa-solid fa-trash"></i></a>
+              </div>
+              <div class="col-xs-11 col-md-3">
+                @account.DisplayAccountType
+              </div>
+              <div class="col-xs-12 col-md-2">
+                @account.InstitutionName
+              </div>
+              <div class="col-xs-12 col-md-2">
+                @account.DisplayAccountNumber
+              </div>
+              <div class="col-xs-11 col-md-2">
+                @account.PrimaryHolderMemberName
+              </div>
+              <div class="col-xs-12 col-md-2 text-end">
+                @account.AccountValueAmt.ToString("C0")
+              </div>
+            </div>
+          }
+          <div class="row mb-3 bg-light border-top">
+            <div class="col-xs-1 col-md-1 text-center">&nbsp;</div>
+            <div class="col-xs-11 col-md-9">
+              <span class="fw-bolder">Total</span>
+            </div>
+            <div class="col-xs-12 col-md-2 text-end">
+              <span class="fw-bolder">@Model.HouseholdAssetAmt.ToString("C0")</span>
+            </div>
+          </div>
+        }
+        else
+        {
+          <p><i class="fa-solid fa-triangle-exclamation text-warning"></i>&nbsp;No accounts have been added. Please add
+            one or more accounts.</p>
+        }
+      </div>
+      <a class="btn btn-sm btn-outline-primary mt-8" asp-area="" asp-controller="Household" asp-action="EditAccount"
+        title="Add Household Account or Asset" aria-label="Add Household Account or Asset">Add Household
+        Account or Asset</a>
+    </div>
+  </div>
+</div>
+
+<div class="text-left mt-16">
+  <div class="card text-bg-light shadow-sm">
+    <!-- <div class="card-header">
+      <a class="whl-link text-dark" asp-area="" asp-controller="Household" asp-action="EditVoucherInfo" title="Edit Voucher Information"
+        aria-label="Add Household Member" style="float: right;"><i class="fa-solid fa-plus"></i></a>
+      <h5>Members</h5>
+    </div> -->
+    <div class="card-body">
+      <a name="VCH"></a>
+      <h4 class="text-secondary whl-card-title">Vouchers / Rental Assistance</h4>
+      <div class="card-text mt-16">
+        <div class="row mb-3">
+          <div class="col-xs-12">
+            <small><strong>Note:</strong> This information is used to determine what eligibility levels apply to your
+              application. New York State
+              Human Rights Law prohibits the discrimination in housing based on lawful source of income, including
+              whether you have a Section 8 voucher.</small>
+          </div>
+        </div>
+        <div class="row mb-3">
+          <div class="col-xs-12 col-md-6">
+            <small>Does any one in your household receive rental assistance that will move with them to a new
+              apartment?<br />
+              <span class="text-secondary">Vouchers and rental subsidies such as Section 8, or VASH are all accepted.
+                Minimum income requirements
+                do not apply if you have a voucher or a rental subsidy. However, rent should be within maximum limits
+                allowed by your voucher or rental assistance program.</span>
+            </small>
+          </div>
+          <div class="col-xs-12 col-md-6">
+            <span class="fs-5 fw-semibold text-dark">@(Model.VoucherInd ? "Yes" : "No")</span>
+          </div>
+        </div>
+        @if (Model.VoucherInd)
+        {
+          <div class="row mb-3">
+            <div class="col-xs-12 col-md-6">
+              <small>What types of rental assistance does your household receive?</small>
+            </div>
+            <div class="col-xs-12 col-md-6">
+              @if (!string.IsNullOrEmpty(Model.DisplayVouchers))
+              {
+                <span class="fs-5 fw-semibold text-dark">@Model.DisplayVouchers</span>
+              }
+              else
+              {
+                <span class="fs-5 fw-light text-secondary">Not Specified</span>
+              }
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-xs-12 col-md-6">
+              <small>Name(s) of the office(s) that administer(s) your subsidy(ies)/voucher(s)?</small>
+            </div>
+            <div class="col-xs-12 col-md-6">
+              @if (!string.IsNullOrEmpty(Model.VoucherAdminName))
+              {
+                <span class="fs-5 fw-semibold text-dark">@Model.VoucherAdminName</span>
+              }
+              else
+              {
+                <span class="fs-5 fw-light text-secondary">Not Specified</span>
+              }
+            </div>
+          </div>
+        }
+      </div>
+      <a class="btn btn-sm btn-outline-primary mt-16" asp-area="" asp-controller="Household"
+        asp-action="EditVoucherInfo" title="Edit Voucher/Rental Assistance Information"
+        aria-label="Edit Voucher/Rental Assistance Information">Edit
+        Voucher Information</a>
+    </div>
+  </div>
+</div>
+
+<div class="text-left mt-16">
+  <div class="card text-bg-light shadow-sm">
+    <!-- <div class="card-header">
+      <a class="whl-link text-dark" asp-area="" asp-controller="Household" asp-action="EditLiveInAideInfo" title="Edit Live-in Aide Information"
+        aria-label="Edit Live-in Aide Information" style="float: right;"><i class="fa-solid fa-pencil"></i></a>
+      <h5>Members</h5>
+    </div> -->
+    <div class="card-body">
+      <a name="LIA"></a>
+      <h4 class="text-secondary whl-card-title">Live-in Aide Information</h4>
+      <div class="card-text mt-16">
+        <div class="row mb-3">
+          <div class="col-xs-12 col-md-6">
+            <small>Does your household have a live-in aide or assistant?</small>
+          </div>
+          <div class="col-xs-12 col-md-6">
+            <span class="fs-5 fw-semibold text-dark">@(Model.LiveInAideInd ? "Yes" : "No")</span>
+          </div>
+        </div>
+      </div>
+      <a class="btn btn-sm btn-outline-primary mt-16" asp-area="" asp-controller="Household"
+        asp-action="EditLiveInAideInfo" title="Edit Live-in Aide Information"
+        aria-label="Edit Live-in Aide Information">Edit Live-in Aide Information</a>
+    </div>
+  </div>
+</div>
+
+<div class="alert alert-warning d-flex align-items-center mt-16" role="alert">
+  <div>
+    <i class="fa-solid fa-triangle-exclamation"></i>&nbsp;Changes to your profile? Complete the <a
+      class="whl-link fw-bold" asp-area="" asp-controller="Profile" asp-action="Index" title="Complete the Profile page"
+      aria-label="Complete the Profile page">Profile</a> page.
+  </div>
+</div>
+
+@section Scripts
+{
+  <script>
+    //<![CDATA[
+    const deleteAccountUrl = '@Url.Action("DeleteAccount", "Household")';
+    const deleteMemberUrl = '@Url.Action("DeleteMember", "Household")';
+    //]]>
+  </script>
+  <script src="~/js/household/home.actions.js" asp-append-version="true"></script>
+}

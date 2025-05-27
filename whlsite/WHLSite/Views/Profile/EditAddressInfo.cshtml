@@ -1,0 +1,285 @@
+@model EditableAddressInfoViewModel
+@{
+  ViewData["Title"] = "Edit Address Information";
+  ViewData["MENUID"] = "PROFILE";
+}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a class="whl-link" asp-area="" asp-controller="Home" asp-action="Index" title="Home"><i
+          class="fa-solid fa-house"></i></a></li>
+    <li class="breadcrumb-item"><a class="whl-link" asp-area="" asp-controller="Profile" asp-action="Index"
+        title="Profile">Profile</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Edit Address Information</li>
+  </ol>
+</nav>
+
+<div class="text-left mt-32 profile-page">
+  <div class="card border-0 shadow-lg">
+    @* <h5 class="card-header">Edit Address Information</h5> *@
+    <div class="card-body">
+      <h4 class="text-secondary whl-card-title">Edit Address Information</h4>
+      @using (Html.BeginForm("EditAddressInfo", "Profile", FormMethod.Post, new
+      {
+        @class = "form whl-form-edit-addressinfo",
+        id = "frmEditAddressInfo",
+        name = "frmEditAddressInfo"
+      }))
+      {
+
+        if (!string.IsNullOrEmpty((Model.Message ?? "").Trim()))
+        {
+          <div id="divSaveErrorMessage">
+            <h6 class="text-danger"><i class="fa-solid fa-triangle-exclamation"></i>&nbsp;Error</h6>
+            <p id="lblSaveErrorMessage">@Model.Message</p>
+            <hr />
+          </div>
+        }
+
+        @await Html.PartialAsync("~/Views/Shared/_RequiredFieldBlurb.cshtml")
+
+        <div class="mt-16">
+          <div class="row mb-3">
+            <div class="col-xs-12 col-md-6">
+              <!-- Physical Address -->
+              <div style="display: none;">
+                <label class="form-label small fw-bolder">Do you have a current physical address?</label><br />
+                <div class="form-check form-switch">
+                  <input type="checkbox" class="form-check-input whl-formfield-addressind" role="switch"
+                    asp-for="AddressInd" checked="checked" />
+                  <label class="form-check-label small" asp-for="AddressInd">Do you currently have a physical
+                    address?</label>
+                </div>
+              </div>
+
+              <div class="whl-formfields-physicaladdress">
+
+                <div class="row mb-3">
+                  <div class="col-xs-12">
+                    <h5 class="fs5 border-bottom text-secondary">Physical Address</h5>
+                  </div>
+                </div>
+
+                <div class="row mb-3">
+                  <div class="col-xs-12">
+                    <label class="form-label small fw-bolder" asp-for="PhysicalStreetLine1">Street Line 1 <span
+                        class="fw-bold text-danger">*</span></label><br />
+                    <input type="text"
+                      class="form-control whl-formfield-physicaladdress whl-formfield-physicalstreetline1 text-capitalize"
+                      maxlength="100" placeholder="Enter Street Address" autocomplete="address-line1"
+                      asp-for="PhysicalStreetLine1" />
+                  </div>
+                </div>
+
+                <div class="row mb-3">
+                  <div class="col-xs-12">
+                    <label class="form-label small" asp-for="PhysicalStreetLine2">Street Line 2</label><br />
+                    <input type="text"
+                      class="form-control whl-formfield-physicaladdress whl-formfield-physicalstreetline2 text-capitalize"
+                      maxlength="100" placeholder="Enter Line 2 (optional)" autocomplete="address-line2"
+                      asp-for="PhysicalStreetLine2" />
+                  </div>
+                </div>
+
+                <div class="row mb-3">
+                  <div class="col-xs-12">
+                    <label class="form-label small" asp-for="PhysicalStreetLine3">Street Line 3</label><br />
+                    <input type="text"
+                      class="form-control whl-formfield-physicaladdress whl-formfield-physicalstreetline3 text-capitalize"
+                      maxlength="100" placeholder="Enter Line 3 (optional)" autocomplete="address-line3"
+                      asp-for="PhysicalStreetLine3" />
+                  </div>
+                </div>
+
+                <div class="row mb-3">
+                  <div class="col-xs-12 col-md-6">
+                    <label class="form-label small fw-bolder" asp-for="PhysicalCity">City <span
+                        class="fw-bold text-danger">*</span></label><br />
+                    <input type="text"
+                      class="form-control whl-formfield-physicaladdress whl-formfield-physicalcity text-capitalize"
+                      maxlength="100" placeholder="Enter City" autocomplete="city" asp-for="PhysicalCity" />
+                  </div>
+                  <div class="col-xs-12 col-md-3">
+                    <label class="form-label small fw-bolder" asp-for="PhysicalStateCd">State <span
+                        class="fw-bold text-danger">*</span></label><br />
+                    <select class="form-select whl-formfield-physicaladdress whl-formfield-physicalstatecd"
+                      placeholder="Select State" autocomplete="state" asp-for="PhysicalStateCd"
+                      asp-items="@(new SelectList(Model.UsStates, "Key", "Key", Model.PhysicalStateCd))"></select>
+                  </div>
+                  <div class="col-xs-12 col-md-3">
+                    <label class="form-label small fw-bolder" asp-for="PhysicalZipCode">Zip Code <span
+                        class="fw-bold text-danger">*</span></label><br />
+                    <input type="text" class="form-control whl-formfield-physicaladdress whl-formfield-physicalzipcode"
+                      maxlength="5" placeholder="Enter Zip Code" autocomplete="state" asp-for="PhysicalZipCode" />
+                  </div>
+                </div>
+
+                <div class="row mb-3">
+                  <div class="col-xs-12 col-md-9">
+                    <label class="form-label small fw-bolder" asp-for="PhysicalCounty">County <span
+                        class="fw-bold text-danger">*</span></label><br />
+                    @* <select class="form-select whl-formfield-physicaladdress whl-formfield-physicalcounty text-capitalize"
+                      placeholder="Select County" asp-for="PhysicalCounty"
+                      asp-items="@(new SelectList(Model.Counties, "Key", "Value", Model.PhysicalCounty))"
+                      disabled="disabled" aria-disabled="true"></select> *@
+                    <input type="text"
+                      class="form-control whl-formfield-physicaladdress whl-formfield-physicalcounty text-capitalize"
+                      maxlength="100" placeholder="County" autocomplete="off" asp-for="PhysicalCounty" disabled="disabled"
+                      aria-disabled="true" />
+                  </div>
+                </div>
+
+                <div class="row mb-3 whl-formfields-physicaladdressvalidated" style="display: none;">
+                  <div class="col-xs-12 mb-3">
+                    <small><i class="fa-solid fa-triangle-exclamation text-danger"></i>&nbsp;Please validate your Physical Address</small>
+                  </div>
+                  <div class="col-xs-12">
+                    <input type="hidden" class="whl-formfield-physicaladdressvalidated" value="1" />
+                    <button type="button" class="btn btn-outline-secondary whl-action-validate-address" title="Validate"
+                      aria-label="Validate" data-addresstype="physical">Validate</button>
+                  </div>
+                </div>
+
+                <div class="row mb-3">
+                  <div class="col-xs-12">
+                    <div class="form-check form-switch mt-16">
+                      <input type="checkbox" class="form-check-input whl-formfield-mailingaddressind" role="switch"
+                        asp-for="DifferentMailingAddressInd" />
+                      <label class="form-check-label small" asp-for="DifferentMailingAddressInd">Do you have a different
+                        mailing address?</label>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+            <div class="col-xs-12 col-md-6 whl-formfields-physicaladdress">
+              <!-- Mailing Address -->
+              @* <div>
+                <div class="form-check form-switch">
+                  <input type="checkbox" class="form-check-input whl-formfield-mailingaddressind" role="switch" asp-for="DifferentMailingAddressInd" />
+                  <label class="form-check-label small" asp-for="DifferentMailingAddressInd">Do you have a different mailing address?</label>
+                </div>
+              </div> *@
+              <div class="whl-formfields-mailingaddress" style="display: none;">
+
+                <div class="row mb-3">
+                  <div class="col-xs-12">
+                    <h5 class="fs5 border-bottom text-secondary">Mailing Address</h5>
+                  </div>
+                </div>
+
+                <div class="row mb-3">
+                  <div class="col-xs-12">
+                    <label class="form-label small fw-bolder" asp-for="MailingStreetLine1">Street Line 1 <span
+                        class="fw-bold text-danger">*</span></label><br />
+                    <input type="text"
+                      class="form-control whl-formfield-mailingaddress whl-formfield-mailingstreetline1 text-capitalize"
+                      maxlength="100" placeholder="Enter Street Address" autocomplete="address-line1"
+                      asp-for="MailingStreetLine1" />
+                  </div>
+                </div>
+
+                <div class="row mb-3">
+                  <div class="col-xs-12">
+                    <label class="form-label small" asp-for="MailingStreetLine2">Street Line 2</label><br />
+                    <input type="text"
+                      class="form-control whl-formfield-mailingaddress whl-formfield-mailingstreetline2 text-capitalize"
+                      maxlength="100" placeholder="Enter Line 2 (optional)" autocomplete="address-line2"
+                      asp-for="MailingStreetLine2" />
+                  </div>
+                </div>
+
+                <div class="row mb-3">
+                  <div class="col-xs-12">
+                    <label class="form-label small" asp-for="MailingStreetLine3">Street Line 3</label><br />
+                    <input type="text"
+                      class="form-control whl-formfield-mailingaddress whl-formfield-mailingstreetline3 text-capitalize"
+                      maxlength="100" placeholder="Enter Line 3 (optional)" autocomplete="address-line3"
+                      asp-for="MailingStreetLine3" />
+                  </div>
+                </div>
+
+                <div class="row mb-3">
+                  <div class="col-xs-12 col-md-6">
+                    <label class="form-label small fw-bolder" asp-for="MailingCity">City <span
+                        class="fw-bold text-danger">*</span></label><br />
+                    <input type="text"
+                      class="form-control whl-formfield-mailingaddress whl-formfield-mailingcity text-capitalize"
+                      maxlength="100" placeholder="Enter City" autocomplete="city" asp-for="MailingCity" />
+                  </div>
+                  <div class="col-xs-12 col-md-3">
+                    <label class="form-label small fw-bolder" asp-for="MailingStateCd">State <span
+                        class="fw-bold text-danger">*</span></label><br />
+                    <select class="form-select whl-formfield-mailingaddress whl-formfield-mailingstatecd"
+                      placeholder="Select State" autocomplete="state" asp-for="MailingStateCd"
+                      asp-items="@(new SelectList(Model.UsStates, "Key", "Key", Model.MailingStateCd))"></select>
+                  </div>
+                  <div class="col-xs-12 col-md-3">
+                    <label class="form-label small fw-bolder" asp-for="MailingZipCode">Zip Code <span
+                        class="fw-bold text-danger">*</span></label><br />
+                    <input type="text" class="form-control whl-formfield-mailingaddress whl-formfield-mailingzipcode"
+                      maxlength="5" placeholder="Enter Zip Code" autocomplete="state" asp-for="MailingZipCode" />
+                  </div>
+                </div>
+
+                <div class="row mb-3">
+                  <div class="col-xs-12 col-md-9">
+                    <label class="form-label small fw-bolder" asp-for="MailingCounty">County <span
+                        class="fw-bold text-danger">*</span></label><br />
+                    @* <select class="form-select whl-formfield-mailingaddress whl-formfield-mailingcounty text-capitalize"
+                      placeholder="Select County" asp-for="MailingCounty"
+                      asp-items="@(new SelectList(Model.Counties, "Key", "Value", Model.MailingCounty))"
+                      disabled="disabled" aria-disabled="true"></select> *@
+                    <input type="text"
+                      class="form-control whl-formfield-mailingaddress whl-formfield-mailingcounty text-capitalize"
+                      maxlength="100" placeholder="County" autocomplete="off" asp-for="MailingCounty" disabled="disabled"
+                      aria-disabled="true" />
+                  </div>
+                </div>
+
+                <div class="row mb-3 whl-formfields-mailingaddressvalidated" style="display: none;">
+                  <div class="col-xs-12 mb-3">
+                    <small><i class="fa-solid fa-triangle-exclamation text-danger"></i>&nbsp;Please validate your Mailing Address</small>
+                  </div>
+                  <div class="col-xs-12">
+                    <input type="hidden" class="whl-formfield-mailingaddressvalidated" value="1" />
+                    <button type="button" class="btn btn-outline-secondary whl-action-validate-address" title="Validate"
+                      aria-label="Validate" data-addresstype="mailing">Validate</button>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <hr />
+
+        @Html.HiddenFor(h => h.Username)
+        @Html.HiddenFor(h => h.HouseholdId)
+        <input type="hidden" id="hidSaveAddressInfoAction" name="hidSaveAddressInfoAction" value="" />
+        <a class="btn btn-outline-secondary whl-action-cancel-addressinfo" asp-area="" asp-controller="Profile"
+          asp-action="Index" title="Cancel Changes" aria-label="Cancel Changes">Cancel</a>
+        <button type="submit" class="btn btn-primary whl-action-save-addressinfo" title="Save Changes"
+          aria-label="Save Changes">Save Changes</button>
+
+      }
+    </div>
+  </div>
+</div>
+
+@await Html.PartialAsync("~/Views/Profile/_AddressCandidates.cshtml")
+
+@section Scripts
+{
+  <script>
+    //<![CDATA[
+    const arcGisApiUrl = '@(Model.ArcGisSettings?.ApiUrl ?? "")';
+    const arcGisAddressCandidatesApiUrl = arcGisApiUrl + '/@(Model.ArcGisSettings?.ApiMethod ?? "")';
+    const arcGisApiToken = '@(Model.ArcGisSettings?.ApiKey ?? "")';
+    //]]>
+  </script>
+  <script src="~/js/profile/address.actions.js" asp-append-version="true"></script>
+  <script src="~/js/profile/address.validations.js" asp-append-version="true"></script>
+}

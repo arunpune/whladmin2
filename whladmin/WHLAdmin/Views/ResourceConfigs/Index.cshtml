@@ -1,0 +1,114 @@
+﻿@model ResourceConfigsViewModel
+@{
+  ViewData["Title"] = "Resources and Links";
+  var resourcesCount = Model.Resources?.Count() ?? 0;
+}
+
+<div class="row">
+  <div class="col-xs-12 col-md-9">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a class="whl-link" asp-area="" asp-controller="Home" asp-action="Index"
+            title="Home"><small><i class="fa-solid fa-house"></i></small></a></li>
+        <li class="breadcrumb-item"><small>Public Site</small></li>
+        <li class="breadcrumb-item active fs-6 fw-bolder" aria-current="page"><small>@ViewData["Title"]</small></li>
+      </ol>
+    </nav>
+  </div>
+  <div class="col-xs-12 col-md-3 text-end">
+    @if (Model.CanEdit)
+    {
+      <button type="button" class="btn btn-sm btn-link whl-link mr-8 whl-action-add-resource" title="Add a new Resource"
+        aria-label="Add a new Resource"><i class="fa-solid fa-plus"></i></button>
+    }
+    <button type="button" class="btn btn-sm btn-link whl-link mr-4 whl-action-refresh-page" title="Refresh"
+      aria-label="Refresh"><i class="fa-solid fa-rotate-right"></i></button>
+  </div>
+</div>
+
+<div class="text-left mt-8">
+  @if (resourcesCount > 0)
+  {
+    foreach (var resource in Model.Resources.OrderBy(o => o.DisplayOrder))
+    {
+      <div class="card mt-8">
+        <div class="card-header">
+          <h6>@if (resource.Active)
+            {
+              <i class="fa-solid fa-circle-dot text-success" title="Resource is active"></i>
+            }
+                else
+            {
+              <i class="fa-solid fa-circle-stop text-danger" title="Resource is inactive"></i>
+            }
+            &nbsp;@($"{resource.DisplayOrder}. {resource.Title}")
+          </h6>
+        </div>
+        <div class="card-body">
+          <div class="card-text mb-3">
+            <div style="white-space: pre-line;">@resource.Text</div>
+            @if (!string.IsNullOrEmpty((resource.Url ?? "").Trim()))
+            {
+              <p class="mt-16 mb-3"><a class="whl-link" href="@resource.Url" target="_blank"><i class="fa-solid fa-globe"></i>
+                  @resource.Url</a></p>
+            }
+          </div>
+          @if (Model.CanEdit)
+          {
+            <a href="javascript:void(0);" class="whl-link whl-action-edit-resource" data-resourceid="@resource.ResourceId"
+              title="Edit Resource"><small><i class="fa-solid fa-pencil"></i>&nbsp;Edit</small></a>
+            @* <a href="javascript:void(0);" class="whl-link whl-action-delete-resource ml-4" data-resourceid="@resource.ResourceId" data-resourcetitle="@resource.Title" title="Delete Resource"><i
+                class="fa-solid fa-trash"></i>&nbsp;Delete</a> *@
+          }
+          <a class="whl-link whl-action-view-audit ml-8" data-entitytype="RESOURCE" data-entityid="@resource.ResourceId"
+            title="View audit log" href="javascript:void(0);"><small><i class="fa-solid fa-list"></i>&nbsp;View Audit
+              Log</small></a>
+        </div>
+      </div>
+    }
+  }
+  else
+  {
+    <div class="text-center">No resources found</div>
+  }
+</div>
+
+<!-- Resource Editor Modal -->
+<div class="modal fade" id="resourceEditorModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+  aria-labelledby="resourceEditorModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="resourceEditorModalLabel"><span id="whl-title-resource-action">Resource
+            Editor</span></h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+      </div>
+      <div class="modal-footer">
+        <input type="hidden" id="hidResourceAction" name="hidResourceAction" value="" />
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i
+            class="fa-solid fa-ban"></i>&nbsp;Cancel</button>
+        <button type="button" class="btn btn-primary whl-action-save-resource"><i
+            class="fa-solid fa-floppy-disk"></i>&nbsp;Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Audit Viewer Modal -->
+@await Html.PartialAsync("~/Views/Shared/_AuditViewerModalPartial.cshtml")
+
+@section Scripts
+{
+  <script>
+    //<![CDATA[
+    const resourceConfigAddUrl = '@Url.Action("Add", "ResourceConfigs")';
+    const resourceConfigEditUrl = '@Url.Action("Edit", "ResourceConfigs")';
+    const resourceConfigDeleteUrl = '@Url.Action("Delete", "ResourceConfigs")';
+    const auditViewerUrl = '@Url.Action("Index", "Audit")';
+    //]]>
+  </script>
+  <script src="~/js/management/common.js" asp-append-version="true"></script>
+  <script src="~/js/management/resourceconfigs.js" asp-append-version="true"></script>
+}

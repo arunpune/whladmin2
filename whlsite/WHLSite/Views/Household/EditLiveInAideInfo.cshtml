@@ -1,0 +1,70 @@
+@model EditableLiveInAideInfoViewModel
+@{
+  ViewData["Title"] = "Edit Live-in Aide Information";
+  ViewData["MENUID"] = "HOUSEHOLD";
+}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a class="whl-link" asp-area="" asp-controller="Home" asp-action="Index" title="Home"><i
+          class="fa-solid fa-house"></i></a></li>
+    <li class="breadcrumb-item"><a class="whl-link" asp-area="" asp-controller="Household" asp-action="Index"
+        title="Household">Household</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Edit Live-in Aide Information</li>
+  </ol>
+</nav>
+
+<div class="text-left mt-32 household-page">
+  <div class="card border-0 shadow-lg">
+    @* <h5 class="card-header">Edit Live-in Aide Information</h5> *@
+    <div class="card-body">
+      <h4 class="text-secondary whl-card-title">Edit Live-in Aide Information</h4>
+      @using (Html.BeginForm("EditLiveInAideInfo", "Household", FormMethod.Post, new
+      {
+        @class = "form whl-form-edit-liveinaideinfo",
+        id = "frmEditLiveInAideInfo",
+        name = "frmEditLiveInAideInfo"
+      }))
+      {
+
+        if (!string.IsNullOrEmpty((Model.Message ?? "").Trim()))
+        {
+          <div id="divSaveErrorMessage">
+            <h6 class="text-danger"><i class="fa-solid fa-triangle-exclamation"></i>&nbsp;Error</h6>
+            <p id="lblSaveErrorMessage">@Model.Message</p>
+            <hr />
+          </div>
+        }
+
+        <div class="row mb-3">
+          <div class="col-xs-12 col-md-6">
+            <label class="form-label small fw-bolder">Does your household have a live-in aide or assistant?</label><br />
+            <div id="whl-formfield-helptext-liveinaideind" class="form-text">Indicate if you or anyone in your household requires a Live-in aide or assistant.</div>
+          </div>
+          <div class="col-xs-12 col-md-6">
+            <div class="form-check form-switch">
+              <input type="checkbox" class="form-check-input whl-formfield-liveinaideind" role="switch" asp-for="LiveInAideInd" />
+              <label class="form-check-label small fw-bolder" asp-for="LiveInAideInd">Yes</label>
+            </div>
+            @Html.ValidationMessageFor(v => v.LiveInAideInd)
+          </div>
+        </div>
+
+        <hr />
+
+        @Html.HiddenFor(h => h.Username)
+        @Html.HiddenFor(h => h.HouseholdId)
+        <input type="hidden" id="hidSaveLiveInAideInfoAction" name="hidSaveLiveInAideInfoAction" value="" />
+        <a class="btn btn-outline-secondary whl-action-cancel-liveinaideinfo" asp-area="" asp-controller="Household" asp-action="Index" title="Cancel Changes" aria-label="Cancel Changes">Cancel</a>
+        <button type="submit" class="btn btn-primary whl-action-save-liveinaideinfo" title="Save Changes" aria-label="Save Changes">Save Changes</button>
+
+      }
+    </div>
+  </div>
+</div>
+
+@section Scripts
+{
+  <script src="~/js/household/liveinaide.actions.js" asp-append-version="true"></script>
+  <script src="~/js/household/liveinaide.validations.js" asp-append-version="true"></script>
+}

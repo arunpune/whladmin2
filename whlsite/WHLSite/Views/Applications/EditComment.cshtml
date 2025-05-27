@@ -1,0 +1,118 @@
+@model EditableApplicationCommentViewModel
+@{
+  ViewData["Title"] = Model.CommentId > 0 ? "Edit Comment" : "Add Comment";
+  ViewData["MENUID"] = "DASHBOARD";
+}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a class="whl-link" asp-area="" asp-controller="Home" asp-action="Index" title="Home"><i
+          class="fa-solid fa-house"></i></a></li>
+    <li class="breadcrumb-item"><a class="whl-link" asp-area="" asp-controller="Applications" asp-action="Dashboard"
+        title="Dashboard">Dashboard</a></li>
+    <li class="breadcrumb-item"><a class="whl-link" asp-area="" asp-controller="Applications" asp-action="Submitted"
+        asp-route-applicationId="@Model.ApplicationId" title="Return to @Model.ApplicationId">@Model.ApplicationId</a></li>
+    <li class="breadcrumb-item active" aria-current="page">@ViewData["Title"]</li>
+  </ol>
+</nav>
+
+<div class="text-left mt-32 bg-white">
+  <div class="card shadow-lg">
+    <h5 class="card-header">@ViewData["Title"]</h5>
+    <div class="card-body">
+      @using (Html.BeginForm("AddComment", "Applications", FormMethod.Post, new
+      {
+        @class = "form whl-form-add-comment",
+        id = "frmAddComment",
+        name = "frmAddComment",
+        enctype = "multipart/form-data"
+      }))
+      {
+
+        if (!string.IsNullOrEmpty((Model.Message ?? "").Trim()))
+        {
+          <div id="divSaveErrorMessage">
+            <h6 class="text-danger"><i class="fa-solid fa-triangle-exclamation"></i>&nbsp;Error</h6>
+            <p id="lblSaveErrorMessage">@Model.Message</p>
+            <hr />
+          </div>
+        }
+
+        <div class="row mb-3">
+
+          @Html.HiddenFor(h => h.CommentId, htmlAttributes: new { @class = "whl-formfield-commentid" })
+          @Html.HiddenFor(h => h.ApplicationId, htmlAttributes: new { @class = "whl-formfield-applicationid" })
+          @Html.HiddenFor(h => h.ListingId, htmlAttributes: new { @class = "whl-formfield-listingid" })
+          @Html.HiddenFor(h => h.Username, htmlAttributes: new { @class = "whl-formfield-username" })
+
+          <div class="col-xs-12">
+            @Html.LabelFor(l => l.Comments, htmlAttributes: new { @class = "form-label small fw-bolder" }) <span class="small text-danger">*</span><br />
+            @Html.TextAreaFor(e => e.Comments, htmlAttributes: new
+            {
+              @class = "form-control whl-formfield-comments",
+              placeholder = "Enter Comment",
+              autocomplete = "off",
+              rows = 5,
+              maxlength = 1000
+            })
+            @Html.ValidationMessageFor(v => v.Comments, "", htmlAttributes: new { @class = "text-danger" })
+          </div>
+
+        </div>
+
+        <hr />
+
+        <input type="hidden" id="hidSaveCommentAction" name="hidSaveCommentAction" value="" />
+        <a class="btn btn-outline-secondary whl-action-cancel-comment" asp-area="" asp-controller="Profile" asp-action="Index" asp-fragment="DOC" title="Cancel Changes" aria-label="Cancel Changes">Cancel</a>
+        <button type="submit" class="btn btn-primary whl-action-save-comment" title="Save Comment" aria-label="Save Comment">Save Comment</button>
+
+      }
+    </div>
+  </div>
+</div>
+
+@section Scripts
+{
+  <script>
+    //<![CDATA[
+
+    $(function () {
+
+      // Disable submission
+      $('.whl-action-save-comment').attr('disabled', 'disabled');
+      fnToggleSaveComment();
+
+      $('.whl-formfield-comments').on('change', function (e) {
+        $(this).removeClass('is-valid');
+        $(this).removeClass('is-invalid');
+        var v = $(this).val();
+        if (v !== undefined && v !== null && v.trim().length > 0) {
+          $(this).addClass('is-valid');
+        } else {
+          $(this).addClass('is-invalid');
+        }
+        fnToggleSaveComment();
+      });
+
+      function fnToggleSaveComment() {
+        var dn = $('.whl-formfield-comments').val();
+        var allowSubmission = (dn !== undefined && dn !== null && dn.trim().length > 0);
+        if (allowSubmission) {
+          $('.whl-action-save-comment').removeAttr('disabled');
+        }
+        else {
+          $('.whl-action-save-comment').attr('disabled', 'disabled');
+        }
+      }
+
+      //$('.whl-form-save-comment').on('submit', function (e) {
+      //  e.preventDefault();
+      //  e.stopPropagation();
+      //  console.log('formsubmission');
+      //});
+
+    });
+
+    //]]>
+  </script>
+}

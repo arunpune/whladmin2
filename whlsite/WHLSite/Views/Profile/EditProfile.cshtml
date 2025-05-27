@@ -1,0 +1,223 @@
+@model EditableProfileViewModel
+@{
+  ViewData["Title"] = "Edit Profile";
+  ViewData["MENUID"] = "PROFILE";
+}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a class="whl-link" asp-area="" asp-controller="Home" asp-action="Index" title="Home"><i
+          class="fa-solid fa-house"></i></a></li>
+    <li class="breadcrumb-item"><a class="whl-link" asp-area="" asp-controller="Profile" asp-action="Index"
+        title="Profile">Profile</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Edit Profile</li>
+  </ol>
+</nav>
+
+<div class="text-left mt-32 profile-page">
+  <div class="card border-0 shadow-lg">
+    @* <h5 class="card-header">Edit Profile</h5> *@
+    <div class="card-body">
+      <h4 class="text-secondary whl-card-title">Edit Profile</h4>
+      @using (Html.BeginForm("EditProfile", "Profile", FormMethod.Post, new
+      {
+        @class = "form whl-form-edit-profile",
+        id = "frmEditProfile",
+        name = "frmEditProfile"
+      }))
+      {
+
+        if (!string.IsNullOrEmpty((Model.Message ?? "").Trim()))
+        {
+          <div id="divSaveErrorMessage">
+            <h6 class="text-danger"><i class="fa-solid fa-triangle-exclamation"></i>&nbsp;Error</h6>
+            <p id="lblSaveErrorMessage">@Model.Message</p>
+            <hr />
+          </div>
+        }
+
+        @await Html.PartialAsync("~/Views/Shared/_RequiredFieldBlurb.cshtml")
+
+        <div class="row mb-3">
+
+          <div class="col-xs-12 col-md-2" style="display: none;">
+            <label class="form-label small fw-bolder" asp-for="Title">Title</label><br />
+            <input type="text" class="form-control whl-formfield-title" maxlength="10" placeholder="Enter Title"
+              autocomplete="off" asp-for="Title" />
+          </div>
+
+          <div class="col-xs-12 col-md-3">
+            <label class="form-label small fw-bolder" asp-for="FirstName">First Name <span
+                class="fw-bold text-danger">*</span></label><br />
+            <input type="text" class="form-control whl-formfield-firstname" maxlength="100" placeholder="Enter First Name"
+              autocomplete="firstname" asp-for="FirstName" />
+          </div>
+
+          <div class="col-xs-12 col-md-2">
+            <label class="form-label small" asp-for="MiddleName">Middle Name</label><br />
+            <input type="text" class="form-control whl-formfield-middlename" maxlength="100"
+              placeholder="Enter Middle Name" autocomplete="middlename" asp-for="MiddleName" />
+          </div>
+
+          <div class="col-xs-12 col-md-3">
+            <label class="form-label small fw-bolder" asp-for="LastName">Last Name <span
+                class="fw-bold text-danger">*</span></label><br />
+            <input type="text" class="form-control whl-formfield-lastname" maxlength="100" placeholder="Enter Last Name"
+              autocomplete="lastname" asp-for="LastName" />
+          </div>
+
+          <div class="col-xs-12 col-md-2">
+            <label class="form-label small" asp-for="Suffix">Suffix</label><br />
+            <input type="text" class="form-control whl-formfield-suffix" maxlength="10" placeholder="Enter Suffix"
+              autocomplete="suffix" asp-for="Suffix" />
+          </div>
+
+        </div>
+
+        <div class="row mb-3 mt-32">
+
+          <div class="col-xs-12 col-md-3">
+            <label class="form-label small fw-bolder" asp-for="DateOfBirth">Date of Birth <span
+                class="fw-bold text-danger">*</span></label><br />
+            <input type="date" class="form-control whl-formfield-dateofbirth" maxlength="10" placeholder="MM/dd/yyyy"
+              autocomplete="off" asp-for="DateOfBirth" />
+          </div>
+
+          <div class="col-xs-12 col-md-3">
+            <label class="form-label small fw-bolder" asp-for="Last4SSN">Last 4 of SSN/ITIN <span
+                class="fw-bold text-danger">*</span></label><br />
+            <input type="text" class="form-control whl-formfield-last4ssn" maxlength="4" placeholder="NNNN"
+              autocomplete="off" asp-for="Last4SSN" />
+          </div>
+
+        </div>
+
+        <div class="row mb-3 mt-32">
+
+          <div class="col-xs-12 col-md-3">
+            <label class="form-label small fw-bolder" asp-for="IdTypeCd">ID Type <span
+                class="fw-bold text-danger">*</span></label><br />
+            <select class="form-select whl-formfield-idtypecd" placeholder="Select One" asp-for="IdTypeCd"
+              asp-items="@(new SelectList(Model.IdTypes, "Key", "Value", Model.IdTypeCd))"></select>
+          </div>
+
+          <div class="col-xs-12 col-md-3">
+            <label class="form-label small fw-bolder" asp-for="IdTypeValue">ID Number <span
+                class="fw-bold text-danger">*</span></label><br />
+            <input type="text" class="form-control whl-formfield-idtypevalue" maxlength="20" placeholder="ID Number"
+              autocomplete="off" asp-for="IdTypeValue" />
+          </div>
+
+          <div class="col-xs-12 col-md-3">
+            <label class="form-label small fw-bolder" asp-for="IdIssueDate">ID Issue Date <span
+                class="fw-bold text-danger">*</span></label><br />
+            <input type="date" class="form-control whl-formfield-idissuedate" maxlength="10" placeholder="MM/dd/yyyy"
+              autocomplete="off" asp-for="IdIssueDate" />
+          </div>
+
+        </div>
+
+        <div class="row mb-3 mt-32">
+
+          <div class="col-xs-12 col-md-3">
+            <label class="form-label small fw-bolder" asp-for="GenderCd">Gender <span
+                class="fw-bold text-danger">*</span></label><br />
+            <select class="form-select whl-formfield-gendercd" placeholder="Select One" asp-for="GenderCd"
+              asp-items="@(new SelectList(Model.GenderTypes, "Key", "Value", Model.GenderCd))"></select>
+          </div>
+
+          <div class="col-xs-12 col-md-6">
+            <label class="form-label small fw-bolder" asp-for="RaceCd">Race <span
+                class="fw-bold text-danger">*</span></label><br />
+            <select class="form-select whl-formfield-racecd" placeholder="Select One" asp-for="RaceCd"
+              asp-items="@(new SelectList(Model.RaceTypes, "Key", "Value", Model.RaceCd))"></select>
+          </div>
+
+          <div class="col-xs-12 col-md-3">
+            <label class="form-label small fw-bolder" asp-for="EthnicityCd">Ethnicity <span
+                class="fw-bold text-danger">*</span></label><br />
+            <select class="form-select whl-formfield-ethnicitycd" placeholder="Select One" asp-for="EthnicityCd"
+              asp-items="@(new SelectList(Model.EthnicityTypes, "Key", "Value", Model.EthnicityCd))"></select>
+          </div>
+
+        </div>
+
+        <div class="row mb-3 mt-32">
+
+          <div class="col-xs-12 col-md-3">
+            <div class="form-check form-switch">
+              <input type="checkbox" class="form-check-input whl-formfield-studentind" role="switch"
+                asp-for="StudentInd" />
+              <label class="form-check-label small" asp-for="StudentInd">Student?</label>
+            </div>
+          </div>
+
+          <div class="col-xs-12 col-md-3">
+            <div class="form-check form-switch">
+              <input type="checkbox" class="form-check-input whl-formfield-disabilityind" role="switch"
+                asp-for="DisabilityInd" />
+              <label class="form-check-label small" asp-for="DisabilityInd">Disability?</label>
+            </div>
+          </div>
+
+          <div class="col-xs-12 col-md-3">
+            <div class="form-check form-switch">
+              <input type="checkbox" class="form-check-input whl-formfield-veteranind" role="switch"
+                asp-for="VeteranInd" />
+              <label class="form-check-label small" asp-for="VeteranInd">Veteran?</label>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="row mb-3 mt-32">
+
+          <div class="col-xs-12 col-md-6">
+            <div class="form-check form-switch">
+              <input type="checkbox" class="form-check-input whl-formfield-everlivedinind" role="switch"
+                asp-for="EverLivedInWestchesterInd" />
+              <label class="form-check-label small" asp-for="EverLivedInWestchesterInd">Have you ever lived in Westchester
+                County?</label>
+            </div>
+          </div>
+
+          <div class="col-xs-12 col-md-6">
+            <div class="form-check form-switch">
+              <input type="checkbox" class="form-check-input whl-formfield-currentlyworkinginind" role="switch"
+                asp-for="CurrentlyWorkingInWestchesterInd" />
+              <label class="form-check-label small" asp-for="CurrentlyWorkingInWestchesterInd">Do you currently work in
+                Westchester County?</label>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="row mb-3 mt-32">
+
+          <div class="col-xs-12 col-md-3">
+            <label class="form-label small fw-bolder" asp-for="HouseholdSize">Size of Household <span
+                class="fw-bold text-danger">*</span></label><br />
+            <input type="text" class="form-control whl-formfield-householdsize" maxlength="2" placeholder="Size"
+              autocomplete="off" asp-for="HouseholdSize" />
+          </div>
+
+        </div>
+
+        <hr />
+
+        <input type="hidden" id="hidSaveProfileAction" name="hidSaveProfileAction" value="" />
+        <a class="btn btn-outline-secondary whl-action-cancel-profile" asp-area="" asp-controller="Profile"
+          asp-action="Index" title="Cancel Changes" aria-label="Cancel Changes">Cancel</a>
+        <button type="submit" class="btn btn-primary whl-action-save-profile" title="Save Changes"
+          aria-label="Save Changes">Save Changes</button>
+
+      }
+    </div>
+  </div>
+</div>
+
+@section Scripts
+{
+  <script src="~/js/profile/profile.actions.js" asp-append-version="true"></script>
+  <script src="~/js/profile/profile.validations.js" asp-append-version="true"></script>
+}

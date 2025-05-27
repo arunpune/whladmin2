@@ -1,0 +1,227 @@
+﻿@model EditableListingDatesViewModel
+
+<div class="text-left">
+  @using (Html.BeginForm("EditDates", "Listings", FormMethod.Post))
+  {
+    <div id="lblDatesSaveErrorMessage" style="display: none;">
+      <h6 class="text-danger"><i class="fa-solid fa-triangle-exclamation"></i>&nbsp;Error</h6>
+      <p id="divDatesSaveErrorMessage">Failed to save listing dates</p>
+      <hr />
+    </div>
+
+    @Html.HiddenFor(h => h.ListingId, htmlAttributes: new { id = "DatesListingId"});
+
+    <div class="row">
+      @Html.Label("ListingStartDate", "Listing Start Date", htmlAttributes: new { @class = "col-sm-4 col-form-label" })
+      <div class="col-sm-4">
+        @Html.TextBoxFor(e => e.ListingStartDate, htmlAttributes: new { @class = "form-control whl-formfield-listingstartdate", placeholder = "Enter Listing Start Date", @type = "date" })
+        @Html.ValidationMessageFor(v => v.ListingStartDate)
+      </div>
+    </div>
+    <div class="row mb-3">
+      <div class="col-sm-4">&nbsp;</div>
+      <div class="col-sm-8">
+        <div id="whl-formfield-helptext-listingstartdate" class="form-text">Date the listing will be officially shown on the public site.</div>
+      </div>
+    </div>
+
+    <div class="row mt-32">
+      @Html.Label("ApplicationStartDate", "Application Start Date/Time", htmlAttributes: new { @class = "col-sm-4 col-form-label" })
+      <div class="col-sm-4">
+        @Html.TextBoxFor(e => e.ApplicationStartDate, htmlAttributes: new { @class = "form-control whl-formfield-applicationstartdate", placeholder = "Enter Application Start Date", @type = "date" })
+        @Html.ValidationMessageFor(v => v.ApplicationStartDate)
+      </div>
+      <div class="col-sm-4">
+        @Html.TextBoxFor(e => e.ApplicationStartTime, htmlAttributes: new { @class = "form-control whl-formfield-applicationstarttime", placeholder = "Enter Application Start Time", @type = "time" })
+        @Html.ValidationMessageFor(v => v.ApplicationStartTime)
+      </div>
+    </div>
+    <div class="row mb-3">
+      <div class="col-sm-4">&nbsp;</div>
+      <div class="col-sm-8">
+        <div id="whl-formfield-helptext-applicationstartdate" class="form-text">Date/time from when applications will be accepted.</div>
+      </div>
+    </div>
+
+    <div class="row">
+      @Html.Label("ApplicationEndDate", "Application End Date/Time", htmlAttributes: new { @class = "col-sm-4 col-form-label" })
+      <div class="col-sm-4">
+        @Html.TextBoxFor(e => e.ApplicationEndDate, htmlAttributes: new { @class = "form-control whl-formfield-applicationenddate", placeholder = "Enter Application End Date", @type = "date" })
+        @Html.ValidationMessageFor(v => v.ApplicationEndDate)
+      </div>
+      <div class="col-sm-4">
+        @Html.TextBoxFor(e => e.ApplicationEndTime, htmlAttributes: new { @class = "form-control whl-formfield-applicationendtime", placeholder = "Enter Application End Time", @type = "time" })
+        @Html.ValidationMessageFor(v => v.ApplicationEndTime)
+      </div>
+    </div>
+    <div class="row mb-3">
+      <div class="col-sm-4">&nbsp;</div>
+      <div class="col-sm-8">
+        <div id="whl-formfield-helptext-applicationenddate" class="form-text">Date/time by when all applications for lottery need to be submitted by (or postmarked by if by mail).</div>
+      </div>
+    </div>
+
+    <div class="row mt-32">
+      @Html.LabelFor(l => l.WaitlistEligible, htmlAttributes: new { @class = "form-check-label col-sm-4" })
+      <div class="form-check form-switch col-sm-8">
+        @Html.CheckBoxFor(m => m.WaitlistEligible, htmlAttributes: new { @class = "form-check-input whl-formfield-waitlisteligible", role = "switch" })
+      </div>
+    </div>
+    <div class="row mb-3">
+      <div class="col-sm-4">&nbsp;</div>
+      <div class="col-sm-8">
+        <div id="whl-formfield-helptext-waitlisteligible" class="form-text">Indicates applications for waitlist will be accepted past application end date/time.</div>
+      </div>
+    </div>
+
+    <div class="row whl-formfieldrow-waitlistdates" style="display: none;">
+      @Html.Label("WaitlistStartDate", "Waitlist Start Date", htmlAttributes: new { @class = "col-sm-4 col-form-label" })
+      <div class="col-sm-4">
+        @Html.TextBoxFor(e => e.WaitlistStartDate, htmlAttributes: new { @class = "form-control whl-formfield-waitliststartdate", placeholder = "Enter Waitlist Start Date", @type = "date" })
+        @Html.ValidationMessageFor(v => v.WaitlistStartDate)
+      </div>
+      <div class="col-sm-4">
+        @Html.TextBoxFor(e => e.WaitlistStartTime, htmlAttributes: new { @class = "form-control whl-formfield-waitliststarttime", placeholder = "Enter Waitlist Start Time", @type = "time" })
+        @Html.ValidationMessageFor(v => v.WaitlistStartTime)
+      </div>
+    </div>
+    <div class="row whl-formfieldrow-waitlistdates mb-3" style="display: none;">
+      <div class="col-sm-4">&nbsp;</div>
+      <div class="col-sm-8">
+        <div id="whl-formfield-helptext-waitliststartdate" class="form-text">Will be defaulted to application end date/time if not specified, and listing is waitlist eligible.</div>
+      </div>
+    </div>
+
+    <div class="row whl-formfieldrow-waitlistdates" style="display: none;">
+      @Html.Label("WaitlistEndDate", "Waitlist End Date", htmlAttributes: new { @class = "col-sm-4 col-form-label" })
+      <div class="col-sm-4">
+        @Html.TextBoxFor(e => e.WaitlistEndDate, htmlAttributes: new { @class = "form-control whl-formfield-waitlistenddate", placeholder = "Enter Waitlist Start Date", @type = "date" })
+        @Html.ValidationMessageFor(v => v.WaitlistEndDate)
+      </div>
+      <div class="col-sm-4">
+        @Html.TextBoxFor(e => e.WaitlistEndTime, htmlAttributes: new { @class = "form-control whl-formfield-waitlistendtime", placeholder = "Enter Waitlist End Time", @type = "time" })
+        @Html.ValidationMessageFor(v => v.WaitlistEndTime)
+      </div>
+    </div>
+    <div class="row whl-formfieldrow-waitlistdates mb-3" style="display: none;">
+      <div class="col-sm-4">&nbsp;</div>
+      <div class="col-sm-8">
+        <div id="whl-formfield-helptext-waitlistenddate" class="form-text">Date/time by when all applications for waitlist need to be submitted by (or postmarked by if by mail).</div>
+      </div>
+    </div>
+
+    <div class="row mt-32">
+      @Html.LabelFor(l => l.LotteryEligible, htmlAttributes: new { @class = "form-check-label col-sm-4" })
+      <div class="form-check form-switch col-sm-8">
+        @Html.CheckBoxFor(m => m.LotteryEligible, htmlAttributes: new { @class = "form-check-input whl-formfield-lotteryeligible", role = "switch" })
+      </div>
+    </div>
+    <div class="row mb-3">
+      <div class="col-sm-4">&nbsp;</div>
+      <div class="col-sm-8">
+        <div id="whl-formfield-helptext-lotteryeligible" class="form-text">Indicates if applications will be accepted via lottery (if not toggled on, applications will be accepted on a first-come first-serve basis).</div>
+      </div>
+    </div>
+
+    <div class="row whl-formfieldrow-lotterydates" style="display: none;">
+      @Html.LabelFor(l => l.LotteryDate, htmlAttributes: new { @class = "form-check-label col-sm-4" })
+      <div class="col-sm-4">
+        @Html.TextBoxFor(e => e.LotteryDate, htmlAttributes: new { @class = "form-control whl-formfield-lotterydate", placeholder = "Enter Lottery Date", @type = "date" })
+        @Html.ValidationMessageFor(v => v.LotteryDate)
+      </div>
+      <div class="col-sm-4">
+        @Html.TextBoxFor(e => e.LotteryTime, htmlAttributes: new { @class = "form-control whl-formfield-lotterytime", placeholder = "Enter Lottery Time", @type = "time" })
+        @Html.ValidationMessageFor(v => v.LotteryTime)
+      </div>
+    </div>
+    <div class="row whl-formfieldrow-lotterydates mb-3" style="display: none;">
+      <div class="col-sm-4">&nbsp;</div>
+      <div class="col-sm-8">
+        <div id="whl-formfield-helptext-lotterydate" class="form-text">Date/time when the lottery will be held.</div>
+      </div>
+    </div>
+
+    <div class="row mt-32">
+      @Html.Label("ListingEndDate", "Listing End Date", htmlAttributes: new { @class = "col-sm-4 col-form-label" })
+      <div class="col-sm-4">
+        @Html.TextBoxFor(e => e.ListingEndDate, htmlAttributes: new { @class = "form-control whl-formfield-listingenddate", placeholder = "Enter Listing End Date", @type = "date" })
+        @Html.ValidationMessageFor(v => v.ListingEndDate)
+      </div>
+    </div>
+    <div class="row mb-3">
+      <div class="col-sm-4">&nbsp;</div>
+      <div class="col-sm-8">
+        <div id="whl-formfield-helptext-listingenddate" class="form-text">Date the listing will be officially removed from the public site.</div>
+      </div>
+    </div>
+  }
+</div>
+
+<script>
+  //<![CDATA[
+
+  $(function() {
+
+    fnToggleLotteryDate();
+    fnToggleWaitlistDates();
+
+    $('.whl-formfield-applicationenddate').on('change', function (e) {
+      var c = $('.whl-formfield-waitlisteligible').prop('checked');
+      var v = $(this).val();
+      if (v !== undefined && v !== null && v.trim().length > 0 && c) {
+        $('.whl-formfield-waitliststartdate').val(v);
+      }
+    });
+
+    $('.whl-formfield-applicationendtime').on('change', function (e) {
+      var c = $('.whl-formfield-waitlisteligible').prop('checked');
+      var v = $(this).val();
+      if (v !== undefined && v !== null && v.trim().length > 0 && c) {
+        $('.whl-formfield-waitliststarttime').val(v);
+      }
+    });
+
+    $('.whl-formfield-lotteryeligible').on('change', function (e) {
+      fnToggleLotteryDate();
+    });
+
+    $('.whl-formfield-waitlisteligible').on('change', function (e) {
+      fnToggleWaitlistDates();
+    });
+
+    function fnToggleLotteryDate() {
+      var c = $('.whl-formfield-lotteryeligible').prop('checked');
+      if (c) {
+        $('.whl-formfieldrow-lotterydates').show();
+      } else {
+        $('.whl-formfield-lotterydate').val('');
+        $('.whl-formfield-lotterytime').val('');
+        $('.whl-formfieldrow-lotterydates').hide();
+      }
+    }
+
+    function fnToggleWaitlistDates() {
+      var c = $('.whl-formfield-waitlisteligible').prop('checked');
+      if (c) {
+        $('.whl-formfieldrow-waitlistdates').show();
+        var v = $('.whl-formfield-applicationenddate').val();
+        if (v !== undefined && v !== null && v.trim().length > 0 && c) {
+          $('.whl-formfield-waitliststartdate').val(v);
+        }
+        var v1 = $('.whl-formfield-applicationendtime').val();
+        if (v1 !== undefined && v1 !== null && v1.trim().length > 0 && c) {
+          $('.whl-formfield-waitliststarttime').val(v1);
+        }
+      } else {
+        $('.whl-formfield-waitliststartdate').val('');
+        $('.whl-formfield-waitliststarttime').val('');
+        $('.whl-formfield-waitlistenddate').val('');
+        $('.whl-formfield-waitlistendtime').val('');
+        $('.whl-formfieldrow-waitlistdates').hide();
+      }
+    }
+
+  });
+
+  //]]>
+</script>

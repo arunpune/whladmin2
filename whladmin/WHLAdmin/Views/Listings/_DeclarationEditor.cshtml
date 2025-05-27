@@ -1,0 +1,89 @@
+﻿@model EditableListingDeclarationViewModel
+
+<div class="text-left">
+  @using (Html.BeginForm("AddDeclaration", "Listings", FormMethod.Post))
+  {
+    <div id="divDeclarationSaveErrorMessage" style="display: none;">
+      <h6 class="text-danger"><i class="fa-solid fa-triangle-exclamation"></i>&nbsp;Error</h6>
+      <p id="lblDeclarationSaveErrorMessage">Failed to save declaration</p>
+      <hr />
+    </div>
+
+    <input type="hidden" id="DeclarationListingId" name="DeclarationListingId" value="@Model.ListingId" />
+    @Html.HiddenFor(h => h.DeclarationId);
+
+    <div class="row mb-3">
+      <div class="col-sm-12">
+        @Html.LabelFor(l => l.Text, htmlAttributes: new { @class = "form-label" })<br />
+        @Html.TextAreaFor(e => e.Text, htmlAttributes: new { @class = "form-control whl-formfield-text", placeholder = "Enter Declaration", rows = 5 })
+        @Html.ValidationMessageFor(v => v.Text)
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      @Html.LabelFor(l => l.SortOrder, htmlAttributes: new { @class = "col-sm-3 col-form-label" })
+      <div class="col-sm-3">
+        @Html.TextBoxFor(e => e.SortOrder, htmlAttributes: new { @class = "form-control whl-formfield-sortorder", placeholder = "Enter Sort Order" })
+        @Html.ValidationMessageFor(v => v.SortOrder)
+      </div>
+    </div>
+  }
+</div>
+
+<script>
+  //<![CDATA[
+  $(function () {
+
+    // Disable submission
+    $('.whl-action-save-declaration').attr('disabled', 'disabled');
+    fnToggleSaveDeclaration();
+
+    $('.whl-formfield-text').on('change', function (e) {
+      $(this).removeClass('is-valid');
+      $(this).removeClass('is-invalid');
+      var v = $(this).val();
+      if (v !== undefined && v !== null && v.trim().length > 0) {
+        $(this).addClass('is-valid');
+      } else {
+        $(this).addClass('is-invalid');
+      }
+      fnToggleSaveDeclaration();
+    });
+
+    $('.whl-formfield-sortorder').on('keypress', function (e) {
+      var reg = /^\d+$/;
+      var k = e.key;
+      return reg.test(e.key);
+    });
+
+    $('.whl-formfield-sortorder').on('change', function (e) {
+      var reg = /^\d+$/;
+      $(this).removeClass('is-valid');
+      $(this).removeClass('is-invalid');
+      var v = $(this).val();
+      if (v === undefined || v == null || v.trim().length == 0) {
+        $(this).val('0');
+        v = '0';
+      }
+      var n = parseInt(v);
+      if (!isNaN(n)) {
+        $(this).addClass('is-valid');
+      }
+      fnToggleSaveDeclaration();
+    });
+
+    function fnToggleSaveDeclaration() {
+      var tx = $('.whl-formfield-text').val();
+      var so = $('.whl-formfield-sortorder').val();
+      var allowSubmission = (tx !== undefined && tx !== null && tx.trim().length > 0)
+                              && (!isNaN(parseInt(so)) && so >= 0);
+      if (allowSubmission) {
+        $('.whl-action-save-declaration').removeAttr('disabled');
+      }
+      else {
+        $('.whl-action-save-declaration').attr('disabled', 'disabled');
+      }
+    }
+  });
+  //]]>
+</script>

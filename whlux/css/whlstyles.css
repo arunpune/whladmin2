@@ -1,0 +1,14 @@
+html, body {
+  background-color: #fafafa;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 1em;
+  min-height: 100%;
+}
+
+.container {
+  border-left: 1px solid #333333;
+  width: 95vw;
+  min-height: 100%;
+  margin: 0 0 auto;
+  padding: 4px;
+}

@@ -1,0 +1,867 @@
+@model PrintableFormViewModel
+@{
+  Layout = "~/Views/Shared/_PrintLayout.cshtml";
+  ViewData["Title"] = "Application Form";
+  ViewData["MENUID"] = "LISTINGS";
+
+  var relationTypesCount = Model.RelationTypes?.Count() ?? 0;
+  var midPointRelationTypesCount = (int) ((relationTypesCount + 1) / 2); 
+}
+
+<!-- Page 1 -->
+<div class="text-left font-monospace" style="page-break-after: always;">
+  <div class="mt-32">
+    @if (Model.IsRental)
+    {
+      <h2 class="text-uppercase">Fair &amp; affordable rental housing application</h2>
+    }
+    else
+    {
+      <h2 class="text-uppercase">Fair &amp; affordable housing purchase application</h2>
+    }
+  </div>
+  <div class="mt-32">
+    <h3 class="mt-16">Initial Application for</h3>
+    <h4>@Model.Name</h4>
+    <h5>@ViewBag.AddressText</h5>
+    <img src="@ViewBag.ImageContents" style="max-height: 96px;" />
+    <p class="fs-6">(Before applying, be certain you conform to all guidelines)</p>
+  </div>
+  <div class="mt-32">
+    <h6>Application Deadline: @ViewBag.ApplicationEndDateText</h6>
+    <p class="fs-6 text-danger">Must be submitted online or hand-delivered by this time, or postmarked by this date if mailed.</p>
+    <p class="fs-6">(applications after deadline will be placed on waitlist)</p>
+    @if (Model.LotteryDate.HasValue)
+    {
+      <h6>Lottery Date: @ViewBag.LotteryDateText</h6>
+    }
+  </div>
+  <div class="mt-32">
+    <p class="fs-5"><u>Submit Initial Application Online, or Print and Mail or Hand Deliver to</u>:</p>
+    <p class="fs-6">Attn: Affirmative Marketing<br />
+      Westchester Residential Opportunities, Inc.<br />
+      470 Mamaroneck Avenue, Suite 410<br />
+      White Plains, New York 10605</p>
+  </div>
+  <div class="mt-32">
+    <p class="fs-5 text-uppercase">Do <u>not</u> apply more than once. If your household applies
+      more than once, <u>all of your applications</u> may be disqualified.</p>
+  </div>
+  <div class="mt-32">
+    <p class="fs-6"><u>Please Note:</u> This is an <u>initial</u> application. It does not include all the
+      information and documentation that will be required to qualify you to rent an apartment or purchase a home, as
+      applicable. To income qualify, you will need to complete additional information requests regarding your
+      household's income and assets, and provide documentation to support that income and assets.</p>
+  </div>
+  <div class="mt-32">
+    <p class="fs-6">Please direct any questions to us at <span class="text-primary text-underline">affordable@wroinc.org</span> or 914-428-4519.</p>
+  </div>
+  <div class="mt-32">
+    <div class="row">
+      <div class="col">
+        <img src="~/images/equalopportunity_48px.png" width="48" height="48" border="0" />
+      </div>
+      <div class="col">
+        <i class="fa-solid fa-ban-smoking" style="font-size: 48px;"></i>
+      </div>
+      @if ((Model.Accessibilities?.Count() ?? 0) > 0)
+      {
+        foreach (var accessibility in Model.Accessibilities)
+        {
+          var className = "fa-brands fa-accessible-icon";
+          switch (accessibility.Key)
+          {
+            case "VISION": className = "fa-solid fa-eye-low-vision"; break;
+            case "HEARING": className = "fa-solid fa-ear-listen"; break;
+            case "WHEELCHAIR": className = "fa-solid fa-wheelchair"; break;
+          }
+          <div class="col">
+            <i class="@className" style="font-size: 48px;"></i>
+          </div>
+        }
+      }
+    </div>
+  </div>
+</div>
+
+<!-- Page 2 -->
+<div class="text-left font-monospace" style="page-break-after: always;">
+
+  <h2 class="mt-32 text-uppercase">1. Applicant Information</h2>
+  <div class="bg-light p-2">
+
+    <!-- Full Name -->
+    <h6 class="mt-16">Full Name <span class="text-danger">*</span></h6>
+    <table class="w-100 mt-16" cellspacing="2" cellpadding="0">
+      <tr valign="top">
+        <td style="width: 384px;">
+          <input type="text" class="form-control-printable" /><br />
+          <small class="text-secondary">First Name</small>
+        </td>
+        <td style="width: 128px;">
+          <input type="text" class="form-control-printable" /><br />
+          <small class="text-secondary">Middle Name</small>
+        </td>
+        <td style="width: 384px;">
+          <input type="text" class="form-control-printable" /><br />
+          <small class="text-secondary">Last Name</small>
+        </td>
+        <td style="width: 128px;">
+          <input type="text" class="form-control-printable" /><br />
+          <small class="text-secondary">Suffix</small>
+        </td>
+      </tr>
+    </table>
+
+    <!-- PII -->
+    <h6 class="mt-16">Identification <span class="text-danger">*</span></h6>
+    <table class="w-100 mt-16" cellspacing="2" cellpadding="0">
+      <tr valign="top">
+        <td style="width: 256px;">
+          <input type="text" class="form-control-printable" /><br />
+          <small class="text-secondary">Date of Birth</small>
+        </td>
+        <td style="width: 17px;">&nbsp;</td>
+        <td style="width: 128px;">
+          <input type="text" class="form-control-printable" /><br />
+          <small class="text-secondary">Last 4 of SSN/ITIN</small>
+        </td>
+        <td style="width: 17px;">&nbsp;</td>
+        <td style="width: 333px;">
+          <input type="text" class="form-control-printable" /><br />
+          <small class="text-secondary">ID Type/Number</small>
+        </td>
+        <td style="width: 17px;">&nbsp;</td>
+        <td style="width: 256px;">
+          <input type="text" class="form-control-printable" /><br />
+          <small class="text-secondary">ID Issue Date</small>
+        </td>
+      </tr>
+    </table>
+
+    <!-- Physical Address -->
+    <h6 class="mt-32">Physical Address <span class="text-danger">*</span></h6>
+    <table class="w-100 mt-16" cellspacing="2" cellpadding="0">
+      <tr valign="top">
+        <td style="width: 1024px;" colspan="4">
+          <input type="text" class="form-control-printable" /><br />
+          <small class="text-secondary">Address Line 1</small>
+        </td>
+      </tr>
+      <tr valign="top">
+        <td style="width: 384px;">
+          <input type="text" class="form-control-printable" /><br />
+          <small class="text-secondary">City</small>
+        </td>
+        <td style="width: 128px;">
+          <input type="text" class="form-control-printable" /><br />
+          <small class="text-secondary">State</small>
+        </td>
+        <td style="width: 128px;">
+          <input type="text" class="form-control-printable" /><br />
+          <small class="text-secondary">Zip Code</small>
+        </td>
+        <td style="width: 384px;">
+          <input type="text" class="form-control-printable" /><br />
+          <small class="text-secondary">County</small>
+        </td>
+      </tr>
+    </table>
+
+    <!-- Mailing Address -->
+    <h6 class="mt-32">Mailing Address <span class="text-secondary">(if different)</span></h6>
+    <table class="w-100 mt-16" cellspacing="2" cellpadding="0">
+      <tr valign="top">
+        <td style="width: 1024px;" colspan="4">
+          <input type="text" class="form-control-printable" /><br />
+          <small class="text-secondary">Address Line 1</small>
+        </td>
+      </tr>
+      <tr valign="top">
+        <td style="width: 384px;">
+          <input type="text" class="form-control-printable" /><br />
+          <small class="text-secondary">City</small>
+        </td>
+        <td style="width: 128px;">
+          <input type="text" class="form-control-printable" /><br />
+          <small class="text-secondary">State</small>
+        </td>
+        <td style="width: 128px;">
+          <input type="text" class="form-control-printable" /><br />
+          <small class="text-secondary">Zip Code</small>
+        </td>
+        <td style="width: 384px;">
+          <input type="text" class="form-control-printable" /><br />
+          <small class="text-secondary">County</small>
+        </td>
+      </tr>
+    </table>
+
+    <!-- Email & Phone Numbers -->
+    <h6 class="mt-32">Email <span class="text-danger">*</span> &amp; Phone Number(s)</h6>
+    <table class="w-100 mt-16" cellspacing="2" cellpadding="0">
+      <tr valign="top">
+        <td style="width: 512px;">
+          <input type="text" class="form-control-printable" /><br />
+          <small class="text-secondary">Primary Email Address</small>
+        </td>
+        <td style="width: 256px;">
+          <input type="text" class="form-control-printable" /><br />
+          <small class="text-secondary">Best Phone Number</small>
+        </td>
+        <td style="width: 256px;">
+          <input type="text" class="form-control-printable" /><br />
+          <small class="text-secondary">Other Phone Number</small>
+        </td>
+      </tr>
+    </table>
+
+    <!-- Gross Annual Income -->
+    <h6 class="mt-32">Gross Annual Income <span class="text-danger">*</span></h6>
+    <table class="w-100 mt-16" cellspacing="2" cellpadding="0">
+      <tr valign="top">
+        <td style="width: 1024px;">
+          <input type="text" class="form-control-printable" style="width: 256px;" value="$" /><br />
+          <small class="text-secondary">Applicant's gross annual income (include total of income from all sources)</small>
+        </td>
+      </tr>
+    </table>
+
+    <!-- Apartments interested in -->
+    <h6 class="mt-32">What size(s) apartment unit are you applying for? <span class="text-danger">*</span></h6>
+    <p>
+      @foreach (var unitType in Model.UnitTypes)
+      {
+        <input type="checkbox" /><label class="ml-8 mr-32">@unitType.Value</label>
+      }
+    </p>
+    <p class="text-secondary">Note: Check all that apply.</p>
+
+  </div>
+
+</div>
+
+<!-- Page 3 -->
+<div class="text-left font-monospace" style="page-break-after: always;">
+
+  <!-- 1. Applicant Information (contd.) -->
+  <h2 class="mt-32 text-uppercase">1. Applicant Information <small class="text-lowercase">(contd.)</small></h2>
+  <div class="bg-light p-2">
+
+    <!-- Household Size -->
+    <table class="w-100 mt-32" cellspacing="2" cellpadding="0">
+      <tr style="vertical-align: top;">
+        <td style="width: 341px;">
+          <h6>Total number of Household Members <span class="text-danger">*</span></h6>
+          <input type="text" class="form-control-printable" style="width: 128px;" />
+        </td>
+        <td style="width: 342px;">
+          <h6>Are all household members Full-Time Students?</h6>
+          <p>
+            <input type="checkbox" /><label class="ml-8 mr-32">Yes</label><input type="checkbox" /><label class="ml-8">No</label>
+          </p>
+        </td>
+        <td style="width: 341px;">
+          <h6>Do you have a live-in aide or assistant?</h6>
+          <p>
+            <input type="checkbox" /><label class="ml-8 mr-32">Yes</label><input type="checkbox" /><label class="ml-8">No</label>
+          </p>
+        </td>
+      </tr>
+    </table>
+
+    <!-- Household Size Increase -->
+    <h6 class="mt-32">Do you anticipate any additions to the household in the next 12 months? <span class="text-danger">*</span></h6>
+    <table class="w-100 mt-16" cellspacing="2" cellpadding="0">
+      <tr valign="top">
+        <td style="width: 1024px;">
+          <p>
+            <input type="checkbox" /><label class="ml-8 mr-32">Yes</label><input type="checkbox" /><label class="ml-8">No</label>
+          </p>
+          <p>If <strong>YES</strong>, explain:</p>
+          <textarea class="form-control-printable" rows="3"></textarea>
+        </td>
+      </tr>
+    </table>
+
+    <!-- Total Gross Annual Household Income -->
+    <h6 class="mt-32">Total Gross Annual Household Income <span class="text-danger">*</span></h6>
+    <table class="w-100 mt-16" cellspacing="2" cellpadding="0">
+      <tr valign="top">
+        <td style="width: 1024px;">
+          <input type="text" class="form-control-printable" style="width: 256px;" value="$" /><br />
+          <small class="text-secondary">Include all sources of income, e.g., wages, social security, pension, child support, self-employment income, monthly/annual distributions, alimony, etc.</small>
+        </td>
+      </tr>
+    </table>
+
+    <!-- Household Accounts -->
+    <h6 class="mt-32">Household Accounts</h6>
+    <table class="w-100 mt-16" cellspacing="2" cellpadding="0">
+      <tr style="vertical-align: bottom;">
+        <th style="width: 256px;">Account Type</th>
+        <th style="width: 128px;">Account #</th>
+        <th style="width: 256px;">Value ($)</th>
+        <th style="width: 384px;">Financial Institution</th>
+      </tr>
+      @for (var accountCtr = 1; accountCtr <= 10; accountCtr++)
+      {
+        <tr valign="top">
+          <td style="width: 256px;"><input type="text" class="form-control-printable" /></td>
+          <td style="width: 128px;"><input type="text" class="form-control-printable" /></td>
+          <td style="width: 256px;"><input type="text" class="form-control-printable" value="$" /></td>
+          <td style="width: 384px;"><input type="text" class="form-control-printable" /></td>
+        </tr>
+      }
+    </table>
+    <small class="text-secondary">Note: Only specify the last 4 digits of your account number in the account number column.</small>
+
+  </div>
+
+</div>
+
+<!-- Page 4 -->
+<div class="text-left font-monospace" style="page-break-after: always;">
+
+  <!-- 1. Applicant Information (contd.) -->
+  <h2 class="mt-32 text-uppercase">1. Applicant Information <small class="text-lowercase">(contd.)</small></h2>
+  <div class="bg-light p-2">
+
+    <!-- Total Household Assets -->
+    <h6 class="mt-32">Total Household Assets <span class="text-danger">*</span></h6>
+    <table class="w-100 mt-16" cellspacing="2" cellpadding="0">
+      <tr valign="top">
+        <td style="width: 1024px;">
+          <input type="text" class="form-control-printable" style="width: 256px;" value="$" /><br />
+          <small class="text-secondary">Include total dollar amount</small>
+        </td>
+      </tr>
+    </table>
+
+    <!-- Real estate Ownership -->
+    <h6 class="mt-32">Does anyone in the Household currently own real estate? <span class="text-danger">*</span></h6>
+    <table class="w-100 mt-16" cellspacing="2" cellpadding="0">
+      <tr valign="top">
+        <td style="width: 1024px;">
+          <p>
+            <input type="checkbox" /><label class="ml-8 mr-32">Yes</label><input type="checkbox" /><label class="ml-8">No</label>
+          </p>
+          <p>If <strong>YES</strong>, what is the value of the real estate in dollars?</p>
+          <input type="text" class="form-control-printable" style="width: 256px;" value="$" />
+        </td>
+      </tr>
+    </table>
+
+    <!-- Current monthly rent and payments -->
+    <h6 class="mt-32">Current monthly rent and payments <span class="text-danger">*</span></h6>
+    <table class="w-100 mt-16" cellspacing="2" cellpadding="0">
+      <tr valign="top">
+        <td style="width: 1024px;">
+          <input type="text" class="form-control-printable" style="width: 256px;" value="$" /><br />
+          <small class="text-secondary">Include any housing or utility payments, like amenity fees, electric, gas, etc.</small>
+        </td>
+      </tr>
+    </table>
+
+    <!-- Voucher or Subsidy -->
+    <h6 class="mt-32">Do you have a Housing Choice Voucher or other rental subsidy?</h6>
+    <table class="w-100 mt-16" cellspacing="2" cellpadding="0">
+      <tr valign="top">
+        <td style="width: 1024px;">
+          <p>
+            @foreach (var voucherType in Model.VoucherTypes)
+            {
+              <input type="checkbox" /><label class="ml-8">@voucherType.Value</label><br />
+            }
+          </p>
+          <p class="text-secondary">This information is used to determine what eligibility levels apply to your
+            application. New York State Human Rights Law prohibits the discrimination in housing based on lawful source
+            of income, including whether you have a Section 8 voucher.</p>
+          <p>If <strong>Other</strong>, please specify:</p>
+          <textarea class="form-control-printable" rows="3"></textarea>
+        </td>
+      </tr>
+      <tr valign="top">
+        <td style="width: 1024px;">
+          <p>If you have a housing subsidy or voucher, what office administers that subsidy/voucher?</p>
+          <input type="text" class="form-control-printable" style="width: 512px;" />
+        </td>
+      </tr>
+    </table>
+
+  </div>
+
+</div>
+
+<!-- Page 5 -->
+<div class="text-left font-monospace" style="page-break-after: always;">
+
+  <!-- 2. Co-Applicant Information -->
+  <h2 class="mt-32 text-uppercase">2. Co-Applicant Information</h2>
+  <div class="bg-light p-2">
+
+    <!-- Full Name -->
+    <h6 class="mt-16">Full Name</h6>
+    <table class="w-100 mt-16" cellspacing="2" cellpadding="0">
+      <tr valign="top">
+        <td style="width: 384px;">
+          <input type="text" class="form-control-printable" /><br />
+          <small class="text-secondary">First Name</small>
+        </td>
+        <td style="width: 128px;">
+          <input type="text" class="form-control-printable" /><br />
+          <small class="text-secondary">Middle Name</small>
+        </td>
+        <td style="width: 384px;">
+          <input type="text" class="form-control-printable" /><br />
+          <small class="text-secondary">Last Name</small>
+        </td>
+        <td style="width: 128px;">
+          <input type="text" class="form-control-printable" /><br />
+          <small class="text-secondary">Suffix</small>
+        </td>
+      </tr>
+    </table>
+
+    <!-- PII -->
+    <h6 class="mt-16">Identification <span class="text-danger">*</span></h6>
+    <table class="w-100 mt-16" cellspacing="2" cellpadding="0">
+      <tr valign="top">
+        <td style="width: 256px;">
+          <input type="text" class="form-control-printable" /><br />
+          <small class="text-secondary">Date of Birth</small>
+        </td>
+        <td style="width: 17px;">&nbsp;</td>
+        <td style="width: 128px;">
+          <input type="text" class="form-control-printable" /><br />
+          <small class="text-secondary">Last 4 of SSN/ITIN</small>
+        </td>
+        <td style="width: 17px;">&nbsp;</td>
+        <td style="width: 333px;">
+          <input type="text" class="form-control-printable" /><br />
+          <small class="text-secondary">ID Type/Number</small>
+        </td>
+        <td style="width: 17px;">&nbsp;</td>
+        <td style="width: 256px;">
+          <input type="text" class="form-control-printable" /><br />
+          <small class="text-secondary">ID Issue Date</small>
+        </td>
+      </tr>
+    </table>
+
+    <!-- Relation to applicant -->
+    <h6 class="mt-32">Relationship to Applicant</h6>
+    <table class="w-100 mt-16" cellspacing="2" cellpadding="0">
+      <tr style="vertical-align: top;">
+        <td style="width: 512px;">
+          <p>
+            @{
+              var relCtr = 0;
+              foreach (var relationType in Model.RelationTypes)
+              {
+                <input type="checkbox" /><label class="ml-8">@relationType.Value</label><br />
+                relCtr++;
+                if (relCtr >= midPointRelationTypesCount) break;
+              }
+            }
+            <small class="text-secondary">Note: Please select only one</small>
+          </p>
+        </td>
+        <td style="width: 512px;">
+          <p>
+            @{
+              relCtr = 0;
+              foreach (var relationType in Model.RelationTypes)
+              {
+                relCtr++;
+                if (relCtr <= midPointRelationTypesCount) continue;
+                <input type="checkbox" /><label class="ml-8">@relationType.Value</label><br />
+              }
+            }
+          </p>
+        </td>
+      </tr>
+    </table>
+
+    <!-- Address -->
+    <h6 class="mt-32">Address</h6>
+    <table class="w-100 mt-16" cellspacing="2" cellpadding="0">
+      <tr valign="top">
+        <td style="width: 1024px;" colspan="4">
+          <input type="text" class="form-control-printable" /><br />
+          <small class="text-secondary">Address Line 1</small>
+        </td>
+      </tr>
+      <tr valign="top">
+        <td style="width: 384px;">
+          <input type="text" class="form-control-printable" /><br />
+          <small class="text-secondary">City</small>
+        </td>
+        <td style="width: 128px;">
+          <input type="text" class="form-control-printable" /><br />
+          <small class="text-secondary">State</small>
+        </td>
+        <td style="width: 128px;">
+          <input type="text" class="form-control-printable" /><br />
+          <small class="text-secondary">Zip Code</small>
+        </td>
+        <td style="width: 384px;">
+          <input type="text" class="form-control-printable" /><br />
+          <small class="text-secondary">County</small>
+        </td>
+      </tr>
+    </table>
+
+    <!-- Email -->
+    <h6 class="mt-32">Email &amp; Phone Number(s)</h6>
+    <table class="w-100 mt-16" cellspacing="2" cellpadding="0">
+      <tr valign="top">
+        <td style="width: 512px;">
+          <input type="text" class="form-control-printable" /><br />
+          <small class="text-secondary">Primary Email Address</small>
+        </td>
+        <td style="width: 256px;">
+          <input type="text" class="form-control-printable" /><br />
+          <small class="text-secondary">Best Phone Number</small>
+        </td>
+        <td style="width: 256px;">
+          <input type="text" class="form-control-printable" /><br />
+          <small class="text-secondary">Other Phone Number</small>
+        </td>
+      </tr>
+    </table>
+
+    <!-- Gross Annual Income -->
+    <h6 class="mt-32">Gross Annual Income</h6>
+    <table class="w-100 mt-16" cellspacing="2" cellpadding="0">
+      <tr valign="top">
+        <td style="width: 1024px;">
+          <input type="text" class="form-control-printable" style="width: 256px;" value="$" /><br />
+          <small class="text-secondary">Co-Applicant's gross annual income (include total of income from all sources)</small>
+        </td>
+      </tr>
+    </table>
+
+  </div>
+
+</div>
+
+<!-- Page 6 - 15 (up to 10 more household members) -->
+@for (var hhCtr = 1; hhCtr <= 10; hhCtr++)
+{
+  <!-- Page @hhCtr -->
+  <div class="text-left font-monospace" style="page-break-after: always;">
+
+    <!-- 3. Household Members -->
+    <h2 class="mt-32 text-uppercase">3. List all persons who live with you @if (hhCtr > 1) { <small class="text-lowercase">(contd.)</small> }</h2>
+    <p class="text-secondary">Note: In addition to the Applicant and Co-Applicant</p>
+    <div class="bg-light p-2">
+
+      <h5 class="mt-16 border-bottom">Household Member #@hhCtr</h5>
+
+      <!-- Full Name -->
+      <h6 class="mt-32">Full Name</h6>
+      <table class="w-100 mt-16" cellspacing="2" cellpadding="0">
+        <tr valign="top">
+          <td style="width: 384px;">
+            <input type="text" class="form-control-printable" /><br />
+            <small class="text-secondary">First Name</small>
+          </td>
+          <td style="width: 128px;">
+            <input type="text" class="form-control-printable" /><br />
+            <small class="text-secondary">Middle Name</small>
+          </td>
+          <td style="width: 384px;">
+            <input type="text" class="form-control-printable" /><br />
+            <small class="text-secondary">Last Name</small>
+          </td>
+          <td style="width: 128px;">
+            <input type="text" class="form-control-printable" /><br />
+            <small class="text-secondary">Suffix</small>
+          </td>
+        </tr>
+      </table>
+
+      <!-- PII -->
+      <h6 class="mt-16">Identification</h6>
+      <table class="w-100 mt-16" cellspacing="2" cellpadding="0">
+        <tr valign="top">
+          <td style="width: 256px;">
+            <input type="text" class="form-control-printable" /><br />
+            <small class="text-secondary">Date of Birth</small>
+          </td>
+          <td style="width: 17px;">&nbsp;</td>
+          <td style="width: 128px;">
+            <input type="text" class="form-control-printable" /><br />
+            <small class="text-secondary">Last 4 of SSN/ITIN</small>
+          </td>
+          <td style="width: 17px;">&nbsp;</td>
+          <td style="width: 333px;">
+            <input type="text" class="form-control-printable" /><br />
+            <small class="text-secondary">ID Type/Number</small>
+          </td>
+          <td style="width: 17px;">&nbsp;</td>
+          <td style="width: 256px;">
+            <input type="text" class="form-control-printable" /><br />
+            <small class="text-secondary">ID Issue Date</small>
+          </td>
+        </tr>
+      </table>
+
+      <!-- Relation to applicant -->
+      <h6 class="mt-32">Relationship to Applicant</h6>
+      <table class="w-100 mt-16" cellspacing="2" cellpadding="0">
+        <tr style="vertical-align: top;">
+          <td style="width: 512px;">
+            <p>
+              @{
+                relCtr = 0;
+                foreach (var relationType in Model.RelationTypes)
+                {
+                  <input type="checkbox" /><label class="ml-8">@relationType.Value</label><br />
+                  relCtr++;
+                  if (relCtr >= midPointRelationTypesCount) break;
+                }
+              }
+              <small class="text-secondary">Note: Please select only one</small>
+            </p>
+          </td>
+          <td style="width: 512px;">
+            <p>
+              @{
+                relCtr = 0;
+                foreach (var relationType in Model.RelationTypes)
+                {
+                  relCtr++;
+                  if (relCtr <= midPointRelationTypesCount) continue;
+                  <input type="checkbox" /><label class="ml-8">@relationType.Value</label><br />
+                }
+              }
+            </p>
+          </td>
+        </tr>
+      </table>
+
+      <!-- Occupation / Full-time Student -->
+      <table class="w-100 mt-16" cellspacing="2" cellpadding="0">
+        <tr style="vertical-align: top;">
+          <td style="width: 512px;">
+            <h6 class="mt-32">Occupation</h6>
+            <input type="text" class="form-control-printable" style="width: 256px;" />
+          </td>
+          <td style="width: 512px;">
+            <h6 class="mt-32">Full-Time Student?</h6>
+            <p>
+              <input type="checkbox" /><label class="ml-8 mr-32">Yes</label><input type="checkbox" /><label class="ml-8">No</label>
+            </p>
+          </td>
+        </tr>
+      </table>
+
+      <!-- Gross Annual Income -->
+      <h6 class="mt-32">Gross Annual Income</h6>
+      <table class="w-100 mt-16" cellspacing="2" cellpadding="0">
+        <tr valign="top">
+          <td style="width: 1024px;">
+            <input type="text" class="form-control-printable" style="width: 256px;" value="$" /><br />
+            <small class="text-secondary">Household member's gross annual income (include total of income from all sources)</small>
+          </td>
+        </tr>
+      </table>
+
+    </div>
+
+  </div>
+}
+
+<!-- Last Page - 2 -->
+<div class="text-left font-monospace" style="page-break-after: always;">
+
+  <!-- 4. Statistical Information -->
+  <h2 class="mt-32 text-uppercase">4. Statistical Information</h2>
+  <div class="bg-light p-2">
+    <p><strong>Responding to this Section is OPTIONAL.</strong> The following demographic information is for statistical
+      purposes only, so that we, Westchester County, New York State and the US Department of Housing and Urban
+      Development may determine the degree to which its programs are utilized by people of different racial & ethnic
+      backgrounds. Provide information for the <strong>Head of Household only</strong>.</p>
+    <table class="w-100 mt-32" cellspacing="2" cellpadding="0">
+      <tr valign="top">
+        <td style="width: 1024px;">
+          <h4 class="">Racial Identity</h4>
+          <p>
+            @foreach (var raceType in Model.RaceTypes)
+            {
+              <input type="checkbox" /><label class="ml-8">@raceType.Value</label><br />
+            }
+          </p>
+          <p class="text-secondary">Please select only one from this group for Head of Household only.</p>
+        </td>
+      </tr>
+    </table>
+    <table class="w-100 mt-32" cellspacing="2" cellpadding="0">
+      <tr valign="top">
+        <td style="width: 1024px;">
+          <h4 class="">Ethnicity</h4>
+          <p>
+            @foreach (var ethnicType in Model.EthnicityTypes)
+            {
+              <input type="checkbox" /><label class="ml-8">@ethnicType.Value</label><br />
+            }
+          </p>
+          <p class="text-secondary">Please select only one from this group for Head of Household only.</p>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+</div>
+
+<!-- Last Page - 2 -->
+<div class="text-left font-monospace" style="page-break-after: always;">
+
+  <!-- 5. Accessibility -->
+  <h2 class="mt-32 text-uppercase">5. Accessibility</h2>
+  <div class="bg-light p-2">
+    @if ((Model.Accessibilities?.Count() ?? 0) > 0)
+    {
+      <table class="w-100 mt-32" cellspacing="2" cellpadding="0">
+        @foreach (var accessibility in Model.Accessibilities)
+        {
+          if (accessibility.Key.Equals("NONSMOKING", StringComparison.CurrentCultureIgnoreCase)) continue;
+          <tr valign="top">
+            <td style="width: 64px; vertical-align: top;"><input type="checkbox" /></td>
+            <td style="width: 960px; vertical-align: top;">
+              @switch (accessibility.Key)
+              {
+                case "VISION":
+                  <p>Certain apartment units are fully accessible and adapted for individuals with vision impairments. Do any of the household members require a unit that has been adapted for vision impairment? <span class="text-danger">*</span></p>
+                  break;
+                case "HEARING":
+                  <p>Certain apartment units are fully accessible and adapted for individuals with hearing impairments. Do any of the household members require a unit that has been adapted for hearing impairment? <span class="text-danger">*</span></p>
+                  break;
+                case "WHEELCHAIR":
+                  <p>Certain apartment units are fully accessible and adapted for wheelchair use. Do any of your household members have a physical disability with mobility impairment that requires a unit adapted for wheelchair use? <span class="text-danger">*</span></p>
+                  break;
+              }
+            </td>
+          </tr>
+        }
+      </table>
+    }
+    else
+    {
+      <p>We do not have accessibility information available at this time.</p>
+    }
+  </div>
+
+  <!-- 6. Pets -->
+  <h2 class="mt-32 text-uppercase">6. Pet Policy</h2>
+  <div class="p-2">
+    @if (Model.PetsAllowedInd)
+    {
+      if (!string.IsNullOrEmpty(Model.PetDisclosure))
+      {
+        <p>@Model.PetDisclosure</p>
+      }
+      else
+      {
+        <p>Yes, pets permitted.</p>
+      }
+    }
+    else
+    {
+      <p>This building does not allow pets. Service and assistance animals (like emotional support animals) are allowed and are not considered pets.</p>
+    }
+  </div>
+
+</div>
+
+<!-- Last Page - 1 -->
+<div class="text-left font-monospace" style="page-break-after: always;">
+
+  <!-- 7. Declaration(s) and Signature(s) -->
+  <h2 class="mt-32 text-uppercase">7. Declaration(s) and Signature(s)</h2>
+  <div class="p-2">
+    @foreach (var declaration in Model.Declarations)
+    {
+      <p>@declaration.Text</p>
+    }
+    <table class="bg-light w-100 mt-16" cellspacing="2" cellpadding="0">
+      <tr valign="top">
+        <td style="width: 512px;" colspan="3">
+          <h6 class="mt-32">Primary Applicant <span class="text-danger">*</span></h6>
+        </td>
+        <td style="width: 512px;" colspan="3">
+          <h6 class="mt-32">Co-Applicant</h6>
+        </td>
+      </tr>
+      <tr valign="top">
+        <td style="width: 256px;">
+          <input type="text" class="form-control-printable" /><br />
+          <small class="text-secondary">Signature</small>
+        </td>
+        <td style="width: 128px;">
+          <input type="text" class="form-control-printable" /><br />
+          <small class="text-secondary">Date</small>
+        </td>
+        <td style="width: 128px;">&nbsp;</td>
+        <td style="width: 256px;">
+          <input type="text" class="form-control-printable" /><br />
+          <small class="text-secondary">Signature</small>
+        </td>
+        <td style="width: 128px;">
+          <input type="text" class="form-control-printable" /><br />
+          <small class="text-secondary">Date</small>
+        </td>
+        <td style="width: 128px;">&nbsp;</td>
+      </tr>
+    </table>
+  </div>
+
+</div>
+
+<!-- Last Page -->
+<div class="text-left font-monospace" style="page-break-after: always;">
+
+  <!-- 8. Lead Capture -->
+  <h2 class="mt-32 text-uppercase">8. How did you hear about this Development?</h2>
+  <div class="bg-light p-2">
+    <p>Check all that apply and list details in the Comments box below:</p>
+    <p>
+      @foreach (var leadType in Model.LeadTypes)
+      {
+        <input type="checkbox" /><label class="ml-8">@leadType.Value</label><br />
+      }
+    </p>
+    <p>Comments:</p>
+    <input type="text" class="form-control-printable" style="width: 512px;" />
+  </div>
+
+  <!-- 9. Notes -->
+  <h6 class="mt-32 text-uppercase">Notes</h6>
+  <ol>
+  @foreach (var disclosure in Model.Disclosures)
+  {
+    <li>@disclosure.Text</li>
+  }
+  </ol>
+
+  <!-- Contact Information -->
+  <div class="mt-32 text-center">
+    <small>Please direct any questions to us at <span class="text-primary text-underline">affordable@wroinc.org</span> or 914-428-4519.</small>
+  </div>
+
+</div>
+
+@section Scripts
+{
+  <script>
+    //<![CDATA[
+    $(function () {
+
+      window.print();
+
+    });
+    //]]>
+  </script>
+}

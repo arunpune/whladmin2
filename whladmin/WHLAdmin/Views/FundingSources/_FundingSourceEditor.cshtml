@@ -1,0 +1,74 @@
+﻿@model EditableFundingSourceViewModel
+
+<div class="text-left">
+  @using (Html.BeginForm("Add", "FundingSources", FormMethod.Post))
+  {
+    <div id="divSaveErrorMessage" style="display: none;">
+      <h6 class="text-danger"><i class="fa-solid fa-triangle-exclamation"></i>&nbsp;Error</h6>
+      <p id="lblSaveErrorMessage">Failed to save funding source information</p>
+      <hr />
+    </div>
+
+    @Html.HiddenFor(h => h.FundingSourceId)
+
+    <div class="row mb-3">
+      <div class="col-sm-12">
+        <label class="form-label small fw-bolder" asp-for="FundingSourceName">Name <span class="text-danger">*</span></label><br />
+        <input type="text" class="form-control form-control-sm whl-formfield-fundingsourcename" placeholder="Enter Funding Source Name" maxlength="100" asp-for="FundingSourceName" />
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-xs-12">
+        <label class="form-label small" asp-for="FundingSourceDescription">Description</label><br />
+        <textarea rows="3" class="form-control form-control-sm whl-formfield-fundingsourcedescription" placeholder="Enter Funding Source Description" maxlength="500" asp-for="FundingSourceDescription"></textarea>
+      </div>
+    </div>
+
+    @if (Model.FundingSourceId > 0)
+    {
+      <div class="row mb-3">
+        <div class="col-xs-12">
+          <div class="form-check form-switch">
+            <input type="checkbox" class="form-check-input" role="switch" asp-for="Active" />
+            <label class="form-check-label small" asp-for="Active">Active</label>
+          </div>
+        </div>
+      </div>
+    }
+  }
+</div>
+
+<script>
+  //<![CDATA[
+  $(function () {
+
+    // Disable submission
+    $('.whl-action-save-fundingsource').attr('disabled', 'disabled');
+    fnToggleSaveFundingSource();
+
+    $('.whl-formfield-fundingsourcename').on('change', function (e) {
+      $(this).removeClass('is-valid');
+      $(this).removeClass('is-invalid');
+      var v = $(this).val();
+      if (v !== undefined && v !== null && v.trim().length > 0) {
+        $(this).addClass('is-valid');
+      } else {
+        $(this).addClass('is-invalid');
+      }
+      fnToggleSaveFundingSource();
+    });
+
+    function fnToggleSaveFundingSource() {
+      var an = $('.whl-formfield-fundingsourcename').val();
+      var allowSubmission = (an !== undefined && an !== null && an.trim().length > 0);
+      if (allowSubmission) {
+        $('.whl-action-save-fundingsource').removeAttr('disabled');
+      }
+      else {
+        $('.whl-action-save-fundingsource').attr('disabled', 'disabled');
+      }
+    }
+  });
+  //]]>
+</script>

@@ -1,0 +1,230 @@
+@model RegistrationsSummaryReportViewModel
+@{
+  ViewData["Title"] = "Registrations Summary Report";
+}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a class="whl-link" asp-area="" asp-controller="Home" asp-action="Index" title="Home"><i
+          class="fa-solid fa-house"></i></a></li>
+    <li class="breadcrumb-item" aria-current="page">Reports</li>
+    <li class="breadcrumb-item active" aria-current="page">Registrations Summary Report</li>
+  </ol>
+</nav>
+
+<div class="text-left mt-32" aria-label="amenity">
+  <h5>@ViewData["Title"]</h5>
+
+  <!-- Search Parameters -->
+  @using (Html.BeginForm("RegistrationsReport", "Reports", FormMethod.Post))
+  {
+    <div class="card card-light border-0 mb-3 mt-16">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-xs-12 col-md-2">Registrations between:</div>
+          <div class="col-xs-12 col-md-3">
+            @Html.TextBoxFor(e => e.FromDate, htmlAttributes: new
+              {
+                @class = "form-control whl-formfield-fromdate",
+                placeholder = "From Date",
+                @type = "date"
+              })
+            @Html.ValidationMessageFor(v => v.FromDate)
+          </div>
+          <div class="col-xs-12 col-md-3">
+            @Html.TextBoxFor(e => e.ToDate, htmlAttributes: new
+              {
+                @class = "form-control whl-formfield-todate",
+                placeholder = "To Date",
+                @type = "date"
+              })
+            @Html.ValidationMessageFor(v => v.ToDate)
+          </div>
+          <div class="col-xs-12 col-md-3">
+            <button type="submit" class="btn btn-outline-secondary whl-action-viewreport" title="View Report" aria-label="View Report">View
+              Report</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+
+  @if (!string.IsNullOrEmpty((Model.Code ?? "").Trim()))
+  {
+    <div id="divSaveErrorMessage">
+      <h6 class="text-danger"><i class="fa-solid fa-triangle-exclamation"></i>&nbsp;Error</h6>
+      <p id="lblSaveErrorMessage">@Model.Message</p>
+      <hr />
+    </div>
+  }
+  else
+  {
+    <!-- Report Data -->
+    if (Model.Searched)
+    {
+      <hr />
+      <div class="card card-light border-0 mb-3 mt-16">
+        <div class="card-body">
+          <div class="card-text">
+            A total of @Model.TotalRegistrationsCount people have signed up on the Central Intake/HomeSeeker database during the
+            report period. The below charts and tables report the location where the households signing up originate; their
+            household size; race and ethnicity. It should be noted that some number of those signing up may sign up a second
+            or, in a few, a third time. On a routine basis, we reach out to those who clearly have a duplicate record to ask
+            if we may delete the duplicates. Letters have been sent to the entire Central Intake/HomeSeeker list asking that
+            they review and update their information. In some cases those who had signed up either find housing, or decide
+            to end their search. In other cases, the mail was returned with no forwarding address, nor was any email
+            provided. In those cases, the record was deactivated. As a result, @Model.TotalInactiveCount records are now
+            considered inactive. With the removal of these records, there remain a total of @Model.TotalActiveCount active
+            households signed up for information.
+          </div>
+        </div>
+      </div>
+
+      <!-- New York State by County -->
+      <div class="card card-light border-0 mb-3 mt-16">
+        <div class="card-body">
+          @if ((Model.NewYorkData?.Count() ?? 0) > 0)
+          {
+            <table class="table table-sm table-striped w-100">
+              <thead>
+                <tr>
+                  <th>County</th>
+                  <th class="text-end">Total</th>
+                  <th class="text-end">Active</th>
+                  <th class="text-end">Inactive</th>
+                </tr>
+              </thead>
+              <tbody>
+                @foreach (var record in Model.NewYorkData)
+                {
+                  <tr>
+                    <td>@record.County</td>
+                    <td class="text-end">@record.TotalCount</td>
+                    <td class="text-end">@record.ActiveCount</td>
+                    <td class="text-end">@record.InactiveCount</td>
+                  </tr>
+                }
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td>Total</td>
+                  <td class="text-end">@Model.NewYorkData.Sum(s => s.TotalCount)</td>
+                  <td class="text-end">@Model.NewYorkData.Sum(s => s.ActiveCount)</td>
+                  <td class="text-end">@Model.NewYorkData.Sum(s => s.InactiveCount)</td>
+                </tr>
+              </tfoot>
+            </table>
+          }
+          else
+          {
+            <div class="card-text">
+              <small class="text-secondary">No sign-ups from New York State.</small>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Other States -->
+      <div class="card card-light border-0 mb-3 mt-16">
+        <div class="card-body">
+          @if ((Model.OtherStatesData?.Count() ?? 0) > 0)
+          {
+            <table class="table table-sm table-striped w-100">
+              <thead>
+                <tr>
+                  <th>State</th>
+                  <th class="text-end">Total</th>
+                  <th class="text-end">Active</th>
+                  <th class="text-end">Inactive</th>
+                </tr>
+              </thead>
+              <tbody>
+                @foreach (var record in Model.OtherStatesData)
+                {
+                  <tr>
+                    <td>@record.StateCd</td>
+                    <td class="text-end">@record.TotalCount</td>
+                    <td class="text-end">@record.ActiveCount</td>
+                    <td class="text-end">@record.InactiveCount</td>
+                  </tr>
+                }
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td>Total</td>
+                  <td class="text-end">@Model.OtherStatesData.Sum(s => s.TotalCount)</td>
+                  <td class="text-end">@Model.OtherStatesData.Sum(s => s.ActiveCount)</td>
+                  <td class="text-end">@Model.OtherStatesData.Sum(s => s.InactiveCount)</td>
+                </tr>
+              </tfoot>
+            </table>
+          }
+          else
+          {
+            <div class="card-text">
+              <small class="text-secondary">No sign-ups from Other States.</small>
+            </div>
+          }
+        </div>
+      </div>
+    }
+  }
+</div>
+
+@section Scripts
+{
+  <script>
+    //<![CDATA[
+
+    $(function () {
+
+      fnToggleViewReport();
+
+      $('.whl-formfield-fromdate').on('change', function () {
+        fnToggleViewReport();
+      });
+
+      $('.whl-formfield-todate').on('change', function () {
+        fnToggleViewReport();
+      });
+
+      function fnToggleViewReport() {
+
+        $('.whl-action-viewreport').attr('disabled', 'disabled');
+
+        var fs = $('.whl-formfield-fromdate').val().split('-');
+        var fd = new Date(parseInt(fs[0]), parseInt(fs[1]) - 1, parseInt(fs[2]));
+
+        var ts = $('.whl-formfield-todate').val().split('-');
+        var td = new Date(parseInt(ts[0]), parseInt(ts[1]) - 1, parseInt(ts[2]));
+
+        var m = new Date(2024, 0, 1, 0, 0, 0);
+        var t = new Date();
+
+        $('.whl-formfield-fromdate').removeClass('is-valid');
+        $('.whl-formfield-fromdate').removeClass('is-invalid');
+        if (fd !== undefined && fd !== null && fd >= m && fd <= t) {
+          $('.whl-formfield-fromdate').addClass('is-valid');
+        } else {
+          $('.whl-formfield-fromdate').addClass('is-invalid');
+          return;
+        }
+
+        $('.whl-formfield-todate').removeClass('is-valid');
+        $('.whl-formfield-todate').removeClass('is-invalid');
+        if (td !== undefined && td !== null && td >= fd && td <= t) {
+          $('.whl-formfield-todate').addClass('is-valid');
+        } else {
+          $('.whl-formfield-todate').addClass('is-invalid');
+          return;
+        }
+
+        $('.whl-action-viewreport').removeAttr('disabled');
+
+      }
+
+    });
+
+    //]]>
+  </script>
+}

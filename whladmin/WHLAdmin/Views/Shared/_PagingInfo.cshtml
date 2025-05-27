@@ -1,0 +1,34 @@
+@model PagedViewModel
+<div class="row">
+  <div class="col-xs-12 col-md-2 text-start">
+    <small>
+      Total Records: <strong>@Model.TotalRecords</strong>
+    </small>
+  </div>
+  <div class="col-xs-12 col-md-8 text-center">
+    @if (Model.TotalPages > 1)
+    {
+      <small>
+        <div class="btn-group btn-group-sm" role="group" aria-label="Page Navigation">
+          @for (var pageCtr = 1; pageCtr <= Model.TotalPages; pageCtr++)
+          {
+            if (pageCtr == Model.PageNo)
+            {
+              <button type="button" class="btn btn-sm btn-secondary" disabled="disabled">@pageCtr</button>
+            }
+            else
+            {
+              <button type="button" class="btn btn-sm btn-outline-secondary whl-action-gotopage" data-pageno="@pageCtr"
+                title="Go to Page @pageCtr" aria-label="Go to Page @pageCtr">@pageCtr</button>
+            }
+          }
+        </div>
+      </small>
+    }
+  </div>
+  <div class="col-xs-12 col-md-2 text-end">
+    <small>
+      Page: <strong>@Model.PageNo @(Model.TotalPages > 1 ? $"of {Model.TotalPages}" : "")</strong>
+    </small>
+  </div>
+</div>

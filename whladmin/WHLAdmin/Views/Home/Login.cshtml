@@ -1,0 +1,90 @@
+﻿@model LoginViewModel
+@{
+  ViewData["Title"] = "Login";
+  Layout = "_Layout_Login";
+}
+
+<div class="text-center mt-32 w-100" aria-label="login">
+  <div class="card card-light border-0 mt-64" style="width: 480px; margin: 0 auto;">
+    <div class="card-body">
+      <img src="~/images/temp-countylogo-gs-300dpi.jpg" width="100%" />
+      <div class="card-text mt-16">
+        <span class="display-5 fw-bold">HomeSeeker</span><br />
+        <small class="fs-5">Administrator Login</small>
+      </div>
+      @using (Html.BeginForm("Login", "Home", FormMethod.Post))
+      {
+        <div class="input-group mb-3 mt-16">
+          <span class="input-group-text">@@</span>
+          <input type="text" asp-for="EmailAddress" class="form-control whl-formfield-emailaddress" placeholder="Enter Email Address" maxlength="200" />
+          <button type="button" class="btn btn-sm btn-outline-secondary whl-action-getotp" title="Get OTP" aria-label="Get OTP"><i class="fa-solid fa-angles-right"></i></button>
+        </div>
+        <div class="input-group mb-3 mt-16 whl-formfieldrow-token" style="display: none;">
+          <span class="input-group-text"><i class="fa-solid fa-key"></i></span>
+          <input type="text" asp-for="Token" class="form-control whl-formfield-token" placeholder="Enter Token" maxlength="16" />
+          <button type="submit" class="btn btn-sm btn-outline-secondary whl-action-login" title="Login" aria-label="Login"><i class="fa-solid fa-right-to-bracket"></i></button>
+        </div>
+        <div class="mb-3 mt-16 whl-formfieldrow-error" style="display: none;">
+          <p class="text-danger"><i class="fa-solid fa-triangle-exclamation"></i>&nbsp;There was an error processing your request. Please try again later.</p>
+        </div>
+      }
+    </div>
+  </div>
+</div>
+
+@section Scripts
+{
+  <script>
+    //<![CDATA[
+
+    $(function () {
+
+      $('.whl-action-getotp').attr('disabled', 'disabled');
+      $('.whl-formfieldrow-token').hide();
+      $('.whl-action-login').attr('disabled', 'disabled');
+
+      $('.whl-formfield-emailaddress').focus();
+
+      $('.whl-formfield-emailaddress').on('change', function (e) {
+        const v = $(this).val();
+        if (fnIsValidUsername(v)) {
+          $('.whl-action-getotp').removeAttr('disabled');
+        }
+        $('.whl-formfieldrow-error').hide();
+      });
+
+      $('.whl-action-getotp').on('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const data = {
+          EmailAddress: $('.whl-formfield-emailaddress').val()
+        };
+
+        $('.whl-formfield-emailaddress').attr('readonly', 'readonly');
+        $('.whl-formfieldrow-error').hide();
+        $(this).hide();
+
+        $.post('@Url.Action("GetOtp", "Home")', data)
+          .done(function () {
+            $('.whl-formfieldrow-token').show();
+          })
+          .fail(function (error) {
+            $('.whl-formfield-emailaddress').removeAttr('readonly');
+            $('.whl-action-getotp').show();
+            $('.whl-formfieldrow-error').show();
+          });
+      });
+
+      $('.whl-formfield-token').on('change', function (e) {
+        const v = $(this).val();
+        if (v !== undefined && v !== null && v.trim().length >= 8 && v.trim().length <= 16) {
+          $('.whl-action-login').removeAttr('disabled');
+        }
+      });
+
+    });
+
+    //]]>
+  </script>
+}

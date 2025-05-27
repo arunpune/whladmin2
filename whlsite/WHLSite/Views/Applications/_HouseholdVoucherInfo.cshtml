@@ -1,0 +1,72 @@
+@model EditableHousingApplicationViewModel
+<div class="text-left mt-16">
+  <div class="card text-bg-light border-0">
+    <div class="card-body">
+      <h4 class="text-secondary whl-card-title">Vouchers / Rental Assistance</h4>
+      <div class="card-text mt-16">
+        <div class="row mb-3">
+          <div class="col-xs-12">
+            <small><strong>Note:</strong> This information is used to determine what eligibility levels
+              apply
+              to your application. New York State Human Rights Law prohibits the discrimination in housing
+              based on lawful source of income, including whether you have a Section 8 voucher.</small>
+          </div>
+        </div>
+        <div class="row mb-3">
+          <div class="col-xs-12 col-md-10">
+            <small>Does any one in your household receive rental assistance that will move with them to a
+              new
+              apartment?<br />
+              <span class="text-secondary">Vouchers and rental subsidies such as Section 8, or VASH are all
+                accepted. Minimum income requirements do not apply if you have a voucher or a rental
+                subsidy. However,
+                rent should be within maximum limits allowed by your voucher or rental assistance
+                program.</span>
+            </small>
+          </div>
+          <div class="col-xs-12 col-md-2">
+            <span class="fs-5 fw-semibold text-dark">@(Model.HouseholdDetails.VoucherInd ? "Yes" :
+              "No")</span>
+          </div>
+        </div>
+        @if (Model.HouseholdDetails.VoucherInd)
+        {
+          <div class="row mb-3">
+            <div class="col-xs-12 col-md-6">
+              <small>What types of rental assistance does your household receive?</small>
+            </div>
+            <div class="col-xs-12 col-md-6">
+              @if (!string.IsNullOrEmpty(Model.DisplayVouchers))
+              {
+                <span class="fs-5 fw-semibold text-dark">@Model.DisplayVouchers</span>
+              }
+              else
+              {
+                <span class="fs-5 fw-light text-secondary">Not Specified</span>
+              }
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-xs-12 col-md-6">
+              <small>Name(s) of the office(s) that administer(s) your subsidy(ies)/voucher(s)?</small>
+            </div>
+            <div class="col-xs-12 col-md-6">
+              @if (!string.IsNullOrEmpty(Model.HouseholdDetails.VoucherAdminName))
+              {
+                <span class="fs-5 fw-semibold text-dark">@Model.HouseholdDetails.VoucherAdminName</span>
+              }
+              else
+              {
+                <span class="fs-5 fw-light text-secondary">Not Specified</span>
+              }
+            </div>
+          </div>
+        }
+      </div>
+      @* <a class="btn btn-sm btn-outline-primary mt-16" asp-area="" asp-controller="Household"
+                    asp-action="EditVoucherInfo" title="Edit Voucher/Rental Assistance Information"
+                    aria-label="Edit Voucher/Rental Assistance Information">Edit
+                    Voucher Information</a> *@
+    </div>
+  </div>
+</div>

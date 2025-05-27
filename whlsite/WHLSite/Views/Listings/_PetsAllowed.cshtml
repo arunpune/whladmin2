@@ -1,0 +1,15 @@
+@model ListingViewModel
+
+<p class="fs-5 mt-32 border-bottom">Pet Policy</p>
+@if (Model.PetsAllowedInd)
+{
+  <p class="text-dark"><i class="fa-regular fa-circle-check"></i>&nbsp;Yes, Pets Permitted</p>
+  @if (!string.IsNullOrEmpty((Model.PetsAllowedText ?? "").Trim()))
+  {
+    <p class="text-secondary"><small>@Model.PetsAllowedText.Trim()</small></p>
+  }
+}
+else
+{
+  <p class="text-secondary"><i class="fa-regular fa-circle-xmark"></i>&nbsp;No, Pets Not Permitted</p>
+}

@@ -1,0 +1,332 @@
+@model MarketEvaluationsReportViewModel
+@{
+  ViewData["Title"] = "Market Evaluations Report";
+}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a class="whl-link" asp-area="" asp-controller="Home" asp-action="Index" title="Home"><i
+          class="fa-solid fa-house"></i></a></li>
+    <li class="breadcrumb-item" aria-current="page">Reports</li>
+    <li class="breadcrumb-item active" aria-current="page">Market Evaluations Report</li>
+  </ol>
+</nav>
+
+<div class="text-left mt-32" aria-label="amenity">
+  <h5>@ViewData["Title"]</h5>
+
+  <!-- Search Parameters -->
+  @using (Html.BeginForm("MarketEvaluationsReport", "Reports", FormMethod.Post))
+  {
+    <div class="card card-light border-0 mb-3 mt-16">
+      <div class="card-body">
+        <div class="row mb-3">
+          <div class="col-xs-12 col-md-2">Listing:</div>
+          <div class="col-xs-12 col-md-10">
+            @Html.DropDownListFor(e => e.ListingId, new SelectList(Model.Listings, "ListingId", "Name", Model.ListingId),
+                   htmlAttributes: new
+                   {
+                     @class = "form-select whl-formfield-listingid",
+                     placeholder = "Select Listing"
+                   })
+          </div>
+        </div>
+        <div class="row mb-3">
+          <div class="col-xs-12 col-md-2">Submissions between:</div>
+          <div class="col-xs-12 col-md-3">
+            @Html.TextBoxFor(e => e.FromDate, htmlAttributes: new
+              {
+                @class = "form-control whl-formfield-fromdate",
+                placeholder = "From Date",
+                @type = "date"
+              })
+            @Html.ValidationMessageFor(v => v.FromDate)
+          </div>
+          <div class="col-xs-12 col-md-3">
+            @Html.TextBoxFor(e => e.ToDate, htmlAttributes: new
+              {
+                @class = "form-control whl-formfield-todate",
+                placeholder = "To Date",
+                @type = "date"
+              })
+            @Html.ValidationMessageFor(v => v.ToDate)
+          </div>
+          <div class="col-xs-12 col-md-3">
+            <button type="submit" class="btn btn-outline-secondary whl-action-viewreport" title="View Report"
+              aria-label="View Report">View
+              Report</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+
+  @if (!string.IsNullOrEmpty((Model.Code ?? "").Trim()))
+  {
+    <div id="divSaveErrorMessage">
+      <h6 class="text-danger"><i class="fa-solid fa-triangle-exclamation"></i>&nbsp;Error</h6>
+      <p id="lblSaveErrorMessage">@Model.Message</p>
+      <hr />
+    </div>
+  }
+  else
+  {
+    <!-- Report Data -->
+    if (Model.Searched)
+    {
+      var totalAppsCount = Model.Data?.FirstOrDefault(f => f.CategoryCd == "GENERAL" && f.CategoryKey ==
+      "TOTAL")?.CategoryCount ?? 0;
+
+      <hr />
+      <div class="row mb-3">
+        <div class="col-xs-12 col-md-3">
+          <small class="border-bottom">Total Applications</small><br />
+          <span class="fs-5 fw-semibold text-dark">@totalAppsCount</span>
+        </div>
+      </div>
+
+      if (totalAppsCount > 0)
+      {
+        var codes = new string[] { "GENDER", "RACE", "ETHNICITY" };
+        <div class="card border-0 mt-32">
+          <div class="card-header text-dark">Demographics</div>
+          <div class="card-body">
+            <div class="row row-cols-1 row-cols-md-3 g-4">
+              @foreach (var code in codes)
+              {
+                <div class="col">
+                  <div class="card border-0">
+                    <div class="card-body">
+                      <h6 class="card-title">@code</h6>
+                      <div class="w-100 text-center">
+                        <canvas id="@($"chartDemographics{code}")" style="width: 50%;"></canvas>
+                      </div>
+                      <div class="row mt-16">
+                        <div class="col-xs-12 col-md-8"><small class="text-secondary fw-bold border-bottom">Category</small>
+                        </div>
+                        <div class="col-xs-12 col-md-2 text-center"><small
+                            class="text-secondary fw-bold border-bottom">Count</small></div>
+                        <div class="col-xs-12 col-md-2 text-center"><small
+                            class="text-secondary fw-bold border-bottom">%</small></div>
+                      </div>
+                      @foreach (var item in Model.Data?.Where(w => w.CategoryCd.Equals(code,
+                     StringComparison.CurrentCultureIgnoreCase)))
+                      {
+                        <div class="row">
+                          <div class="col-xs-12 col-md-8">@item.CategoryDescription</div>
+                          <div class="col-xs-12 col-md-2 text-center">@item.CategoryCount</div>
+                          <div class="col-xs-12 col-md-2 text-center">@item.CategoryPercentage%</div>
+                        </div>
+                      }
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+
+        codes = new string[] { "AMI" };
+        <div class="card border-0 mt-32">
+          <div class="card-header text-dark">Calculated % AMI by HH Size</div>
+          <div class="card-body">
+            <div class="row row-cols-1 row-cols-md-3 g-4">
+              @foreach (var code in codes)
+              {
+                <div class="col">
+                  <div class="card border-0">
+                    <div class="card-body">
+                      @* <h6 class="card-title">@code</h6> *@
+                      <div class="row">
+                        <div class="col-xs-12 col-md-8"><small class="text-secondary fw-bold border-bottom">Category</small>
+                        </div>
+                        <div class="col-xs-12 col-md-2 text-center"><small
+                            class="text-secondary fw-bold border-bottom">Count</small></div>
+                        <div class="col-xs-12 col-md-2 text-center"><small
+                            class="text-secondary fw-bold border-bottom">%</small></div>
+                      </div>
+                      @foreach (var item in Model.Data?.Where(w => w.CategoryCd == "AMI"))
+                      {
+                        <div class="row">
+                          <div class="col-xs-12 col-md-8">@item.CategoryDescription</div>
+                          <div class="col-xs-12 col-md-2 text-center">@item.CategoryCount</div>
+                          <div class="col-xs-12 col-md-2 text-center">@item.CategoryPercentage%</div>
+                        </div>
+                      }
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+
+        codes = new string[] { "VOUCHER" };
+        <div class="card border-0 mt-32">
+          <div class="card-header text-dark">Voucher</div>
+          <div class="card-body">
+            <div class="row row-cols-1 row-cols-md-3 g-4">
+              @foreach (var code in codes)
+              {
+                <div class="col">
+                  <div class="card border-0">
+                    <div class="card-body">
+                      @* <h6 class="card-title">@code</h6> *@
+                      <div class="row">
+                        <div class="col-xs-12 col-md-8"><small class="text-secondary fw-bold border-bottom">Category</small>
+                        </div>
+                        <div class="col-xs-12 col-md-2 text-center"><small
+                            class="text-secondary fw-bold border-bottom">Count</small></div>
+                        <div class="col-xs-12 col-md-2 text-center"><small
+                            class="text-secondary fw-bold border-bottom">%</small></div>
+                      </div>
+                      @foreach (var item in Model.Data?.Where(w => w.CategoryCd == "VOUCHER" && w.CategoryKey.Equals(code,
+                     StringComparison.CurrentCultureIgnoreCase)))
+                      {
+                        <div class="row">
+                          <div class="col-xs-12 col-md-8">@item.CategoryDescription</div>
+                          <div class="col-xs-12 col-md-2 text-center">@item.CategoryCount</div>
+                          <div class="col-xs-12 col-md-2 text-center">@item.CategoryPercentage%</div>
+                        </div>
+                      }
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+
+        codes = new string[] { "MOBILITY", "HEARING", "VISION" };
+        <div class="card border-0 mt-32">
+          <div class="card-header text-dark">Request Adapted Units</div>
+          <div class="card-body">
+            <div class="row row-cols-1 row-cols-md-3 g-4">
+              @foreach (var code in codes)
+              {
+                <div class="col">
+                  <div class="card border-0">
+                    <div class="card-body">
+                      <h6 class="card-title">@code</h6>
+                      <div class="row">
+                        <div class="col-xs-12 col-md-8"><small class="text-secondary fw-bold border-bottom">Category</small>
+                        </div>
+                        <div class="col-xs-12 col-md-2 text-center"><small
+                            class="text-secondary fw-bold border-bottom">Count</small></div>
+                        <div class="col-xs-12 col-md-2 text-center"><small
+                            class="text-secondary fw-bold border-bottom">%</small></div>
+                      </div>
+                      @foreach (var item in Model.Data?.Where(w => w.CategoryCd == "ACCESSIBILITY" && w.CategoryKey.Equals(code,
+                     StringComparison.CurrentCultureIgnoreCase)))
+                      {
+                        <div class="row">
+                          <div class="col-xs-12 col-md-8">@item.CategoryDescription</div>
+                          <div class="col-xs-12 col-md-2 text-center">@item.CategoryCount</div>
+                          <div class="col-xs-12 col-md-2 text-center">@item.CategoryPercentage%</div>
+                        </div>
+                      }
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      }
+    }
+  }
+</div>
+
+@section Scripts
+{
+  @if (Model.Searched)
+  {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"
+      integrity="sha512-ZwR1/gSZM3ai6vCdI+LVF1zSq/5HznD3ZSTk7kajkaj4D292NLuduDCO1c/NT8Id+jE58KYLKT7hXnbtryGmMg=="
+      crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <div>
+      <script>
+        //<![CDATA[
+        $(function() {
+          const data = {
+            gender: [
+              { key: 'Male', value: 50 },
+              { key: 'Choose not to respond', value: 50 }
+            ]
+          };
+
+          const myChart = new Chart(
+            document.getElementById('chartDemographicsGENDER'),
+            {
+              type: 'doughnut',
+              data: {
+                labels: data.gender.map(row => row.key),
+                datasets: [
+                  {
+                    label: 'Applications by Gender',
+                    data: data.gender.map(row => row.value)
+                  }
+                ]
+              }
+            }
+          );
+        });
+        //]]>
+      </script>
+    </div>
+  }
+  <script>
+    //<![CDATA[
+
+    $(function () {
+
+      fnToggleViewReport();
+
+      $('.whl-formfield-fromdate').on('change', function () {
+        fnToggleViewReport();
+      });
+
+      $('.whl-formfield-todate').on('change', function () {
+        fnToggleViewReport();
+      });
+
+      function fnToggleViewReport() {
+
+        $('.whl-action-viewreport').attr('disabled', 'disabled');
+
+        var fs = $('.whl-formfield-fromdate').val().split('-');
+        var fd = new Date(parseInt(fs[0]), parseInt(fs[1]) - 1, parseInt(fs[2]));
+
+        var ts = $('.whl-formfield-todate').val().split('-');
+        var td = new Date(parseInt(ts[0]), parseInt(ts[1]) - 1, parseInt(ts[2]));
+
+        var m = new Date(2024, 0, 1, 0, 0, 0);
+        var t = new Date();
+
+        $('.whl-formfield-fromdate').removeClass('is-valid');
+        $('.whl-formfield-fromdate').removeClass('is-invalid');
+        if (fd !== undefined && fd !== null && fd >= m && fd <= t) {
+          $('.whl-formfield-fromdate').addClass('is-valid');
+        } else {
+          $('.whl-formfield-fromdate').addClass('is-invalid');
+          return;
+        }
+
+        $('.whl-formfield-todate').removeClass('is-valid');
+        $('.whl-formfield-todate').removeClass('is-invalid');
+        if (td !== undefined && td !== null && td >= fd && td <= t) {
+          $('.whl-formfield-todate').addClass('is-valid');
+        } else {
+          $('.whl-formfield-todate').addClass('is-invalid');
+          return;
+        }
+
+        $('.whl-action-viewreport').removeAttr('disabled');
+
+      }
+
+    });
+
+    //]]>
+  </script>
+}

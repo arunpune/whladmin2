@@ -1,0 +1,25 @@
+<div class="modal fade" id="listingSubmitModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+  aria-labelledby="listingSubmitModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="listingSubmitModalLabel">Submit Listing</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row mb-3">
+          <div class="col-sm-12">
+            <p class="lead">Are you sure you want to submit this listing for review?</p>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary whl-action-cancel-submit-listing" data-bs-dismiss="modal"><i
+            class="fa-solid fa-ban"></i>&nbsp;Cancel</button>
+        <button type="button" class="btn btn-primary whl-action-confirm-submit-listing" data-listingid="@Model.ListingId"><i
+            class="fa-solid fa-share"></i>&nbsp;Submit</button>
+        <label class="whl-label-confirm-submit-listing-inprogress">Submitting&hellip;</label>
+      </div>
+    </div>
+  </div>
+</div>

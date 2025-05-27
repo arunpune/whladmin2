@@ -1,0 +1,308 @@
+@model EmfluenceViewModel
+@{
+  ViewData["Title"] = "Emfluence Test Page";
+}
+
+<div class="text-start">
+  <div class="row mb-3">
+    <div class="col-xs-12">
+      @if (Model.Status == "Available")
+      {
+        <p>Emfluence Service Status: <span class="whl-label-emfluencestsatus text-success">@Model.Status</span></p>
+      }
+      else
+      {
+        <p>Emfluence Service Status: <span class="whl-label-emfluencestsatus text-danger">@Model.Status</span></p>
+      }
+      @* <button type="button" class="btn btn-sm btn-outline-secondary whl-action-pingemfluence-client">Refresh Client-Side</button> *@
+      <button type="button" class="btn btn-sm btn-outline-secondary whl-action-pingemfluence-server">Refresh
+        Status</button>
+    </div>
+  </div>
+
+  <hr />
+
+  <div class="row mb-3 mt-16">
+    <div class="col-xs-12">
+      <div class="whl-div-emfluenceavailable mt-16">
+        <ul class="nav nav-tabs mb-3" id="emfluence-tab-content" role="tablist">
+          <li class="nav-item" role="presentation">
+            <a class="nav-link" id="emfluence-contacts-tab" data-bs-toggle="tab"
+              data-bs-target="#emfluence-contacts-tab-pane" role="tab"
+              aria-controls="emfluence-contacts-tab-pane">Contacts</a>
+          </li>
+          <li class="nav-item" role="presentation">
+            <a class="nav-link" id="emfluence-groups-tab" data-bs-toggle="tab"
+              data-bs-target="#emfluence-groups-tab-pane" role="tab"
+              aria-controls="emfluence-groups-tab-pane">Groups</a>
+          </li>
+          <li class="nav-item" role="presentation">
+            <a class="nav-link" id="emfluence-templates-tab" data-bs-toggle="tab"
+              data-bs-target="#emfluence-templates-tab-pane" role="tab"
+              aria-controls="emfluence-templates-tab-pane">Templates</a>
+          </li>
+          <li class="nav-item" role="presentation">
+            <a class="nav-link" id="emfluence-email-tab" data-bs-toggle="tab" data-bs-target="#emfluence-email-tab-pane"
+              role="tab" aria-controls="emfluence-email-tab-pane">Email</a>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane fade" id="emfluence-contacts-tab-pane" role="tabpanel"
+            aria-labelledby="notifications-contacts-tab" tabindex="1">
+            <div class="row mb-3">
+              <div class="col-xs-12 col-md-2">
+                <div class="form-group form-group-sm">
+                  <label class="form-label fw-bolder"><small>Contact ID</small></label><br />
+                  <input type="text"
+                    class="form-control form-control-sm whl-formfield-contact whl-formfield-contact-contactid"
+                    autocomplete="off" />
+                </div>
+              </div>
+              <div class="col-xs-12 col-md-1">
+                <label class="form-label">OR</label>
+              </div>
+              <div class="col-xs-12 col-md-3">
+                <div class="form-group form-group-sm">
+                  <label class="form-label fw-bolder"><small>Email Address</small></label><br />
+                  <input type="text"
+                    class="form-control form-control-sm whl-formfield-contact whl-formfield-contact-emailaddress"
+                    autocomplete="off" />
+                </div>
+              </div>
+            </div>
+            <button type="button" class="btn btn-sm btn-outline-secondary whl-action-contact-lookup">Lookup</button>
+            <hr />
+            <div class="row mb-3">
+              <div class="col-xs-12 col-md-2">
+                <small class="label fw-bolder">Contact ID</small><br />
+                <span class="whl-label-contact-contactid"></span>
+              </div>
+              <div class="col-xs-12 col-md-3">
+                <small class="label fw-bolder">First Name</small><br />
+                <span class="whl-label-contact-firstname"></span>
+              </div>
+              <div class="col-xs-12 col-md-3">
+                <small class="label fw-bolder">Last Name</small><br />
+                <span class="whl-label-contact-lastname"></span>
+              </div>
+              <div class="col-xs-12 col-md-3">
+                <small class="label fw-bolder">Email Address</small><br />
+                <span class="whl-label-contact-emailaddress"></span>
+              </div>
+              <div class="col-xs-12 col-md-1">
+                <small class="label fw-bolder">Suppressed</small><br />
+                <span class="whl-label-contact-suppressed"></span>
+              </div>
+            </div>
+          </div>
+          <div class="tab-pane fade" id="emfluence-groups-tab-pane" role="tabpanel"
+            aria-labelledby="notifications-groups-tab" tabindex="2">
+            <div class="row mb-3">
+              <div class="col-xs-12 col-md-2">
+                <div class="form-group form-group-sm">
+                  <label class="form-label fw-bolder"><small>Group ID</small></label><br />
+                  <input type="text"
+                    class="form-control form-control-sm whl-formfield-group whl-formfield-group-groupid"
+                    autocomplete="off" />
+                </div>
+              </div>
+              <div class="col-xs-12 col-md-1">
+                <label class="form-label">OR</label>
+              </div>
+              <div class="col-xs-12 col-md-3">
+                <div class="form-group form-group-sm">
+                  <label class="form-label fw-bolder"><small>Group Name</small></label><br />
+                  <input type="text"
+                    class="form-control form-control-sm whl-formfield-group whl-formfield-group-groupname"
+                    autocomplete="off" />
+                </div>
+              </div>
+            </div>
+            <button type="button" class="btn btn-sm btn-outline-secondary whl-action-group-lookup">Lookup</button>
+            <hr />
+            <div class="row mb-3">
+              <div class="col-xs-12 col-md-2">
+                <small class="label fw-bolder">Group ID</small><br />
+                <span class="whl-label-group-groupid"></span>
+              </div>
+              <div class="col-xs-12 col-md-4">
+                <small class="label fw-bolder">Group Name</small><br />
+                <span class="whl-label-group-groupname"></span>
+              </div>
+              <div class="col-xs-12 col-md-3">
+                <small class="label fw-bolder">Friendly Name</small><br />
+                <span class="whl-label-group-friendlyname"></span>
+              </div>
+              <div class="col-xs-12 col-md-1">
+                <small class="label fw-bolder">Total</small><br />
+                <span class="whl-label-group-totalmembers"></span>
+              </div>
+              <div class="col-xs-12 col-md-1">
+                <small class="label fw-bolder">Active</small><br />
+                <span class="whl-label-group-activemembers"></span>
+              </div>
+              <div class="col-xs-12 col-md-1">
+                <small class="label fw-bolder">Status</small><br />
+                <span class="whl-label-group-status"></span>
+              </div>
+            </div>
+          </div>
+          <div class="tab-pane fade" id="emfluence-templates-tab-pane" role="tabpanel"
+            aria-labelledby="notifications-templates-tab" tabindex="3">Templates</div>
+          <div class="tab-pane fade" id="emfluence-email-tab-pane" role="tabpanel"
+            aria-labelledby="notifications-email-tab" tabindex="3">Email</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+@section Scripts
+{
+  <script>
+    //<![CDATA[
+    $(function () {
+
+      if ('@Model.Success' === '1') {
+        $('.whl-div-emfluenceavailable').show();
+      } else {
+        $('.whl-div-emfluenceavailable').hide();
+      }
+
+      $('#emfluence-tab-content li:first-child a').tab('show');
+      $('.whl-action-contact-lookup').attr('disabled', 'disabled');
+
+      $('.whl-action-pingemfluence-server').on('click', function (e) {
+        $('.whl-label-emfluencestsatus').html('Refreshing...');
+        $('.whl-label-emfluencestsatus').removeClass('text-danger');
+        $('.whl-label-emfluencestsatus').removeClass('text-success');
+        $('.whl-label-emfluencestsatus').removeClass('text-secondary');
+        $('.whl-label-emfluencestsatus').addClass('text-secondary');
+        $('.whl-div-emfluenceavailable').hide();
+        $.get('@Url.Action("GetStatus", "EmfluenceTest")')
+          .done(function (response) {
+            if (response.success === 1) {
+              $('.whl-label-emfluencestsatus').addClass('text-success');
+              $('.whl-label-emfluencestsatus').html('Available');
+              $('.whl-div-emfluenceavailable').show();
+            } else {
+              $('.whl-label-emfluencestsatus').addClass('text-danger');
+              $('.whl-label-emfluencestsatus').html('Unavailable');
+            }
+          })
+          .fail(function (error) {
+            $('.whl-label-emfluencestsatus').addClass('text-danger');
+            $('.whl-label-emfluencestsatus').html('Unavailable');
+          });
+      });
+
+      $('.whl-formfield-contact').on('change', function (e) {
+        const a = $('.whl-formfield-contact-emailaddress').val();
+        const i = $('.whl-formfield-contact-contactid').val();
+        if ((a !== undefined && a !== null && a.trim() !== '') || (i !== undefined && i !== undefined && !isNaN(parseFloat(i)))) {
+          $('.whl-action-contact-lookup').removeAttr('disabled');
+        } else {
+          $('.whl-action-contact-lookup').attr('disabled', 'disabled');
+        }
+      });
+      $('.whl-action-contact-lookup').on('click', function (e) {
+        let a = $('.whl-formfield-contact-emailaddress').val();
+        a = (a === undefined || a === null) ? '' : a.trim();
+        let i = $('.whl-formfield-contact-contactid').val();
+        i = isNaN(parseFloat(i)) ? 0 : parseFloat(i);
+        const data = {
+          "EmailAddress": a,
+          "ContactId": i
+        };
+        $('.whl-action-contact-lookup').attr('disabled', 'disabled');
+        $('.whl-label-contact-contactid').html('');
+        $('.whl-label-contact-firstname').html('');
+        $('.whl-label-contact-lastname').html('');
+        $('.whl-label-contact-emailaddress').html('');
+        $('.whl-label-contact-suppressed').html('');
+        $.post('@Url.Action("LookupContact", "EmfluenceTest")', data)
+          .done(function (response) {
+            if (response.success === 1) {
+              $('.whl-label-contact-contactid').html(response.data.contactID);
+              $('.whl-label-contact-firstname').html(response.data.firstName);
+              $('.whl-label-contact-lastname').html(response.data.lastName);
+              $('.whl-label-contact-emailaddress').html(response.data.email);
+              $('.whl-label-contact-suppressed').html(response.data.suppressed);
+            } else {
+              $('.whl-label-contact-contactid').html('0');
+              $('.whl-label-contact-firstname').html('Not Found');
+            }
+            $('.whl-action-contact-lookup').removeAttr('disabled');
+          })
+          .fail(function (error) {
+            $('.whl-label-contact-contactid').html('0');
+            $('.whl-label-contact-firstname').html('Not Found');
+            $('.whl-action-contact-lookup').removeAttr('disabled');
+          });
+      });
+
+      $('.whl-action-group-lookup').on('click', function (e) {
+        let a = $('.whl-formfield-group-groupname').val();
+        a = (a === undefined || a === null) ? '' : a.trim();
+        let i = $('.whl-formfield-group-groupid').val();
+        i = isNaN(parseFloat(i)) ? 0 : parseFloat(i);
+        const data = {
+          "GroupName": a,
+          "GroupId": i
+        };
+        $('.whl-action-group-lookup').attr('disabled', 'disabled');
+        $('.whl-label-group-groupid').html('');
+        $('.whl-label-group-groupname').html('');
+        $('.whl-label-group-friendlyname').html('');
+        $('.whl-label-group-totalmembers').html('');
+        $('.whl-label-group-activemembers').html('');
+        $('.whl-label-group-status').html('');
+        $.post('@Url.Action("LookupGroup", "EmfluenceTest")', data)
+          .done(function (response) {
+            if (response.success === 1) {
+              if (response.data.records !== undefined && response.data.records !== null) {
+                let groupIds = '';
+                let groupNames = '';
+                let friendlyNames = '';
+                let totalMembers = '';
+                let activeMembers = '';
+                let statuses = '';
+                $(response.data.records).each(function (idx, elem) {
+                  groupIds += (groupIds.length > 0 ?  '<br />' : '') + elem.groupID;
+                  groupNames += (groupNames.length > 0 ?  '<br />' : '') + elem.groupName;
+                  friendlyNames += (friendlyNames.length > 0 ?  '<br />' : '') + elem.friendlyName;
+                  totalMembers += (totalMembers.length > 0 ?  '<br />' : '') + elem.totalMembers.toString();
+                  activeMembers += (activeMembers.length > 0 ?  '<br />' : '') + elem.activeMembers.toString();
+                  statuses += (statuses.length > 0 ?  '<br />' : '') + elem.status;
+                });
+                $('.whl-label-group-groupid').html(groupIds);
+                $('.whl-label-group-groupname').html(groupNames);
+                $('.whl-label-group-friendlyname').html(friendlyNames);
+                $('.whl-label-group-totalmembers').html(totalMembers);
+                $('.whl-label-group-activemembers').html(activeMembers);
+                $('.whl-label-group-status').html(statuses);
+              } else {
+                $('.whl-label-group-groupid').html(response.data.groupID);
+                $('.whl-label-group-groupname').html(response.data.groupName);
+                $('.whl-label-group-friendlyname').html(response.data.friendlyName);
+                $('.whl-label-group-totalmembers').html(response.data.totalMembers);
+                $('.whl-label-group-activemembers').html(response.data.activeMembers);
+                $('.whl-label-group-status').html(response.data.status);
+              }
+            } else {
+              $('.whl-label-group-groupid').html('0');
+              $('.whl-label-group-groupname').html('Not Found');
+            }
+            $('.whl-action-group-lookup').removeAttr('disabled');
+          })
+          .fail(function (error) {
+            $('.whl-label-group-groupid').html('0');
+            $('.whl-label-group-groupname').html('Not Found');
+            $('.whl-action-group-lookup').removeAttr('disabled');
+          });
+      });
+
+    });
+    //]]>
+  </script>
+}

@@ -1,0 +1,89 @@
+@model EditableHousingApplicationViewModel
+<div class="text-left mt-16">
+  <div class="card text-bg-light border-0">
+    <div class="card-body">
+      <h4 class="text-secondary whl-card-title">Contact Information</h4>
+      <div class="card-text mt-16">
+        <div class="row mb-3">
+          <div class="col-xs-12 col-sm-6 col-md-6"><small class="border-bottom">Primary Phone
+              Number</small><br />
+            <span class="fs-5 fw-semibold text-dark">
+              @if (Model.ApplicationDetails.PhoneNumberTypeCd == "CELL")
+              {
+                <i class="fa-solid fa-mobile-screen" title="@Model.ApplicationDetails.PhoneNumberTypeDescription"
+                  aria-label="@Model.ApplicationDetails.PhoneNumberTypeDescription"></i>
+              }
+              else if (Model.ApplicationDetails.PhoneNumberTypeCd == "LAND")
+              {
+                <i class="fa-solid fa-phone" title="@Model.ApplicationDetails.PhoneNumberTypeDescription"
+                  aria-label="@Model.ApplicationDetails.PhoneNumberTypeDescription"></i>
+              }
+              else
+              {
+                <i class="fa-solid fa-square-phone" title="@Model.ApplicationDetails.PhoneNumberTypeDescription"
+                  aria-label="@Model.ApplicationDetails.PhoneNumberTypeDescription"></i>
+              }
+              @Model.DisplayPhoneNumber
+              @if (!string.IsNullOrEmpty(Model.ApplicationDetails.PhoneNumberExtn))
+              {
+                <br />
+                <small class="text-secondary">Extension @Model.ApplicationDetails.PhoneNumberExtn</small>
+              }
+            </span>
+          </div>
+          <div class="col-xs-12 col-sm-6 col-md-6"><small class="border-bottom">Alternate Phone
+              Number</small><br />
+            @if (!string.IsNullOrEmpty(Model.ApplicationDetails.AltPhoneNumber))
+            {
+              <span class="fs-5 fw-semibold text-dark">
+                @if (Model.ApplicationDetails.AltPhoneNumberTypeCd == "CELL")
+                {
+                  <i class="fa-solid fa-mobile-screen" title="@Model.ApplicationDetails.AltPhoneNumberTypeDescription"
+                    aria-label="@Model.ApplicationDetails.AltPhoneNumberTypeDescription"></i>
+                }
+                else if (Model.ApplicationDetails.AltPhoneNumberTypeCd == "LAND")
+                {
+                  <i class="fa-solid fa-phone" title="@Model.ApplicationDetails.AltPhoneNumberTypeDescription"
+                    aria-label="@Model.ApplicationDetails.AltPhoneNumberTypeDescription"></i>
+                }
+                else
+                {
+                  <i class="fa-solid fa-square-phone" title="@Model.ApplicationDetails.AltPhoneNumberTypeDescription"
+                    aria-label="@Model.ApplicationDetails.AltPhoneNumberTypeDescription"></i>
+                }
+                @Model.DisplayAltPhoneNumber
+                @if (!string.IsNullOrEmpty(Model.ApplicationDetails.AltPhoneNumberExtn))
+                {
+                  <br />
+                  <small class="text-secondary">Extension @Model.ApplicationDetails.AltPhoneNumberExtn</small>
+                }
+              </span>
+            }
+            else
+            {
+              <span class="fs-5 fw-light text-secondary">Not Specified</span>
+            }
+          </div>
+        </div>
+        <div class="row mb-3 mt-16">
+          <div class="col-xs-12 col-sm-6 col-md-6"><small class="border-bottom">Email Address</small><br />
+            <span class="fs-5 fw-semibold text-primary">@Model.ApplicationDetails.EmailAddress</span>
+          </div>
+          <div class="col-xs-12 col-sm-6 col-md-6"><small class="border-bottom">Alternate Email
+              Address</small><br />
+            @if (!string.IsNullOrEmpty(Model.ApplicationDetails.AltEmailAddress))
+            {
+              <span class="fs-5 fw-semibold text-dark">@Model.ApplicationDetails.AltEmailAddress</span>
+            }
+            else
+            {
+              <span class="fs-5 fw-light text-secondary">Not Specified</span>
+            }
+          </div>
+        </div>
+      </div>
+      @* <a class="btn btn-sm btn-outline-primary mt-16" asp-area="" asp-controller="Profile" asp-action="EditContactInfo"
+                      title="Edit Contact Information" aria-label="Edit Contact Information">Edit Contact Information</a> *@
+    </div>
+  </div>
+</div>

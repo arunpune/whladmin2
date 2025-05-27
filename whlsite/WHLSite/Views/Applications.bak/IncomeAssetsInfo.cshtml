@@ -1,0 +1,311 @@
+@model EditableIncomeAssetsInfoViewModel
+@{
+  ViewData["Title"] = "Edit Housing Application";
+  ViewData["MENUID"] = "DASHBOARD";
+}
+
+@await Html.PartialAsync("_Breadcrumb.cshtml", new RailroadViewModel(Model.Username, Model.ApplicationId, Model.ListingId, Model.StepNumber))
+
+<div class="text-left mt-32 bg-white">
+  @await Html.PartialAsync("_Railroad.cshtml", new RailroadViewModel(Model.Username, Model.ApplicationId, Model.ListingId, Model.StepNumber))
+  <div class="row mb-3">
+    <div class="col-xs-12 col-md-9">
+      <div class="card border-0">
+        <div class="card-body">
+          <h5 class="fs-4 border-bottom">Income &amp; Assets Information</h5>
+          @using (Html.BeginForm("IncomeAssetsInfo", "Applications", FormMethod.Post, new
+          {
+            @class = "form whl-form-income-assets-info mt-32",
+            id = "frmIncomeAssetsInfo",
+            name = "frmIncomeAssetsInfo"
+          }))
+          {
+
+            if (!string.IsNullOrEmpty((Model.Message ?? "").Trim()))
+            {
+              <div id="divSaveErrorMessage">
+                <h6 class="text-danger"><i class="fa-solid fa-triangle-exclamation"></i>&nbsp;Error</h6>
+                <p id="lblSaveErrorMessage">@Model.Message</p>
+                <hr />
+              </div>
+            }
+
+            <div class="row mb-3 mt-32">
+              <div class="col-xs-12">
+                <h5 class="fs5">Summary</h5>
+              </div>
+            </div>
+            <div class="row mb-3">
+              <div class="col-xs-12 col-sm-6 col-md-3"><small class="border-bottom">Applicants Included</small><br />
+                <span class="fs-5 fw-semibold text-dark">@(Model.HouseholdMembers.Count())</span>
+              </div>
+              <div class="col-xs-12 col-sm-6 col-md-3"><small class="border-bottom">Total Annual Gross Income</small><br />
+                <span class="fs-5 fw-semibold text-dark">@(Model.TotalIncomeValueAmt.ToString("C0"))</span>
+              </div>
+              <div class="col-xs-12 col-sm-6 col-md-3"><small class="border-bottom">Total Value of all Owned Real Estate</small><br />
+                <span class="fs-5 fw-semibold text-dark">@(Model.TotalRealEstateValueAmt.ToString("C0"))</span>
+              </div>
+              <div class="col-xs-12 col-sm-6 col-md-3"><small class="border-bottom">Total Accounts &amp; Other Assets</small><br />
+                <span class="fs-5 fw-semibold text-dark">@(Model.TotalAssetValueAmt.ToString("C0"))</span>
+              </div>
+            </div>
+
+            @if (Model.HouseholdMembers.Any())
+            {
+              <div class="row mb-3 mt-32">
+                <div class="col-xs-12">
+                  <h5 class="fs5">Income &amp; Real Estate</h5>
+                  <p class="lead">The following household income and real estate values will be included in this application.</p>
+                </div>
+              </div>
+              <div class="row mb-3 border-bottom">
+                <div class="col-xs-1 col-md-1 text-center">
+                  <div class="form-check form-switch">
+                    <input type="checkbox" class="form-check-input whl-formfield-select-income-all" role="switch" checked="checked" disabled="disabled" />
+                  </div>
+                </div>
+                <div class="col-xs-11 col-md-3">
+                  <small class="fw-bold">Relation Type</small>
+                </div>
+                <div class="col-xs-12 col-md-3">
+                  <small class="fw-bold">Name</small>
+                </div>
+                <div class="col-xs-12 col-md-3 text-end">
+                  <small class="fw-bold">Total Annual Gross Income</small>
+                </div>
+                @* <div class="col-xs-12 col-md-2 text-end">
+                  <small class="fw-bold">Assets</small>
+                </div> *@
+                <div class="col-xs-12 col-md-2 text-end">
+                  <small class="fw-bold">Real Estate</small>
+                </div>
+              </div>
+
+              foreach (var member in Model.HouseholdMembers)
+              {
+                <div class="row mb-3">
+                  <div class="col-xs-1 col-md-1 text-center">
+                    <div class="form-check form-switch">
+                      <input type="checkbox" class="form-check-input whl-formfield-select-income" role="switch"
+                        data-memberid="@member.MemberId" data-membername="@member.DisplayName"
+                        checked="checked" disabled="disabled" />
+                    </div>
+                  </div>
+                  <div class="col-xs-11 col-md-3">
+                    @member.RelationTypeDescription
+                  </div>
+                  <div class="col-xs-12 col-md-3">
+                    @member.DisplayName
+                  </div>
+                  <div class="col-xs-12 col-md-3 text-end">
+                    @member.IncomeValueAmt.ToString("C0")
+                  </div>
+                  @* <div class="col-xs-12 col-md-2 text-end">
+                    @member.AssetValueAmt.ToString("C0")
+                  </div> *@
+                  <div class="col-xs-12 col-md-2 text-end">
+                    @member.RealEstateValueAmt.ToString("C0")
+                  </div>
+                </div>
+              }
+
+              <div class="row mb-3 border-top">
+                <div class="col-xs-1 col-md-1 text-center">
+                  &nbsp;
+                </div>
+                <div class="col-xs-11 col-md-6">
+                  <strong>Total</strong>
+                </div>
+                <div class="col-xs-12 col-md-3 text-end">
+                  <strong>@Model.HouseholdMembers.Sum(s => s.IncomeValueAmt).ToString("C0")</strong>
+                </div>
+                @* <div class="col-xs-12 col-md-2 text-end">
+                  <strong>@Model.HouseholdMembers.Sum(s => s.AssetValueAmt).ToString("C0")</strong>
+                </div> *@
+                <div class="col-xs-12 col-md-2 text-end">
+                  <strong>@Model.HouseholdMembers.Sum(s => s.RealEstateValueAmt).ToString("C0")</strong>
+                </div>
+              </div>
+            }
+
+            @if (Model.HouseholdAccounts.Any())
+            {
+              <div class="row mb-3 mt-32">
+                <div class="col-xs-12">
+                  <h5 class="fs5">Accounts &amp; Other Assets</h5>
+                  @* <p class="lead">Select one or more household accounts to be included in this application.</p> *@
+                  <p class="lead">The following household accounts and assets will be included in this application.</p>
+                </div>
+              </div>
+              <div class="row mb-3 border-bottom">
+                <div class="col-xs-1 col-md-1 text-center">
+                  <div class="form-check form-switch">
+                    <input type="checkbox" class="form-check-input whl-formfield-select-account-all" role="switch" checked="checked" disabled="disabled" />
+                  </div>
+                </div>
+                <div class="col-xs-11 col-md-3">
+                  <small class="fw-bold">Account/Asset Type</small>
+                </div>
+                <div class="col-xs-12 col-md-2">
+                  <small class="fw-bold">Institution/Instrument Name</small>
+                </div>
+                <div class="col-xs-12 col-md-2">
+                  <small class="fw-bold">Account Number</small>
+                </div>
+                <div class="col-xs-12 col-md-2">
+                  <small class="fw-bold">Primary Holder</small>
+                </div>
+                <div class="col-xs-12 col-md-2 text-end">
+                  <small class="fw-bold">Asset Value</small>
+                </div>
+              </div>
+
+              foreach (var account in Model.HouseholdAccounts)
+              {
+                <div class="row mb-3">
+                  <div class="col-xs-1 col-md-1 text-center">
+                    <div class="form-check form-switch">
+                      <input type="checkbox" class="form-check-input whl-formfield-select-account" role="switch"
+                        data-accountid="@account.AccountId" data-accountnumber="@account.AccountNumber"
+                        checked="checked" disabled="disabled" />
+                    </div>
+                  </div>
+                  <div class="col-xs-11 col-md-3">
+                    @account.DisplayAccountType
+                  </div>
+                  <div class="col-xs-12 col-md-2">
+                    @account.InstitutionName
+                  </div>
+                  <div class="col-xs-12 col-md-2">
+                    @account.DisplayAccountNumber
+                  </div>
+                  <div class="col-xs-11 col-md-2">
+                    @account.PrimaryHolderMemberName
+                  </div>
+                  <div class="col-xs-12 col-md-2 text-end">
+                    @account.AccountValueAmt.ToString("C0")
+                  </div>
+                </div>
+              }
+
+              <div class="row mb-3 border-top">
+                <div class="col-xs-1 col-md-1 text-center">
+                  &nbsp;
+                </div>
+                <div class="col-xs-11 col-md-9">
+                  <strong>Total</strong>
+                </div>
+                <div class="col-xs-12 col-md-2 text-end">
+                  <strong>@Model.HouseholdAccounts.Sum(s => s.AccountValueAmt).ToString("C0")</strong>
+                </div>
+              </div>
+            }
+            else
+            {
+              <div class="row mb-3 mt-32">
+                <div class="col-xs-12">
+                  <h5 class="fs5">Accounts &amp; Other Assets</h5>
+                  <p class="small text-secondary"><i class="fa-solid fa-triangle-exclamation text-warning"></i>&nbsp;There are no accounts or other asset types available for selection.</p>
+                </div>
+              </div>
+            }
+
+            <div class="mt-32">
+              <input type="hidden" class="whl-formfield-accountids" asp-for="AccountIds" value="@Model.AccountIds" />
+              @await Html.PartialAsync("_Actions.cshtml", new ApplicationActionsViewModel(Model.Username, Model.ApplicationId, Model.ListingId, Model.StepNumber))
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+    <div class="col-xs-12 col-md-3">
+      @await Html.PartialAsync("_ListingDetails.cshtml", Model.ListingDetails)
+    </div>
+  </div>
+</div>
+
+@await Html.PartialAsync("~/Views/Applications/_WithdrawApplication.cshtml")
+
+@section Scripts
+{
+  <script>
+    //<![CDATA[
+    $(function () {
+
+      fnToggleAllAccounts();
+
+      $('.whl-formfield-select-account-all').on('change', function (e) {
+        var c = $(this).prop('checked');
+        $('.whl-formfield-select-account').prop('checked', c);
+      });
+
+      $('.whl-formfield-select-account').on('change', function (e) {
+        fnToggleAllAccounts();
+      });
+
+      function fnToggleAllAccounts() {
+        var ctr = 0;
+        var total = $('.whl-formfield-select-account').length;
+        var s = '';
+        $('.whl-formfield-select-account').each((i, el) => {
+          if ($(el).prop('checked')) {
+            s += (s.length > 0 ? ',' : '') + $(el).data('accountid');
+            ctr++;
+          }
+        });
+        $('.whl-formfield-accountids').val(s);
+        if (ctr === total) {
+          $('.whl-formfield-select-account-all').prop('checked', true);
+        } else {
+          $('.whl-formfield-select-account-all').prop('checked', false);
+        }
+      }
+
+      $('.whl-action-save-income-assets-draft').on('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        $('.whl-formfield-savemode').val('DRAFT');
+        $('.whl-form-income-assets-info').submit();
+      });
+
+      $('.whl-action-save-income-assets-info').on('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        $('.whl-formfield-savemode').val('NEXT');
+        $('.whl-form-income-assets-info').submit();
+      });
+
+      $('.whl-action-withdraw-application').on('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        $('#withdrawApplicationModal').modal('show');
+        $('.whl-action-cancel-withdraw-application').show();
+        $('.whl-action-confirm-withdraw-application').show();
+        $('.whl-label-confirm-withdraw-application-inprogress').hide();
+      });
+      $('.whl-action-confirm-withdraw-application').on('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        const applicationId = $(e.currentTarget).data('applicationid');
+        $('.whl-action-cancel-withdraw-application').hide();
+        $('.whl-action-confirm-withdraw-application').hide();
+        $('.whl-label-confirm-withdraw-application-inprogress').show();
+        $.post('@Url.Action("Withdraw", "Applications")?applicationId=' + applicationId)
+          .done(function (response) {
+            $('#withdrawApplicationModal').modal('hide');
+            window.location.href = '@Url.Action("Dashboard", "Applications")';
+          })
+          .fail(function (error) {
+            $('#withdrawApplicationModal').modal('hide');
+            var message = error.responseJSON && error.responseJSON.message && error.responseJSON.message.length > 0 ? error.responseJSON.message : 'Failed to withdraw application due to one or more errors';
+            if (error.responseJSON && error.responseJSON.details && error.responseJSON.details.length > 0) {
+              message += '<br />' + error.responseJSON.details;
+            }
+            alert('Failed to withdraw application due to one or more errors!');
+          });
+      });
+
+    });
+    //]]>
+  </script>
+}

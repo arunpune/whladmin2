@@ -1,0 +1,31 @@
+@model IEnumerable<System.Security.Claims.Claim>
+
+@{
+  ViewBag.Title = "My Profile";
+}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a class="whl-link" asp-area="" asp-controller="Home" asp-action="Index" title="Home"><i
+          class="fa-solid fa-house"></i></a></li>
+    <li class="breadcrumb-item active" aria-current="page">My Profile</li>
+  </ol>
+</nav>
+
+<div class="text-left mt-32" aria-label="amenity">
+  <h5>My Profile</h5>
+  <dl class="dl-horizontal">
+    @foreach (var claim in Model)
+    {
+      <dt title="@claim.Type">
+        @claim.Type
+        <button type="button" class="btn btn-link btn-xs" aria-label="Copy to clipboard" title="Copy to clipboard"
+          data-clipboard-text="@claim.Value">
+          <span class="glyphicon glyphicon glyphicon-copy" aria-hidden="true"></span>
+        </button>
+      </dt>
+
+      <dd id="claim-@String.Format("{0}", claim.Type)">@claim.Value</dd>
+    }
+  </dl>
+</div>

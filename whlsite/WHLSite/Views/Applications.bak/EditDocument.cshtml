@@ -1,0 +1,167 @@
+@model EditableApplicationDocumentViewModel
+@{
+  ViewData["Title"] = Model.DocId > 0 ? "Edit Document" : "Add Document";
+  ViewData["MENUID"] = "DASHBOARD";
+}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a class="whl-link" asp-area="" asp-controller="Home" asp-action="Index" title="Home"><i
+          class="fa-solid fa-house"></i></a></li>
+    <li class="breadcrumb-item"><a class="whl-link" asp-area="" asp-controller="Applications" asp-action="Dashboard"
+        title="Dashboard">Dashboard</a></li>
+    <li class="breadcrumb-item"><a class="whl-link" asp-area="" asp-controller="Applications" asp-action="Submitted"
+        asp-route-applicationId="@Model.ApplicationId" title="Return to @Model.ApplicationId">@Model.ApplicationId</a></li>
+    <li class="breadcrumb-item active" aria-current="page">@ViewData["Title"]</li>
+  </ol>
+</nav>
+
+<div class="text-left mt-32">
+  <div class="card shadow-lg">
+    <h5 class="card-header">@ViewData["Title"]</h5>
+    <div class="card-body">
+      @using (Html.BeginForm("AddDocument", "Applications", FormMethod.Post, new
+      {
+        @class = "form whl-form-add-document",
+        id = "frmAddDocument",
+        name = "frmAddDocument",
+        enctype = "multipart/form-data"
+      }))
+      {
+
+        if (!string.IsNullOrEmpty((Model.Message ?? "").Trim()))
+        {
+          <div id="divSaveErrorMessage">
+            <h6 class="text-danger"><i class="fa-solid fa-triangle-exclamation"></i>&nbsp;Error</h6>
+            <p id="lblSaveErrorMessage">@Model.Message</p>
+            <hr />
+          </div>
+        }
+
+        <div class="row mb-3">
+
+          @Html.HiddenFor(h => h.DocId, htmlAttributes: new { @class = "whl-formfield-docid" })
+          @Html.HiddenFor(h => h.FileName, htmlAttributes: new { @class = "whl-formfield-filename" })
+          @Html.HiddenFor(h => h.ApplicationId, htmlAttributes: new { @class = "whl-formfield-applicationid" })
+          @Html.HiddenFor(h => h.ListingId, htmlAttributes: new { @class = "whl-formfield-listingid" })
+          @Html.HiddenFor(h => h.Username, htmlAttributes: new { @class = "whl-formfield-username" })
+
+          <div class="col-xs-12 col-md-3">
+            @Html.LabelFor(l => l.DocTypeId, htmlAttributes: new { @class = "form-label small fw-bolder" }) <span class="small text-danger">*</span><br />
+            @Html.DropDownListFor(e => e.DocTypeId, new SelectList(Model.DocumentTypes, "DocumentTypeId", "Name", Model.DocTypeId), htmlAttributes: new
+            {
+              @class = "form-select whl-formfield-doctypecd",
+              placeholder = "Select Document Type",
+              autocomplete = "off"
+            })
+            @Html.ValidationMessageFor(v => v.DocTypeId, "", htmlAttributes: new { @class = "text-danger" })
+          </div>
+
+          <div class="col-xs-12 col-sm-9 col-md-6">
+            @Html.LabelFor(l => l.DocName, htmlAttributes: new { @class = "form-label small fw-bolder" }) <span class="small text-danger">*</span><br />
+            @Html.TextBoxFor(e => e.DocName, htmlAttributes: new
+            {
+              @class = "form-control whl-formfield-docname",
+              placeholder = "Enter Document Name",
+              autocomplete = "off"
+            })
+            @Html.ValidationMessageFor(v => v.DocName, "", htmlAttributes: new { @class = "text-danger" })
+          </div>
+
+        </div>
+
+        <div class="row mb-3">
+
+          <div class="col-xs-12 col-md-9">
+            @Html.LabelFor(l => l.FileName, htmlAttributes: new { @class = "form-label small fw-bolder" }) <span class="small text-danger">*</span><br />
+            <input asp-for="File" type="file" class="form-control whl-formfield-file" accept=".pdf,.jpeg,.jpg,.png" />
+            <div id="whl-formfield-helptext-file" class="form-text">Supported file types: *.pdf, *.png, *.jpeg, *.jpg. Maximum file size: 1MB.</div>
+            @Html.ValidationMessageFor(v => v.File, "", htmlAttributes: new { @class = "text-danger" })
+          </div>
+
+        </div>
+
+        <hr />
+
+        <input type="hidden" id="hidSaveDocumentAction" name="hidSaveDocumentAction" value="" />
+        <a class="btn btn-outline-secondary whl-action-cancel-document" asp-area="" asp-controller="Profile" asp-action="Index" asp-fragment="DOC" title="Cancel Changes" aria-label="Cancel Changes">Cancel</a>
+        <button type="submit" class="btn btn-primary whl-action-save-document" title="Save Document" aria-label="Save Document">Save Document</button>
+
+      }
+    </div>
+  </div>
+</div>
+
+@section Scripts
+{
+  <script>
+    //<![CDATA[
+
+    $(function () {
+
+      // Disable submission
+      $('.whl-action-save-document').attr('disabled', 'disabled');
+      fnToggleSaveDocument();
+
+      $('.whl-formfield-doctypecd').on('change', function (e) {
+        $(this).removeClass('is-valid');
+        $(this).removeClass('is-invalid');
+        var v = $(this).val();
+        if (v !== undefined && v !== null && v.trim().length > 0) {
+          $(this).addClass('is-valid');
+        } else {
+          $(this).addClass('is-invalid');
+        }
+        fnToggleSaveDocument();
+      });
+
+      $('.whl-formfield-docname').on('change', function (e) {
+        $(this).removeClass('is-valid');
+        $(this).removeClass('is-invalid');
+        var v = $(this).val();
+        if (v !== undefined && v !== null && v.trim().length > 0) {
+          $(this).addClass('is-valid');
+        } else {
+          $(this).addClass('is-invalid');
+        }
+        fnToggleSaveDocument();
+      });
+
+      $('.whl-formfield-file').on('change', function (e) {
+        $(this).removeClass('is-valid');
+        $(this).removeClass('is-invalid');
+        var v = $(this).val();
+        if (v !== undefined && v !== null && v.trim().length > 0) {
+          $(this).addClass('is-valid');
+        } else {
+          $(this).addClass('is-invalid');
+        }
+        fnToggleSaveDocument();
+      });
+
+      function fnToggleSaveDocument() {
+        var dt = $('.whl-formfield-doctypecd').val();
+        var dn = $('.whl-formfield-docname').val();
+        var fl = $('.whl-formfield-file').val();
+        var allowSubmission = (dt !== undefined && dt !== null && dt.trim().length > 0)
+                                && (dn !== undefined && dn !== null && dn.trim().length > 0)
+                                && (fl !== undefined && fl !== null && fl.trim().length > 0);
+        if (allowSubmission) {
+          $('.whl-action-save-document').removeAttr('disabled');
+        }
+        else {
+          $('.whl-action-save-document').attr('disabled', 'disabled');
+        }
+      }
+
+      //$('.whl-form-save-document').on('submit', function (e) {
+      //  e.preventDefault();
+      //  e.stopPropagation();
+      //  console.log('formsubmission');
+      //});
+
+    });
+
+    //]]>
+  </script>
+}

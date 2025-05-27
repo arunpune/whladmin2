@@ -1,0 +1,35 @@
+@model ApplicationCommentsViewModel
+@{
+  ViewData["Title"] = $"Comments - {Model.ApplicationId}";
+}
+
+<table class="table table-sm">
+  <thead class="bg-whlgreen text-white">
+    <tr>
+      <th class="text-start" style="width: 180px;"><small>Timestamp</small></th>
+      <th class="text-center" style="width: 120px;"><small>Username</small></th>
+      <th class="text-center" style="width: 120px;"><small>Internal</small></th>
+      <th class="text-start" style="min-width: 360px;"><small>Comment</small></th>
+    </tr>
+  </thead>
+  <tbody class="table-group-divider">
+    @if (Model.Count == 0)
+    {
+      <tr>
+        <td colspan="4" class="text-center">No comments</td>
+      </tr>
+    }
+    else
+    {
+      foreach (var comment in Model.Comments.OrderByDescending(o => o.CreatedDate))
+      {
+        <tr>
+          <td class="text-start" style="width: 180px;"><small>@comment.CreatedDate.ToString("g")</small></td>
+          <td class="text-center" style="width: 120px;"><small>@comment.CreatedBy</small></td>
+          <td class="text-center" style="width: 120px;"><small>@if (comment.InternalOnlyInd) { <i class="fa-regular fa-circle-check"></i> }</small></td>
+          <td class="text-start" style="min-width: 360px;"><small>@comment.Comments</small></td>
+        </tr>
+      }
+    }
+  </tbody>
+</table>

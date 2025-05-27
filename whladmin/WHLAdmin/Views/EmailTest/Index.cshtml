@@ -1,0 +1,35 @@
+@model MailMessageViewModel
+@{
+  ViewData["Title"] = $"Email Test";
+}
+
+@using (Html.BeginForm("Index", "Email", FormMethod.Post, htmlAttributes: new { @class = "form form-inline" } ))
+{
+  <div class="container">
+    <div class="row mb-3">
+      <label asp-for="ToAddresses" class="col-xs-12 col-md-3 form-label">To Addresses</label>
+      <input asp-for="ToAddresses" class="col-xs-12 col-md-6 form-control" type="text" />
+    </div>
+    <div class="row mb-3">
+      <label asp-for="Subject" class="col-xs-12 col-md-3 form-label">Subject</label>
+      <input asp-for="Subject" class="col-xs-12 col-md-6 form-control" type="text" />
+    </div>
+    <div class="row mb-3">
+      <label asp-for="Body" class="col-xs-12 col-md-3 form-label">Body</label>
+      <textarea asp-for="Body" class="col-xs-12 col-md-6 form-control"></textarea>
+    </div>
+    <div class="row mb-3">
+      <label asp-for="UseHtmlBody" class="col-xs-12 col-md-3 form-check-label">Html?</label>
+      <input asp-for="UseHtmlBody" class="col-xs-12 col-md-6 form-check" type="checkbox" />
+    </div>
+    <button type="submit" class="btn btn-sm btn-outline-primary">Send</button>
+    @if (!string.IsNullOrEmpty(Model.Result))
+    {
+      <hr />
+      <div class="row mb-3">
+        <label asp-for="Result" class="col-xs-12 col-md-3 form-label">Result</label>
+        <textarea asp-for="Result" class="col-xs-12 col-md-6 form-control"></textarea>
+      </div>
+    }
+  </div>
+}

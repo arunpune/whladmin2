@@ -1,0 +1,63 @@
+﻿@model EditableListingDocumentViewModel
+
+<div class="text-left">
+  <form asp-action="AddDocument" asp-controller="Listings" method="post" enctype="multipart/form-data" novalidate="novalidate">
+    <div id="divDocumentSaveErrorMessage" style="display: none;">
+      <h6 class="text-danger"><i class="fa-solid fa-triangle-exclamation"></i>&nbsp;Error</h6>
+      <p id="lblDocumentSaveErrorMessage">Failed to save document</p>
+      <hr />
+    </div>
+
+    <input type="hidden" id="DocumentListingId" name="DocumentListingId" value="@Model.ListingId" />
+    <input type="hidden" id="DocumentId" name="DocumentId" value="@Model.DocumentId" />
+    <input type="hidden" id="DocumentContents" name="DocumentContents" value="@Model.Contents" />
+    <input type="hidden" id="DocumentMimeType" name="DocumentMimeType" value="@Model.MimeType" />
+    <input type="hidden" id="DocumentFileName" name="DocumentFileName" value="@Model.FileName" />
+    <span class="hidden" id="documentContents" name="documentContents" />
+
+    <div class="row mb-3">
+      @Html.LabelFor(l => l.Title, htmlAttributes: new { @class = "col-sm-3 col-form-label" })
+      <div class="col-sm-9">
+        @Html.TextBoxFor(e => e.Title, htmlAttributes: new { @class = "form-control", placeholder = "Enter Title", id = "DocumentTitle" })
+        @Html.ValidationMessageFor(v => v.Title)
+      </div>
+    </div>
+
+    @if (Model.DocumentId > 0)
+    {
+      var documentContents = Model.Contents;
+      <div class="row mb-3">
+        <div class="col-sm-3">Document</div>
+        <div class="col-sm-9">
+          @if (Model.MimeType == "application/pdf")
+          {
+            <iframe src="@documentContents" width="100%" height="480px"></iframe>
+          }
+          else
+          {
+            <img src="@documentContents" class="card-img-top" alt="@Model.Title" aria-label="@Model.Title" width="100%" />
+          }
+        </div>
+      </div>
+    }
+    else
+    {
+      <div class="row mb-3">
+        @Html.LabelFor(l => l.Contents, "File", htmlAttributes: new { @class = "col-sm-3 col-form-label" })
+        <div class="col-sm-9">
+          <input type="file" id="documentFile" name="documentFile" accept="application/pdf, image/png, image/jpeg, image/jpg" />
+          <div id="whl-formfield-helptext-file" class="form-text">Supported file types: *.pdf, *.png, *.jpeg, *.jpg. Maximum file size: 5MB.</div>
+          @Html.ValidationMessageFor(v => v.Contents)
+        </div>
+      </div>
+    }
+
+    <div class="row mb-3">
+      <div class="col-sm-3">&nbsp;</div>
+      <div class="form-check form-switch col-sm-9">
+        @Html.CheckBoxFor(m => m.DisplayOnListingsPageInd, htmlAttributes: new { @class = "form-check-input", role = "switch" })
+        @Html.LabelFor(l => l.DisplayOnListingsPageInd, htmlAttributes: new { @class = "form-check-label" })
+      </div>
+    </div>
+  </form>
+</div>

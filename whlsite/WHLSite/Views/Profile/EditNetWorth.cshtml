@@ -1,0 +1,87 @@
+@model EditableNetWorthViewModel
+@{
+  ViewData["Title"] = "Edit Income and Real Estate Information";
+  ViewData["MENUID"] = "PROFILE";
+}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a class="whl-link" asp-area="" asp-controller="Home" asp-action="Index" title="Home"><i
+          class="fa-solid fa-house"></i></a></li>
+    <li class="breadcrumb-item"><a class="whl-link" asp-area="" asp-controller="Profile" asp-action="Index"
+        title="Profile">Profile</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Edit Income &amp; Real Estate Information</li>
+  </ol>
+</nav>
+
+<div class="text-left mt-32 profile-page">
+  <div class="card border-0 shadow-lg">
+    @* <h5 class="card-header">Edit Income &amp; Real Estate Information</h5> *@
+    <div class="card-body">
+      <h4 class="text-secondary whl-card-title">Edit Income &amp; Real Estate Information</h4>
+      @using (Html.BeginForm("EditNetWorth", "Profile", FormMethod.Post, new
+      {
+        @class = "form whl-form-edit-networth",
+        id = "frmEditNetWorth",
+        name = "frmEditNetWorth"
+      }))
+      {
+
+        if (!string.IsNullOrEmpty((Model.Message ?? "").Trim()))
+        {
+          <div id="divSaveErrorMessage">
+            <h6 class="text-danger"><i class="fa-solid fa-triangle-exclamation"></i>&nbsp;Error</h6>
+            <p id="lblSaveErrorMessage">@Model.Message</p>
+            <hr />
+          </div>
+        }
+
+        <div class="row mb-3">
+
+          <div class="col-xs-12 col-md-4">
+            <label class="form-label small" asp-for="IncomeValueAmt">Total Annual Gross Income</label><br />
+            <input type="text" class="form-control whl-formfield-incomevalueamt" maxlength="9" placeholder="Enter Total Annual Gross Income" autocomplete="off" asp-for="IncomeValueAmt" />
+            <div id="whl-formfield-helptext-incomevalueamt" class="form-text">Enter the gross value of all income you receive annually.</div>
+          </div>
+
+          @* <div class="col-xs-12 col-md-4">
+            <label class="form-label small" asp-for="AssetValueAmt">Total value of all assets owned other than real estate</label><br />
+            <input type="text" class="form-control whl-formfield-assetvalueamt" maxlength="9" placeholder="Enter Total Value of all Owned Assets excluding Real Estate" autocomplete="off" asp-for="AssetValueAmt" />
+            <div id="whl-formfield-helptext-assetvalueamt" class="form-text">Enter the total value of all non-real estate assets you own.</div>
+          </div> *@
+
+        </div>
+
+        <div class="row mb-3">
+
+          <div class="col-xs-12 col-md-4">
+            <div class="form-check form-switch mt-32">
+              <input type="checkbox" class="form-check-input whl-formfield-ownrealestateind" role="switch" asp-for="OwnRealEstateInd" />
+              <label class="form-check-label" asp-for="OwnRealEstateInd">Do you own any real estate or shares in a Co-op?</label>
+            </div>
+          </div>
+
+          <div class="col-xs-12 col-md-4 whl-formfieldcol-realestatevalueamt" style="display: none;">
+            <label class="form-label small" asp-for="RealEstateValueAmt">Total value of all owned real estate or shares in a Co-op</label><br />
+            <input type="text" class="form-control whl-formfield-realestatevalueamt" maxlength="9" placeholder="Enter Total Value of Owned Real Estate" autocomplete="off" asp-for="RealEstateValueAmt" />
+            <div id="whl-formfield-helptext-realestatevalueamt" class="form-text">Enter the total value of any real estate or shares in a Co-op you own.</div>
+          </div>
+
+        </div>
+
+        <hr />
+
+        <input type="hidden" id="hidSaveNetWorthAction" name="hidSaveNetWorthAction" value="" />
+        <a class="btn btn-outline-secondary whl-action-cancel-networth" asp-area="" asp-controller="Profile" asp-action="Index" title="Cancel Changes" aria-label="Cancel Changes">Cancel</a>
+        <button type="submit" class="btn btn-primary whl-action-save-networth" title="Save Changes" aria-label="Save Changes">Save Changes</button>
+
+      }
+    </div>
+  </div>
+</div>
+
+@section Scripts
+{
+  <script src="~/js/profile/networth.actions.js" asp-append-version="true"></script>
+  <script src="~/js/profile/networth.validations.js" asp-append-version="true"></script>
+}

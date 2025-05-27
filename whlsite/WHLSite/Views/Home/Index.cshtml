@@ -1,0 +1,214 @@
+﻿@model HomeViewModel
+@{
+  ViewData["Title"] = "Home Page";
+  ViewData["MENUID"] = "HOME";
+}
+
+<div class="container-fluid">
+  <div class="p-5 text-center bg-body-tertiary rounded-3 home-page-jumbotron">
+    <div class="align-middle">
+      <h1 class="text-body-emphasis">Welcome, HomeSeeker</h1>
+      <p class="lead">
+        We're glad you've found your way here and are interested in fair and affordable housing opportunities in
+        Westchester County, NY. HomeSeeker is intended to support Westchester County's commitment to promoting fair and
+        equitable housing across its six cities, 19 towns and 20 villages.
+      </p>
+      <div>
+        <a class="btn btn-primary whl-goto-listings" title="Get Started" aria-label="Get Started" asp-area=""
+          asp-controller="Listings" asp-action="Index" role="button">Get
+          Started</a>
+        @if (!User.Identity.IsAuthenticated)
+        {
+          <a class="btn btn-light whl-goto-login" title="Login" aria-label="Login" asp-area="" asp-controller="Account"
+            asp-action="LogIn" role="button">Login</a>
+        }
+      </div>
+    </div>
+  </div>
+</div>
+
+@if (!string.IsNullOrEmpty((Model.Quote?.Text ?? "").Trim()))
+{
+  <div class="container py-4 quote-container bg-light text-dark shadow-sm">
+    <div class="row">
+      <div class="col-xs-12 text-center">
+        <blockquote class="fw-medium fst-italic" style="padding-left: 48px; padding-right: 48px;">
+          <i class="fa-solid fa-quote-left display-6 text-secondary"></i>
+          <span style="line-height: 48px;">&nbsp;@Model.Quote.Text.Trim()</span>
+          &nbsp;<i class="fa-solid fa-quote-right display-6 text-secondary"></i>
+        </blockquote>
+      </div>
+    </div>
+  </div>
+}
+
+@if (Model.Video != null)
+{
+  var youtubeVideoId = Model.Video.Url?.Replace("https://www.youtube.com/watch?v=", "") ?? string.Empty;
+  if (youtubeVideoId.IndexOf("&") > -1) youtubeVideoId = youtubeVideoId.Substring(0, youtubeVideoId.IndexOf("&"));
+  var videoImageUrl = "https://img.youtube.com/vi/";
+  if (youtubeVideoId.Length > 0) videoImageUrl += youtubeVideoId + "/hqdefault.jpg";
+  var videoDescription = Model.Video.Text?.Trim() ?? string.Empty;
+
+  var embedVideoUrl = $"https://www.youtube.com/embed/{youtubeVideoId}";
+
+  <div class="container py-4 mt-16 work-container shadow-sm">
+    <div class="row">
+      <div class="col-xs-0 col-md-2"></div>
+      <div class="col-xs-0 col-md-8 text-center">
+        <h4 class="display-6">@Model.Video.Title</h4>
+        <iframe class="w-100 mt-16" style="min-height: 480px;" src="@embedVideoUrl"></iframe>
+        @* <a href="@Model.Video.Url" class="w-100" target="_blank" data-videoid="@Model.Video.VideoId" title="@Model.Video.Title"><img
+            class="w-100" src="@videoImageUrl" alt="@Model.Video.Title" /></a> *@
+      </div>
+      <div class="col-xs-0 col-md-2"></div>
+    </div>
+  </div>
+}
+
+<div class="container text-center py-4 mt-16 work-container shadow-sm">
+  <h4 class="display-3">How does HomeSeeker work?</h4>
+  <p class="lead">Through HomeSeeker, you can find and apply for affordable rental and homeownership opportunities. To
+    qualify, your household must meet the household income and size requirements for affordable housing.</p>
+  <div class="mt-32">
+    <div class="row row-cols-1 row-cols-md-3 g-3">
+      <div class="col">
+        <div class="card h-100 border-0 shadow-sm">
+          <div class="card-body">
+            <div class="work-sequence-container text-center">
+              <h5 class="work-sequence-text">1</h5>
+            </div>
+            <h5 class="card-title">Register</h5>
+            <p class="card-text">To get started with HomeSeeker, create an account with a unique user name and an email
+              address. Click "Register" at the top of the page, or "Create an Account" below.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card h-100 border-0 shadow-sm">
+          <div class="card-body">
+            <div class="work-sequence-container text-center">
+              <h5 class="work-sequence-text">2</h5>
+            </div>
+            <h5 class="card-title">Complete your profile</h5>
+            <p class="card-text">HomeSeeker gives you the ability to update your profile as income or household
+              information changes. Receive emails when opportunities become available.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card h-100 border-0 shadow-sm">
+          <div class="card-body">
+            <div class="work-sequence-container text-center">
+              <h5 class="work-sequence-text">3</h5>
+            </div>
+            <h5 class="card-title">Apply for Affordable Housing</h5>
+            <p class="card-text">Visit HomeSeeker often to learn about and apply for new housing opportunities that meet
+              your household needs. Your household may apply only once for each distinct affordable housing opportunity.
+              However, you may apply to multiple housing opportunities.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card h-100 border-0 shadow-sm">
+          <div class="card-body">
+            <div class="work-sequence-container text-center">
+              <h5 class="work-sequence-text">4</h5>
+            </div>
+            <h5 class="card-title">Selection</h5>
+            <p class="card-text">If you apply to an opportunity before the Application End Date where a lottery will be
+              conducted, your application will be included in a lottery. Once the lottery is conducted applications
+              will be reviewed for eligibility based on the lottery order. It may take several months for the
+              applications to be processed.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card h-100 border-0 shadow-sm">
+          <div class="card-body">
+            <div class="work-sequence-container text-center">
+              <h5 class="work-sequence-text">5</h5>
+            </div>
+            <h5 class="card-title">Waitlist</h5>
+            <p class="card-text">If you apply to a Waitlist Opportunity, your application will be put at the end of the
+              waitlist based on the date you apply. Only when a unit becomes available and where your application has
+              been reached on the Waitlist will you be contacted for eligibility review. During the application review
+              process, documentation will be requested to confirm your eligibility.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card h-100 border-0 shadow-sm">
+          <div class="card-body">
+            <div class="work-sequence-container text-center">
+              <h5 class="work-sequence-text">6</h5>
+            </div>
+            <h5 class="card-title">Sign a lease or complete a purchase</h5>
+            <p class="card-text">Once it has been determined you are eligible, a lease or a purchase agreement can be executed.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="mt-32"><a class="text-primary fw-semibold" asp-area="" asp-controller="Home" asp-action="About"
+      title="Learn more about HomeSeeker" aria-label="Learn more about HomeSeeker">Learn more about HomeSeeker</a></div>
+</div>
+
+<div class="container py-4 mt-16 work-container shadow-sm">
+  <div class="row row-cols-1 row-cols-md-2 g-4 p-0">
+    <div class="col">
+      <div class="card text-bg-light h-100 shadow-sm">
+        <h5 class="card-header">Start applying to opportunities today</h5>
+        <div class="card-body">
+          <div class="card-text">
+            <ul>
+              <li>Tell us about yourself and the rest of your household</li>
+              <li>Search through the opportunities you're eligible for, and apply</li>
+              <li>If your application is selected, the managing agent for the development will work with you through
+                the next steps of the process, which includes reviewing documentation to confirm your household and
+                household income</li>
+            </ul>
+          </div>
+          <div>
+            <a class="btn btn-primary whl-goto-register" title="Create an Account" aria-label="Create an Account"
+              asp-area="" asp-controller="Account" asp-action="Register" role="button">Create an Account</a>
+            <a class="btn btn-outline-secondary whl-goto-listings" title="Browse Lotteries"
+              aria-label="Browse Lotteries" asp-area="" asp-controller="Listings" asp-action="Index"
+              role="button">Browse Lotteries</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card text-bg-light h-100 shadow-sm">
+        <h5 class="card-header">Need help?</h5>
+        <div class="card-body">
+          <div class="card-text">
+            <ul>
+              <li>Check out our <a class="text-primary" asp-area="" asp-controller="Home" asp-action="FAQs"
+                  title="Frequently Asked Questions" aria-label="Frequently Asked Questions">Frequently Asked Questions
+                  (FAQ)</a></li>
+              <li><a href="https://www.wroinc.org/" target="_blank"
+                  title="Visit the Westchester Residential Opportunities site"
+                  aria-label="Visit the Westchester Residential Opportunities site">Westchester Residential
+                  Opportunities</a> can provide information and assistance with the application process.
+                <ul>
+                  <li>Email: <a href="mailto:affordable@wroinc.org" title="Email Westchester Residential Opportunities"
+                      aria-label="Email Westchester Residential Opportunities">affordable@wroinc.org</a></li>
+                  <li>Telephone: <a href="tel:9144284519" title="Phone Westchester Residential Opportunities"
+                      aria-label="Phone Westchester Residential Opportunities">(914) 428-4519</a></li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+@section Scripts
+{
+  <script src="~/js/home/home.actions.js" asp-append-version="true"></script>
+}

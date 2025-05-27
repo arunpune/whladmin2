@@ -1,0 +1,259 @@
+@model EditableAdditionalMembersInfoViewModel
+@{
+  ViewData["Title"] = "Edit Housing Application";
+  ViewData["MENUID"] = "DASHBOARD";
+}
+
+@await Html.PartialAsync("_Breadcrumb.cshtml", new RailroadViewModel(Model.Username, Model.ApplicationId, Model.ListingId, Model.StepNumber))
+
+<div class="text-left mt-32 bg-white">
+  @await Html.PartialAsync("_Railroad.cshtml", new RailroadViewModel(Model.Username, Model.ApplicationId, Model.ListingId, Model.StepNumber))
+  <div class="row mb-3">
+    <div class="col-xs-12 col-md-9">
+      <div class="card border-0">
+        <div class="card-body">
+          <h5 class="fs-4 border-bottom">Additional Members Information</h5>
+          @using (Html.BeginForm("AdditionalMembersInfo", "Applications", FormMethod.Post, new
+          {
+            @class = "form whl-form-additional-members-info mt-32",
+            id = "frmAdditionalMembersInfo",
+            name = "frmAdditionalMembersInfo"
+          }))
+          {
+
+            if (!string.IsNullOrEmpty((Model.Message ?? "").Trim()))
+            {
+              <div id="divSaveErrorMessage">
+                <h6 class="text-danger"><i class="fa-solid fa-triangle-exclamation"></i>&nbsp;Error</h6>
+                <p id="lblSaveErrorMessage">@Model.Message</p>
+                <hr />
+              </div>
+            }
+
+            @if (Model.HouseholdMembers.Any())
+            {
+              <div class="row mb-3 mt-32">
+                <div class="col-xs-12">
+                  <h5 class="fs5">Members</h5>
+                  <p class="lead">Select one or more household members to be included in this application.</p>
+                </div>
+              </div>
+              <div class="row mb-3 border-bottom">
+                <div class="col-xs-1 col-md-1 text-center">
+                  <div class="form-check form-switch">
+                    <input type="checkbox" class="form-check-input whl-formfield-select-member-all" role="switch" />
+                  </div>
+                </div>
+                <div class="col-xs-11 col-md-2">
+                  <small class="fw-bold">Relation Type</small>
+                </div>
+                <div class="col-xs-12 col-md-3">
+                  <small class="fw-bold">Name</small>
+                </div>
+                <div class="col-xs-12 col-md-2 text-end">
+                  <small class="fw-bold">Total Annual Gross Income</small>
+                </div>
+                <div class="col-xs-12 col-md-2 text-end">
+                  <small class="fw-bold">Assets</small>
+                </div>
+                <div class="col-xs-12 col-md-2 text-end">
+                  <small class="fw-bold">Real Estate</small>
+                </div>
+              </div>
+
+              foreach (var member in Model.HouseholdMembers)
+              {
+                <div class="row mb-3">
+                  <div class="col-xs-1 col-md-1 text-center">
+                    <div class="form-check form-switch">
+                      <input type="checkbox" class="form-check-input whl-formfield-select-member" role="switch"
+                        data-memberid="@member.MemberId" data-membername="@member.DisplayName" />
+                    </div>
+                  </div>
+                  <div class="col-xs-11 col-md-2">
+                    @member.RelationTypeDescription
+                  </div>
+                  <div class="col-xs-12 col-md-3">
+                    @member.DisplayName
+                  </div>
+                  <div class="col-xs-12 col-md-2 text-end">
+                    @member.IncomeValueAmt.ToString("C0")
+                  </div>
+                  <div class="col-xs-12 col-md-2 text-end">
+                    @member.AssetValueAmt.ToString("C0")
+                  </div>
+                  <div class="col-xs-12 col-md-2 text-end">
+                    @member.RealEstateValueAmt.ToString("C0")
+                  </div>
+                </div>
+              }
+
+              <div class="row mb-3 mt-64">
+                <div class="col-xs-12">
+                  <h5 class="fs5">Co-Applicant Information</h5>
+                  <p class="lead">Is any of the members included in this application a co-applicant?</p>
+                </div>
+              </div>
+              <div class="row mb-3">
+                <div class="col-xs-12 col-md-3">
+                  @Html.DropDownListFor(e => e.CoApplicantMemberId, new SelectList(Model.CoApplicants, "Key", "Value", Model.CoApplicantMemberId),
+                        htmlAttributes: new { @class = "form-select whl-formfield-coapplicantmemberid", placeholder = "Select Co-Applicant" })
+                </div>
+              </div>
+            }
+            else
+            {
+              <div class="row mb-3 mt-32">
+                <div class="col-xs-12">
+                  <p class="lead">You do not have any household members to add to this application. Please add one or more
+                    household members from the <a class="whl-link" asp-area="" asp-controller="Household" asp-action="Index"
+                      title="Go to the Household page" aria-label="Go to the Household page">Household</a> page, and come
+                    back to submit application form.</p>
+                </div>
+              </div>
+            }
+
+            <div class="mt-32">
+              <input type="checkbox" class="whl-formfield-coapplicantind" asp-for="CoApplicantInd" style="display: none;" />
+              <input type="hidden" class="whl-formfield-memberids" asp-for="MemberIds" value="@Model.MemberIds" />
+              @await Html.PartialAsync("_Actions.cshtml", new ApplicationActionsViewModel(Model.Username, Model.ApplicationId, Model.ListingId, Model.StepNumber))
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+    <div class="col-xs-12 col-md-3">
+      @await Html.PartialAsync("_ListingDetails.cshtml", Model.ListingDetails)
+    </div>
+  </div>
+</div>
+
+@await Html.PartialAsync("~/Views/Applications/_WithdrawApplication.cshtml")
+
+@section Scripts
+{
+  <script>
+    //<![CDATA[
+    $(function () {
+
+      fnInitSelections();
+
+      function fnInitSelections() {
+        var v = $('.whl-formfield-memberids').val();
+        if (v !== undefined && v !== null && v.trim().length > 0) {
+          var s = v.split(',');
+          for (var sc = 0; sc < s.length; sc++) {
+            $('.whl-formfield-select-member').each((j, el) => {
+              if ($(el).data('memberid').toString() === s[sc]) {
+                $(el).prop('checked', true);
+              }
+            });
+          }
+        }
+        fnToggleAllMembers();
+      }
+
+      $('.whl-formfield-select-member-all').on('change', function (e) {
+        var c = $(this).prop('checked');
+        $('.whl-formfield-select-member').prop('checked', c);
+        var s = '';
+        if (c)
+        {
+          $('.whl-formfield-select-member').each((i, el) => {
+            s += (s.length > 0 ? ',' : '') + $(el).data('memberid');
+          });
+        }
+        $('.whl-formfield-memberids').val(s);
+        fnSetupCoApplicant();
+      });
+
+      $('.whl-formfield-select-member').on('change', function (e) {
+        fnToggleAllMembers();
+        fnSetupCoApplicant();
+      });
+
+      function fnToggleAllMembers() {
+        var ctr = 0;
+        var total = $('.whl-formfield-select-member').length;
+        var s = '';
+        $('.whl-formfield-select-member').each((i, el) => {
+          if ($(el).prop('checked')) {
+            s += (s.length > 0 ? ',' : '') + $(el).data('memberid');
+            ctr++;
+          }
+        });
+        $('.whl-formfield-memberids').val(s);
+        if (ctr === total) {
+          $('.whl-formfield-select-member-all').prop('checked', true);
+        } else {
+          $('.whl-formfield-select-member-all').prop('checked', false);
+        }
+      }
+
+      function fnSetupCoApplicant() {
+        var ctr = 0;
+        var total = $('.whl-formfield-select-member').length;
+        var h = '<option value="0">None</option>';
+        $('.whl-formfield-select-member').each((i, el) => {
+          if ($(el).prop('checked')) {
+            ctr++;
+            h += '<option value="' + $(el).data('memberid') + '">' + $(el).data('membername') + '</option>';
+          }
+        });
+        $('.whl-formfield-coapplicantmemberid').html(h);
+        $('.whl-formfield-coapplicantmemberid').val(0);
+      }
+
+      $('.whl-formfield-coapplicantmemberid').on('change', function (e) {
+        var v = parseFloat($(this).val());
+        $('.whl-formfield-coapplicantind').prop('checked', !isNaN(v) && v > 0);
+      });
+
+      $('.whl-action-save-draft').on('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        $('.whl-formfield-savemode').val('DRAFT');
+        $('.whl-form-additional-members-info').submit();
+      });
+
+      $('.whl-action-save-next').on('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        $('.whl-formfield-savemode').val('NEXT');
+        $('.whl-form-additional-members-info').submit();
+      });
+
+      $('.whl-action-withdraw-application').on('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        $('#withdrawApplicationModal').modal('show');
+        $('.whl-action-cancel-withdraw-application').show();
+        $('.whl-action-confirm-withdraw-application').show();
+        $('.whl-label-confirm-withdraw-application-inprogress').hide();
+      });
+      $('.whl-action-confirm-withdraw-application').on('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        const applicationId = $(e.currentTarget).data('applicationid');
+        $('.whl-action-cancel-withdraw-application').hide();
+        $('.whl-action-confirm-withdraw-application').hide();
+        $('.whl-label-confirm-withdraw-application-inprogress').show();
+        $.post('@Url.Action("Withdraw", "Applications")?applicationId=' + applicationId)
+          .done(function (response) {
+            $('#withdrawApplicationModal').modal('hide');
+            window.location.href = '@Url.Action("Dashboard", "Applications")';
+          })
+          .fail(function (error) {
+            $('#withdrawApplicationModal').modal('hide');
+            var message = error.responseJSON && error.responseJSON.message && error.responseJSON.message.length > 0 ? error.responseJSON.message : 'Failed to withdraw application due to one or more errors';
+            if (error.responseJSON && error.responseJSON.details && error.responseJSON.details.length > 0) {
+              message += '<br />' + error.responseJSON.details;
+            }
+            alert('Failed to withdraw application due to one or more errors!');
+          });
+      });
+
+    });
+    //]]>
+  </script>
+}

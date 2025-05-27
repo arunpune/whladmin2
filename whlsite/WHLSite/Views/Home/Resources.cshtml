@@ -1,0 +1,39 @@
+﻿@model ResourcesViewModel
+@{
+  ViewData["Title"] = "Resources";
+  ViewData["MENUID"] = "RESOURCES";
+
+  var resourcesCount = Model.Resources?.Count() ?? 0;
+}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a class="whl-link" asp-area="" asp-controller="Home" asp-action="Index" title="Home"><i
+          class="fa-solid fa-house"></i></a></li>
+    <li class="breadcrumb-item active" aria-current="page">Resources &amp; Links</li>
+  </ol>
+</nav>
+
+<div class="text-left mt-32 resources-page">
+  <h5>Resources &amp; Links</h5>
+  @if (resourcesCount > 0)
+  {
+    foreach (var resource in Model.Resources.OrderBy(o => o.DisplayOrder))
+    {
+      <div class="card mt-16 mb-3 shadow-sm">
+        <div class="card-body">
+          <div class="card-title fw-medium text-dark fs-4">@resource.Title</div>
+          <div class="card-text text-secondary" style="white-space: pre-line; text-align: justify;">@resource.Text</div>
+          <div class="mt-16">
+            <a class="whl-link" href="@resource.Url" target="_blank" title="Open external link" aria-label="Open external link">
+              <i class="fa-solid fa-globe"></i> @resource.Url</a>
+          </div>
+        </div>
+      </div>
+    }
+  }
+  else
+  {
+    @await Html.PartialAsync("~/Views/Shared/_ComingSoonContent.cshtml")
+  }
+</div>

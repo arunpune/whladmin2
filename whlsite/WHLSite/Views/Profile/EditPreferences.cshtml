@@ -1,0 +1,109 @@
+@model EditablePreferencesViewModel
+@{
+  ViewData["Title"] = "Edit Preferences";
+  ViewData["MENUID"] = "PROFILE";
+}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a class="whl-link" asp-area="" asp-controller="Home" asp-action="Index" title="Home"><i
+          class="fa-solid fa-house"></i></a></li>
+    <li class="breadcrumb-item"><a class="whl-link" asp-area="" asp-controller="Profile" asp-action="Index"
+        title="Profile">Profile</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Edit Preferences</li>
+  </ol>
+</nav>
+
+<div class="text-left mt-32 profile-page">
+  <div class="card border-0 shadow-lg">
+    <h5 class="card-header">Edit Preferences</h5>
+    <div class="card-body">
+      @using (Html.BeginForm("EditPreferences", "Profile", FormMethod.Post, new
+      {
+        @class = "form whl-form-edit-preferences",
+        id = "frmEditPreferences",
+        name = "frmEditPreferences"
+      }))
+      {
+
+        if (!string.IsNullOrEmpty((Model.Message ?? "").Trim()))
+        {
+          <div id="divSaveErrorMessage">
+            <h6 class="text-danger"><i class="fa-solid fa-triangle-exclamation"></i>&nbsp;Error</h6>
+            <p id="lblSaveErrorMessage">@Model.Message</p>
+            <hr />
+          </div>
+        }
+
+        <div class="row mb-3">
+
+          <div class="col-xs-12 col-md-4">
+            @Html.LabelFor(l => l.LanguagePreferenceCd, htmlAttributes: new { @class = "form-label small fw-bolder" })<br />
+            @Html.DropDownListFor(e => e.LanguagePreferenceCd, new SelectList(Model.LanguageTypes, "Key", "Value", Model.LanguagePreferenceCd),
+                   htmlAttributes: new { @class = "form-select whl-formfield-languagepreferencecd", placeholder = "Select Language" })
+            <div id="whl-formfield-helptext-languagepreferencecd" class="form-text">Specify a language preference (default is English).</div>
+            @Html.ValidationMessageFor(v => v.LanguagePreferenceCd)
+          </div>
+
+          <div class="col-xs-12 col-md-4 whl-formfieldcol-languagepreferenceother" style="display: none;">
+            @Html.LabelFor(l => l.LanguagePreferenceOther, "Please specify", htmlAttributes: new { @class = "form-label small fw-bolder" })<br />
+            @Html.TextBoxFor(e => e.LanguagePreferenceOther, htmlAttributes: new
+            {
+              @class = "form-control whl-formfield-languagepreferenceother",
+              placeholder = "Other",
+              autocomplete = "off"
+            })
+            <div id="whl-formfield-helptext-languagepreferenceother" class="form-text">Please specify your other language preference.</div>
+            @Html.ValidationMessageFor(v => v.LanguagePreferenceOther)
+          </div>
+
+        </div>
+
+        <div class="row mt-32 mb-3">
+
+          <div class="col-xs-12 col-md-4">
+            @Html.LabelFor(l => l.ListingPreferenceCd, htmlAttributes: new { @class = "form-label small fw-bolder" })<br />
+            @Html.DropDownListFor(e => e.ListingPreferenceCd, new SelectList(Model.ListingTypes, "Key", "Value", Model.ListingPreferenceCd),
+                   htmlAttributes: new { @class = "form-select whl-formfield-listingpreferencecd", placeholder = "Select Listing Type" })
+            <div id="whl-formfield-helptext-listingpreferencecd" class="form-text">Please specify the types of listings you are interested in (default is Both).</div>
+            @Html.ValidationMessageFor(v => v.ListingPreferenceCd)
+          </div>
+
+        </div>
+
+        @if (Model.CanChangeSmsPreferences)
+        {
+          <div class="row mt-32 mb-3">
+
+            <div class="col-xs-12 col-md-3">
+              <div class="form-check form-switch mt-16">
+                @Html.CheckBoxFor(m => m.SmsNotificationsPreferenceInd, htmlAttributes: new { @class = "form-check-input whl-formfield-smsnotificationspreferenceind", role = "switch" })
+                @Html.LabelFor(l => l.SmsNotificationsPreferenceInd, htmlAttributes: new { @class = "form-check-label" })
+              </div>
+            </div>
+
+          </div>
+        }
+        else
+        {
+          <div style="display: none;">
+            @Html.CheckBoxFor(m => m.SmsNotificationsPreferenceInd, htmlAttributes: new { @class = "form-check-input whl-formfield-smsnotificationspreferenceind", role = "switch" })
+          </div>
+        }
+
+        <hr />
+
+        <input type="hidden" id="hidSavePreferencesAction" name="hidSavePreferencesAction" value="" />
+        <a class="btn btn-outline-secondary whl-action-cancel-preferences" asp-area="" asp-controller="Profile" asp-action="Index" title="Cancel Changes" aria-label="Cancel Changes">Cancel</a>
+        <button type="submit" class="btn btn-primary whl-action-save-preferences" title="Save Changes" aria-label="Save Changes">Save Changes</button>
+
+      }
+    </div>
+  </div>
+</div>
+
+@section Scripts
+{
+  <script src="~/js/profile/preferences.actions.js" asp-append-version="true"></script>
+  <script src="~/js/profile/preferences.validations.js" asp-append-version="true"></script>
+}

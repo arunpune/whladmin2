@@ -1,0 +1,61 @@
+<div class="modal fade" id="addressCandidatesModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+  aria-labelledby="addressCandidatesModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="addressCandidatesModalLabel">Validate Address</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row mb-3">
+          <div class="col-sm-12">
+            <p class="lead">Please select one</p>
+          </div>
+        </div>
+        <div class="row mb-3">
+          <div class="col-sm-12">
+            <h6 class="text-secondary">Entered Address</h6>
+            <div class="row bg-light text-secondary">
+              <div class="col-xs-12 col-md-1">&nbsp;</div>
+              <div class="col-xs-12 col-md-4"><small class="fw-bolder">Street Address</small></div>
+              <div class="col-xs-12 col-md-3"><small class="fw-bolder">City</small></div>
+              <div class="col-xs-12 col-md-1"><small class="fw-bolder">State</small></div>
+              <div class="col-xs-12 col-md-1"><small class="fw-bolder">Zip</small></div>
+              <div class="col-xs-12 col-md-2"><small class="fw-bolder">County</small></div>
+            </div>
+            <div class="row mb-3">
+              <div class="col-xs-12 col-md-1"><small><a href="javascript:void(0);" class="whl-link fw-bolder whl-address-candidate" title="Select Entered Address" onclick="return fnSelectAddress(-1)">SELECT</a></small></div>
+              <div class="col-xs-12 col-md-4"><small id="lblEnteredAddressStreet"></small></div>
+              <div class="col-xs-12 col-md-3"><small id="lblEnteredAddressCity"></small></div>
+              <div class="col-xs-12 col-md-1"><small id="lblEnteredAddressStateCd"></small></div>
+              <div class="col-xs-12 col-md-1"><small id="lblEnteredAddressZipCode"></small></div>
+              <div class="col-xs-12 col-md-2"><small id="lblEnteredAddressCounty"></small></div>
+            </div>
+          </div>
+        </div>
+        <div class="row mb-3">
+          <div class="col-sm-12">
+            <h6 class="text-secondary">Validated Address(es)</h6>
+            <div class="row bg-light text-secondary">
+              <div class="col-xs-12 col-md-1">&nbsp;</div>
+              <div class="col-xs-12 col-md-4"><small class="fw-bolder">Street Address</small></div>
+              <div class="col-xs-12 col-md-3"><small class="fw-bolder">City</small></div>
+              <div class="col-xs-12 col-md-1"><small class="fw-bolder">State</small></div>
+              <div class="col-xs-12 col-md-1"><small class="fw-bolder">Zip</small></div>
+              <div class="col-xs-12 col-md-2"><small class="fw-bolder">County</small></div>
+            </div>
+            <div class="whl-address-candidates mb-3">
+            </div>
+          </div>
+        </div>
+      </div>
+      @* <div class="modal-footer">
+        <button type="button" class="btn btn-secondary whl-action-cancel-submit-listing" data-bs-dismiss="modal"><i
+            class="fa-solid fa-ban"></i>&nbsp;Cancel</button>
+        <button type="button" class="btn btn-primary whl-action-confirm-submit-listing"><i
+            class="fa-solid fa-share"></i>&nbsp;Submit</button>
+        <label class="whl-label-confirm-submit-listing-inprogress">Submitting&hellip;</label>
+      </div> *@
+    </div>
+  </div>
+</div>

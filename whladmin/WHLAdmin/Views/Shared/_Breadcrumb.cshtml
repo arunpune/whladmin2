@@ -1,0 +1,9 @@
+@model string
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a class="whl-link" asp-area="" asp-controller="Home" asp-action="Index" title="Home"><small><i
+          class="fa-solid fa-house"></i></small></a></li>
+    <li class="breadcrumb-item"><small>@Model</small></li>
+    <li class="breadcrumb-item active fs-6 fw-bolder" aria-current="page"><small>@ViewData["Title"]</small></li>
+  </ol>
+</nav>

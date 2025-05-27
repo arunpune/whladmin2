@@ -1,0 +1,105 @@
+﻿@model VideosViewModel
+@{
+  ViewData["Title"] = "About";
+  ViewData["MENUID"] = "ABOUT";
+
+  var videosCount = Model.Videos?.Count() ?? 0;
+}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a class="whl-link" asp-area="" asp-controller="Home" asp-action="Index" title="Home"><i
+          class="fa-solid fa-house"></i></a></li>
+    <li class="breadcrumb-item active" aria-current="page">About</li>
+  </ol>
+</nav>
+
+<div class="text-left mt-32 bg-light about-page">
+  <div class="card card-light border-0">
+    <div class="card-body" style="text-align: justify;">
+      <p class="lead">HomeSeeker is Westchester County's website for marketing Fair and Affordable Housing. Westchester
+        County provides assistance to for profit and not for profit developers to create affordable housing opportunities
+        for various eligible household income levels and sizes. Affordable housing is generally defined as housing for which
+        the occupants are paying no more than 30 percent of their gross income for all housing-related costs, including
+        utilities. The rent or sales prices for affordable housing are determined so as to be affordable to households at a
+        certain income range established by the federal government, generally between 30% and 80% of the area median income.
+        To learn more about size and income for of households see the <a class="whl-link" asp-area="" asp-controller="Home"
+          asp-action="FAQs" title="Visit the FAQs section" aria-label="Visit the FAQs section">Frequently Asked Questions
+          (FAQs)</a>.</p>
+      <p class="fs-6">You can use HomeSeeker to locate and apply to these privately owned and operated developments. Once
+        you set up a Household Profile your application process becomes more streamlined.</p>
+    </div>
+  </div>
+</div>
+
+<div class="text-left mt-16 bg-light">
+  <div class="card card-light border-0">
+    <div class="card-body">
+      <h6 class="display-6">Videos</h6>
+      @if (videosCount > 0)
+      {
+        var firstVideo = Model.Videos.First();
+        if (firstVideo != null)
+        {
+          var youtubeVideoId = firstVideo.Url?.Replace("https://www.youtube.com/watch?v=", "") ?? string.Empty;
+          if (youtubeVideoId.IndexOf("&") > -1) youtubeVideoId = youtubeVideoId.Substring(0, youtubeVideoId.IndexOf("&"));
+          var videoImageUrl = "https://img.youtube.com/vi/";
+          if (youtubeVideoId.Length > 0) videoImageUrl += youtubeVideoId + "/hqdefault.jpg";
+          var videoDescription = firstVideo.Text?.Trim() ?? string.Empty;
+
+          var embedVideoUrl = $"https://www.youtube.com/embed/{youtubeVideoId}";
+
+          <div class="container py-4 mt-16 shadow-sm border-0 bg-light mb-3">
+            <div class="row">
+              <div class="col-xs-0 col-md-2"></div>
+              <div class="col-xs-0 col-md-8 text-center">
+                <h4 class="fs-4 whl-video-title">@firstVideo.Title</h4>
+                <iframe class="w-100 mt-16 whl-video-iframe" style="min-height: 480px;" src="@embedVideoUrl"></iframe>
+                @* <a href="@Model.Video.Url" class="w-100" target="_blank" data-videoid="@Model.Video.VideoId" title="@Model.Video.Title"><img
+                    class="w-100" src="@videoImageUrl" alt="@Model.Video.Title" /></a> *@
+              </div>
+              <div class="col-xs-0 col-md-2"></div>
+            </div>
+          </div>
+        }
+
+        <div class="row row-cols-1 row-cols-md-4 g-4">
+          @foreach (var video in Model.Videos)
+          {
+            var youtubeVideoId = video.Url?.Replace("https://www.youtube.com/watch?v=", "") ?? string.Empty;
+            if (youtubeVideoId.IndexOf("&") > -1) youtubeVideoId = youtubeVideoId.Substring(0, youtubeVideoId.IndexOf("&"));
+            var videoImageUrl = "https://img.youtube.com/vi/";
+            if (youtubeVideoId.Length > 0) videoImageUrl += youtubeVideoId + "/hqdefault.jpg";
+            var videoDescription = video.Text?.Trim() ?? string.Empty;
+
+            var embedVideoUrl = $"https://www.youtube.com/embed/{youtubeVideoId}";
+
+            <div class="col">
+              <div class="card mt-8 h-100">
+                @* <a href="@video.Url" class="w-100" target="_blank" data-videoid="@video.VideoId" title="@video.Title"><img
+                    class="w-100" src="@videoImageUrl" alt="@video.Title" /></a> *@
+                <img class="w-100 whl-video" src="@videoImageUrl" alt="@video.Title" data-videoid="@youtubeVideoId" data-videotitle="@video.Title" style="cursor: pointer;" />
+                <div class="card-body">
+                  <h5 class="card-title">@video.Title</h5>
+                  @if (videoDescription.Length > 0)
+                  {
+                    <p class="card-text">@videoDescription</p>
+                  }
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      }
+      else
+      {
+        @await Html.PartialAsync("~/Views/Shared/_ComingSoonContent.cshtml")
+      }
+    </div>
+  </div>
+</div>
+
+@section Scripts
+{
+  <script src="~/js/home/about.actions.js" asp-append-version="true"></script>
+}

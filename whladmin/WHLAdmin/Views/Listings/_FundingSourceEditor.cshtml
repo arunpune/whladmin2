@@ -1,0 +1,39 @@
+﻿@model EditableListingFundingSourcesViewModel
+@{
+  var fundingSourcesCount = Model.FundingSources?.Count() ?? 0;
+}
+
+<div class="text-left">
+  @if (fundingSourcesCount == 0)
+  {
+    <div>
+      <h6 class="text-danger"><i class="fa-solid fa-triangle-exclamation"></i>&nbsp;Error</h6>
+      <p>There are no funding sources available for selection!</p>
+      <hr />
+    </div>
+  }
+  else
+  {
+    using (Html.BeginForm("EditFundingSources", "Listings", FormMethod.Post))
+    {
+      <div id="divFundingSourceSaveErrorMessage" style="display: none;">
+        <h6 class="text-danger"><i class="fa-solid fa-triangle-exclamation"></i>&nbsp;Error</h6>
+        <p id="lblFundingSourceSaveErrorMessage">Failed to save funding sources</p>
+        <hr />
+      </div>
+
+      <input type="hidden" id="FundingSourceListingId" name="FundingSourceListingId" value="@Model.ListingId" />
+
+      <div class="row mb-3">
+        <div class="col-sm-12">
+          @foreach (var amenity in Model.FundingSources)
+          {
+            var id = $"selFundingSource{amenity.FundingSourceId}";
+            <input type="checkbox" id="@id" name="selFundingSources" value="@amenity.FundingSourceId" @(Html.Raw(amenity.Selected ? "checked=\"checked\"" : "")) />
+            <label for="@id">@amenity.Name @if (!amenity.Active) { @(" (Inactive)") }</label><br />
+          }
+        </div>
+      </div>
+    }
+  }
+</div>

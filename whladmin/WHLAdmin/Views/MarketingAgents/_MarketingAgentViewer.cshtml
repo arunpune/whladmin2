@@ -1,0 +1,27 @@
+@model MarketingAgentViewModel
+
+<p>
+  <label class="small fw-bolder">Agent/Company Name</label><br />
+  <span class="text-dark">@Model.Name.Trim()</span>
+</p>
+@if (!string.IsNullOrEmpty((Model.ContactName ?? "").Trim()))
+{
+  <p>
+    <label class="small fw-bolder">Contact Name</label><br />
+    <span class="text-dark">@Model.ContactName.Trim()</span>
+  </p>
+}
+@if (!string.IsNullOrEmpty((Model.PhoneNumber ?? "").Trim()))
+{
+  <p>
+    <label class="small fw-bolder">Phone Number</label><br />
+    <span class="text-dark">@Model.PhoneNumber.Trim()</span>
+  </p>
+}
+@if (!string.IsNullOrEmpty((Model.EmailAddress ?? "").Trim()))
+{
+  <p>
+    <label class="small fw-bolder">Email Address</label><br />
+    <span class="text-dark">@Model.EmailAddress.Trim()</span>
+  </p>
+}

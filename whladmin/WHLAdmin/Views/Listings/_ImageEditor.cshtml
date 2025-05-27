@@ -1,0 +1,73 @@
+﻿@model EditableListingImageViewModel
+
+<div class="text-left">
+  @using (Html.BeginForm("AddImage", "Listings", FormMethod.Post))
+  {
+    <div id="divImageSaveErrorMessage" style="display: none;">
+      <h6 class="text-danger"><i class="fa-solid fa-triangle-exclamation"></i>&nbsp;Error</h6>
+      <p id="lblImageSaveErrorMessage">Failed to save image</p>
+      <hr />
+    </div>
+
+    <input type="hidden" id="ImageListingId" name="ImageListingId" value="@Model.ListingId" />
+    @Html.HiddenFor(h => h.ImageId);
+    @Html.HiddenFor(h => h.Contents)
+    @Html.HiddenFor(h => h.ThumbnailContents)
+    @Html.HiddenFor(h => h.MimeType)
+    <span class="hidden" id="imageContents" name="imageContents" />
+
+    <div class="row mb-3">
+      @Html.LabelFor(l => l.Title, htmlAttributes: new { @class = "col-sm-3 col-form-label" })
+      <div class="col-sm-9">
+        @Html.TextBoxFor(e => e.Title, htmlAttributes: new { @class = "form-control", placeholder = "Enter Title" })
+        @Html.ValidationMessageFor(v => v.Title)
+      </div>
+    </div>
+
+    @if (Model.ImageId > 0)
+    {
+      var imageContents = (Model.ThumbnailContents?.Length ?? 0) > 0 ? Model.ThumbnailContents : Model.Contents;
+      <div class="row mb-3">
+        <div class="col-sm-3">Image</div>
+        <div class="col-sm-9">
+          <img src="@imageContents" class="card-img-top" alt="@Model.Title" aria-label="@Model.Title" width="100%" />
+        </div>
+      </div>
+    }
+    else
+    {
+      <div class="row mb-3">
+        @Html.LabelFor(l => l.Contents, htmlAttributes: new { @class = "col-sm-3 col-form-label" })
+        <div class="col-sm-9">
+          <input type="file" id="imageFile" name="imageFile" accept="image/png, image/jpeg, image/jpg" />
+          <div id="whl-formfield-helptext-file" class="form-text">Supported file types: *.png, *.jpeg, *.jpg. Maximum file size: 1MB.</div>
+          @Html.ValidationMessageFor(v => v.Contents)
+        </div>
+      </div>
+
+      <div class="row mb-3">
+        @Html.LabelFor(l => l.ThumbnailContents, htmlAttributes: new { @class = "col-sm-3 col-form-label" })
+        <div class="col-sm-9">
+          <input type="file" id="thumbnailFile" name="thumbnailFile" accept="image/png, image/jpeg, image/jpg" />
+          @Html.ValidationMessageFor(v => v.ThumbnailContents)
+        </div>
+      </div>
+    }
+
+    <div class="row mb-3">
+      <div class="col-sm-3">&nbsp;</div>
+      <div class="form-check form-switch col-sm-9">
+        @Html.CheckBoxFor(m => m.IsPrimary, htmlAttributes: new { @class = "form-check-input", role = "switch" })
+        @Html.LabelFor(l => l.IsPrimary, htmlAttributes: new { @class = "form-check-label" })
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-sm-3">&nbsp;</div>
+      <div class="form-check form-switch col-sm-9">
+        @Html.CheckBoxFor(m => m.DisplayOnListingsPageInd, htmlAttributes: new { @class = "form-check-input", role = "switch" })
+        @Html.LabelFor(l => l.DisplayOnListingsPageInd, htmlAttributes: new { @class = "form-check-label" })
+      </div>
+    </div>
+  }
+</div>

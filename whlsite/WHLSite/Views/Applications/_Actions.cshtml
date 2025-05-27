@@ -1,0 +1,99 @@
+@model ApplicationActionsViewModel
+@{
+  var steps = new Dictionary<int, string>();
+  steps.Add(1, "Application Information");
+  steps.Add(2, "Review and Submit");
+
+  var actions = new Dictionary<int, string>();
+  actions.Add(1, "ApplicationInfo");
+  actions.Add(2, "ReviewSubmitInfo");
+}
+
+@if (Model.StepNumber == 99)
+{
+  if (Model.CanWithdraw)
+  {
+    <button type="button" class="btn btn-outline-secondary whl-action-withdraw-application mr-2"
+      title="Withdraw Application" aria-label="Withdraw Application" data-applicationid="@Model.ApplicationId">Withdraw
+      Application</button>
+  }
+  if (Model.DocumentsReqdInd)
+  {
+    <a class="btn btn-outline-secondary whl-action-manage-documents mr-2" href="#DOCS" title="Manage Documents"
+      aria-label="Manage Documents">Manage Documents</a>
+  }
+  if (Model.HasComments)
+  {
+    <a class="btn btn-outline-secondary whl-action-view-comments mr-2" href="#COMMENTS" title="View Comments"
+      aria-label="View Comments">View Comments</a>
+  }
+  <a class="btn btn-outline-secondary whl-action-close-application mr-2" asp-area="" asp-controller="Applications"
+    asp-action="Dashboard" title="Close" aria-label="Close">Close</a>
+  <a class="btn btn-outline-secondary whl-action-view-listings" asp-area="" asp-controller="Listings" asp-action="Index"
+    title="Back to Listings" aria-label="Back to Listings">Back to Listings</a>
+}
+else
+{
+  <input type="hidden" class="whl-formfield-savemode" asp-for="SaveMode" value="@Model.SaveMode" />
+  <input type="hidden" asp-for="ListingId" value="@Model.ListingId" />
+  <input type="hidden" asp-for="Username" value="@Model.Username" />
+  <input type="hidden" asp-for="ApplicationId" value="@Model.ApplicationId" />
+  @if (Model.StepNumber == 1)
+  {
+    if (Model.ApplicationId > 0)
+    {
+      <a class="btn btn-outline-secondary whl-action-close-application" asp-area="" asp-controller="Listings"
+        asp-action="Details" asp-route-listingId="@Model.ListingId" title="Close Application"
+        aria-label="Close Application">Close</a>
+      <!-- <button type="button" class="btn btn-outline-secondary whl-action-review-application ml-32"
+        title="Review Application" aria-label="Review Application">Review Application</button> -->
+      <!-- <button type="button" class="btn btn-outline-secondary whl-action-continue-application ml-32"
+        title="Continue Application" aria-label="Continue Application">Continue Application</button> -->
+      <!-- <button type="button" class="btn btn-outline-secondary whl-action-withdraw-application ml-32"
+        title="Withdraw Application" aria-label="Withdraw Application" data-applicationid="@Model.ApplicationId">Withdraw
+        Application</button> -->
+    }
+    else
+    {
+      <a class="btn btn-outline-secondary whl-action-cancel-application" asp-area="" asp-controller="Listings"
+        asp-action="Details" asp-route-listingId="@Model.ListingId" title="Cancel Application"
+        aria-label="Cancel Application">Cancel</a>
+      <!-- <button type="button" class="btn btn-outline-secondary whl-action-start-application ml-32" title="Start Application"
+        aria-label="Start Application">Start Application</button> -->
+    }
+    <button type="button" class="btn btn-outline-secondary whl-action-review-application ml-32"
+      title="Review Application" aria-label="Review Application">Review Application</button>
+    @if (Model.ApplicationId > 0)
+    {
+      <button type="button" class="btn btn-outline-secondary whl-action-withdraw-application ml-32"
+        title="Withdraw Application" aria-label="Withdraw Application" data-applicationid="@Model.ApplicationId">Withdraw
+        Application</button>
+    }
+  }
+  else if (Model.StepNumber == 2)
+  {
+    if (Model.ApplicationId > 0)
+    {
+      <a class="btn btn-outline-secondary whl-action-close-application" asp-area="" asp-controller="Listings"
+        asp-action="Details" asp-route-listingId="@Model.ListingId" title="Close Application"
+        aria-label="Close Application">Close</a>
+    }
+    else
+    {
+      <a class="btn btn-outline-secondary whl-action-cancel-application" asp-area="" asp-controller="Listings"
+        asp-action="Details" asp-route-listingId="@Model.ListingId" title="Cancel Changes"
+        aria-label="Cancel Changes">Cancel</a>
+    }
+    <a class="btn btn-outline-secondary whl-action-step-previous ml-32" asp-area="" asp-controller="Applications"
+      asp-action="@actions[Model.StepNumber - 1]" asp-route-applicationId="@Model.ApplicationId"
+      asp-route-listingId="@Model.ListingId" title="Back to previous step" aria-label="Back to previous step">Previous</a>
+    <button type="submit" class="btn btn-primary whl-action-submit-application" title="Submit Application"
+      aria-label="Submit Application">Submit Application</button>
+    @if (Model.ApplicationId > 0)
+    {
+      <button type="button" class="btn btn-outline-secondary whl-action-withdraw-application ml-32"
+        title="Withdraw Application" aria-label="Withdraw Application" data-applicationid="@Model.ApplicationId">Withdraw
+        Application</button>
+    }
+  }
+}

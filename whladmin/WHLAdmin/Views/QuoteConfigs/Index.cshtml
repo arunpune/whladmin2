@@ -1,0 +1,131 @@
+﻿@model QuoteConfigsViewModel
+@{
+  ViewData["Title"] = "Home Page Quotes";
+  var quotesCount = Model.Quotes?.Count() ?? 0;
+}
+
+<div class="row">
+  <div class="col-xs-12 col-md-9">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a class="whl-link" asp-area="" asp-controller="Home" asp-action="Index"
+            title="Home"><small><i class="fa-solid fa-house"></i></small></a></li>
+        <li class="breadcrumb-item"><small>Public Site</small></li>
+        <li class="breadcrumb-item active fs-6 fw-bolder" aria-current="page"><small>@ViewData["Title"]</small></li>
+      </ol>
+    </nav>
+  </div>
+  <div class="col-xs-12 col-md-3 text-end">
+    <button type="button" class="btn btn-sm btn-link whl-link mr-4 whl-action-refresh-page" title="Refresh"
+      aria-label="Refresh"><i class="fa-solid fa-rotate-right"></i></button>
+  </div>
+</div>
+
+<div class="text-left mt-8">
+  <div class="card bg-light">
+    <table class="table table-sm table-hover">
+      <thead class="bg-whlgreen text-white">
+        <tr>
+          <th class="text-center" style="width: 120px;">
+            <small>
+              @if (Model.CanEdit)
+              {
+                <a class="whl-link text-white fw-bold whl-action-add-quote" title="Add a new quote"
+                  href="javascript:void(0);"><i class="fa-solid fa-plus"></i>&nbsp;Add</a>
+              }
+            </small>
+          </th>
+          <th class="text-left"><small>Quote</small></th>
+          <th class="text-center" style="width: 120px;"><small>Home Page?</small></th>
+          <th class="text-center" style="width: 60px;"><small>Active</small></th>
+        </tr>
+      </thead>
+      <tbody class="table-group-divider">
+        @if (quotesCount == 0)
+        {
+          <tr>
+            <td colspan="4" class="text-center">No quotes found</td>
+          </tr>
+        }
+        else
+        {
+          foreach (var quote in Model.Quotes)
+          {
+            <tr>
+              <td class="text-center" style="width: 120px;">
+                <small>
+                  @if (Model.CanEdit)
+                  {
+                    <a class="whl-link whl-action-edit-quote" data-quoteid="@quote.QuoteId" title="Edit quote"
+                      href="javascript:void(0);"><i class="fa-solid fa-pencil"></i></a>
+                    @* <a class="whl-link whl-action-delete-quote ml-8" data-quoteid="@quote.QuoteId" title="Delete quote"
+                      href="javascript:void(0);"><i class="fa-solid fa-trash"></i></a> *@
+                  }
+                  <a class="whl-link whl-action-view-audit ml-8" data-entitytype="QUOTE" data-entityid="@quote.QuoteId"
+                    title="View audit log" href="javascript:void(0);"><i class="fa-solid fa-list"></i></a>
+                </small>
+              </td>
+              <td class="text-left"><small>@quote.Text</small></td>
+              <td class="text-center" style="width: 120px;">
+                <small>
+                  @if (quote.DisplayOnHomePageInd)
+                  {
+                    <i class="fa-solid fa-check text-success"></i>
+                  }
+                </small>
+              </td>
+              <td class="text-center" style="width: 60px;">
+                <small>
+                  @if (quote.Active)
+                  {
+                    <i class="fa-solid fa-circle text-success"></i>
+                  }
+                </small>
+              </td>
+            </tr>
+          }
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Quote Editor Modal -->
+<div class="modal fade" id="quoteEditorModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+  aria-labelledby="quoteEditorModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="quoteEditorModalLabel"><span id="whl-title-quote-action">Quote Editor</span>
+        </h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+      </div>
+      <div class="modal-footer">
+        <input type="hidden" id="hidQuoteAction" name="hidQuoteAction" value="" />
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i
+            class="fa-solid fa-ban"></i>&nbsp;Cancel</button>
+        <button type="button" class="btn btn-primary whl-action-save-quote"><i
+            class="fa-solid fa-floppy-disk"></i>&nbsp;Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Audit Viewer Modal -->
+@await Html.PartialAsync("~/Views/Shared/_AuditViewerModalPartial.cshtml")
+
+@section Scripts
+{
+  <script>
+    //<![CDATA[
+    const quoteConfigAddUrl = '@Url.Action("Add", "QuoteConfigs")';
+    const quoteConfigEditUrl = '@Url.Action("Edit", "QuoteConfigs")';
+    const quoteConfigDeleteUrl = '@Url.Action("Delete", "QuoteConfigs")';
+    const auditViewerUrl = '@Url.Action("Index", "Audit")';
+    //]]>
+  </script>
+  <script src="~/js/management/common.js" asp-append-version="true"></script>
+  <script src="~/js/management/quoteconfigs.js" asp-append-version="true"></script>
+}

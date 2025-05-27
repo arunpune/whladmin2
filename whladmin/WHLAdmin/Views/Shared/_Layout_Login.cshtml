@@ -1,0 +1,43 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>@ViewData["Title"] - HomeSeeker Administration</title>
+  <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="~/lib/fontawesome/css/all.min.css" />
+  <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+  <link rel="stylesheet" href="~/WHLAdmin.styles.css" asp-append-version="true" />
+  @await RenderSectionAsync("Styles", required: false)
+</head>
+
+<body>
+  <div class="container">
+    <main role="main" class="pb-3">
+      <div class="w-100 text-center">
+        @RenderBody()
+      </div>
+    </main>
+  </div>
+
+  <footer class="border-top bg-whlgreen footer text-white w-100" style="position: absolute; bottom: 0; height: 72px; margin-top: 72px;">
+    <div class="container mt-8">
+      <div class="row">
+        <div class="col-xs-12 col-md-9">
+          HomeSeeker Administration Site. &copy; @DateTime.Now.Year Westchester County.
+        </div>
+        <div class="col-xs-12 col-md-3 text-end">
+          @(await Component.InvokeAsync("AppVersion"))
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="~/lib/jquery/dist/jquery.min.js"></script>
+  <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="~/js/site.js" asp-append-version="true"></script>
+  @await RenderSectionAsync("Scripts", required: false)
+</body>
+
+</html>

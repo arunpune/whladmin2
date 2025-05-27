@@ -1,0 +1,119 @@
+@model EditableProfileViewModel
+@{
+  ViewData["Title"] = "Edit Contact Information";
+  ViewData["MENUID"] = "PROFILE";
+}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a class="whl-link" asp-area="" asp-controller="Home" asp-action="Index" title="Home"><i
+          class="fa-solid fa-house"></i></a></li>
+    <li class="breadcrumb-item"><a class="whl-link" asp-area="" asp-controller="Profile" asp-action="Index"
+        title="Profile">Profile</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Edit Contact Information</li>
+  </ol>
+</nav>
+
+<div class="text-left mt-32 profile-page">
+  <div class="card border-0 shadow-lg">
+    @* <h5 class="card-header">Edit Contact Information</h5> *@
+    <div class="card-body">
+      <h4 class="text-secondary whl-card-title">Edit Contact Information</h4>
+      @using (Html.BeginForm("EditContactInfo", "Profile", FormMethod.Post, new
+      {
+        @class = "form whl-form-edit-contactinfo",
+        id = "frmEditContactInfo",
+        name = "frmEditContactInfo"
+      }))
+      {
+
+        if (!string.IsNullOrEmpty((Model.Message ?? "").Trim()))
+        {
+          <div id="divSaveErrorMessage">
+            <h6 class="text-danger"><i class="fa-solid fa-triangle-exclamation"></i>&nbsp;Error</h6>
+            <p id="lblSaveErrorMessage">@Model.Message</p>
+            <hr />
+          </div>
+        }
+
+        @await Html.PartialAsync("~/Views/Shared/_RequiredFieldBlurb.cshtml")
+
+        <div class="row mb-3">
+          <div class="col-xs-12 col-md-6">
+            <label class="form-label small fw-bolder" asp-for="EmailAddress">Email Address <span class="fw-bold text-danger">*</span></label><br />
+            <input type="email" class="form-control whl-formfield-emailaddress" maxlength="200" placeholder="Enter Email Address" autocomplete="email" asp-for="EmailAddress" />
+            <div id="whl-formfield-helptext-emailaddress" class="form-text">Enter your primary email address.</div>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-xs-12">
+            <div class="form-check form-switch">
+              <input type="checkbox" class="form-check-input whl-formfield-authrepemailaddressind" role="switch" asp-for="AuthRepEmailAddressInd" />
+              <label class="form-check-label" asp-for="AuthRepEmailAddressInd">This email address is for the registrant's authorized representative to receive notifications.</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-xs-12 col-md-6">
+            <label class="form-label small" asp-for="AltEmailAddress">Alternate Email Address</label><br />
+            <input type="email" class="form-control whl-formfield-altemailaddress" maxlength="200" placeholder="Enter Alternate Email Address" autocomplete="off" asp-for="AltEmailAddress" />
+            <div id="whl-formfield-helptext-altemailaddress" class="form-text">Enter an alternate email address if you
+              have one. This email address should not match your primary email address on file.</div>
+          </div>
+        </div>
+
+        <div class="row mt-16 mb-3">
+          <div class="col-xs-12 col-md-3">
+            <label class="form-label small fw-bolder" asp-for="PhoneNumber">Phone Number <span class="fw-bold text-danger">*</span></label><br />
+            <input type="tel" class="form-control whl-formfield-phonenumber" maxlength="10" placeholder="Enter Phone Number" autocomplete="phone" asp-for="PhoneNumber" />
+            <div id="whl-formfield-helptext-phonenumber" class="form-text">This is your primary US phone number.</div>
+          </div>
+          <div class="col-xs-12 col-sm-9 col-md-2">
+            <label class="form-label small" asp-for="PhoneNumberExtn">Extension</label><br />
+            <input type="text" class="form-control whl-formfield-phonenumberextn" maxlength="10" placeholder="Extn" autocomplete="off" asp-for="PhoneNumberExtn" />
+            <div id="whl-formfield-helptext-phonenumberextn" class="form-text">Enter the extension if you have one.</div>
+          </div>
+          <div class="col-xs-12 col-sm-12 col-md-3">
+            <label class="form-label small fw-bolder" asp-for="PhoneNumberTypeCd">Type <span class="fw-bold text-danger">*</span></label><br />
+            <select class="form-select whl-formfield-phonenumbertypecd" placeholder="Select One" asp-for="PhoneNumberTypeCd" asp-items="@(new SelectList(Model.PhoneNumberTypes, "Key", "Value", Model.PhoneNumberTypeCd))"></select>
+            <div id="whl-formfield-helptext-phonenumbertypecd" class="form-text">Specify type of primary US phone number.</div>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-xs-12 col-md-3">
+            <label class="form-label small" asp-for="AltPhoneNumber">Alternate Phone Number</label><br />
+            <input type="tel" class="form-control whl-formfield-altphonenumber" maxlength="10" placeholder="Enter Phone Number" autocomplete="off" asp-for="AltPhoneNumber" />
+            <div id="whl-formfield-helptext-altphonenumber" class="form-text">This is your alternate US phone number.</div>
+          </div>
+          <div class="col-xs-12 col-sm-9 col-md-2">
+            <label class="form-label small" asp-for="AltPhoneNumberExtn">Extension</label><br />
+            <input type="text" class="form-control whl-formfield-altphonenumberextn" maxlength="10" placeholder="Extn" autocomplete="off" asp-for="AltPhoneNumberExtn" />
+            <div id="whl-formfield-helptext-altphonenumberextn" class="form-text">Enter the extension if you have one.</div>
+          </div>
+          <div class="col-xs-12 col-sm-12 col-md-3">
+            <label class="form-label small" asp-for="AltPhoneNumberTypeCd">Type</label><br />
+            <select class="form-select whl-formfield-altphonenumbertypecd" placeholder="Select One" asp-for="AltPhoneNumberTypeCd" asp-items="@(new SelectList(Model.PhoneNumberTypes, "Key", "Value", Model.AltPhoneNumberTypeCd))"></select>
+            <div id="whl-formfield-helptext-altphonenumbertypecd" class="form-text">Specify type of alternate US phone number.</div>
+          </div>
+        </div>
+
+        <hr />
+
+        @Html.HiddenFor(h => h.Username, htmlAttributes: new { @class = "whl-formfield-username" })
+        <input type="hidden" id="hidSaveContactInfoAction" name="hidSaveContactInfoAction" value="" />
+        <a class="btn btn-outline-secondary whl-action-cancel-contactinfo" asp-area="" asp-controller="Profile" asp-action="Index" title="Cancel Changes" aria-label="Cancel Changes">Cancel</a>
+        <button type="submit" class="btn btn-primary whl-action-save-contactinfo" title="Save Changes" aria-label="Save Changes">Save Changes</button>
+
+      }
+    </div>
+  </div>
+</div>
+
+@section Scripts
+{
+  <script src="~/js/profile/contact.actions.js" asp-append-version="true"></script>
+  <script src="~/js/profile/contact.validations.js" asp-append-version="true"></script>
+}

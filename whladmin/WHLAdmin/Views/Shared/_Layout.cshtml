@@ -1,0 +1,225 @@
+﻿@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
+@{
+  var displayName = User.Identity.Name;
+  if (displayName.Contains("\\")) displayName = displayName.Substring(displayName.IndexOf("\\") + 1);
+
+  var displayNameClaim = User.Claims.FirstOrDefault(x => x.Type == "DisplayName");
+  if (displayNameClaim != null && !string.IsNullOrEmpty((displayNameClaim.Value ?? "").Trim()))
+  {
+    displayName = displayNameClaim.Value.Trim();
+  }
+
+  var authMode = (Configuration.GetValue<string>("AUTHMODE") ?? "").Trim().ToUpper();
+  if (authMode.Length == 0) authMode = "BASIC";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>@ViewData["Title"] - HomeSeeker Administration</title>
+  <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="~/lib/fontawesome/css/all.min.css" />
+  <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+  <link rel="stylesheet" href="~/WHLAdmin.styles.css" asp-append-version="true" />
+  @await RenderSectionAsync("Styles", required: false)
+</head>
+
+<body>
+  <header>
+    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow pt-0 mb-3">
+      <div class="container-fluid">
+        <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index"><img
+            src="~/images/temp-countylogo-gs-300dpi.jpg" width="150" height="60" alt=""></a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
+          aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+          <ul class="navbar-nav flex-grow-1">
+            <li class="nav-item">
+              <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                aria-expanded="false">
+                Listings, Applications &amp; Lotteries
+              </a>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item text-dark" asp-area="" asp-controller="Listings" asp-action="Index"
+                    title="Manage listings for the public site"
+                    aria-label="Manage listings for the public site">Listings</a>
+                </li>
+                <li><a class="dropdown-item text-dark" asp-area="" asp-controller="Applications" asp-action="Index"
+                    title="Manage paper applications for the public site"
+                    aria-label="Manage paper applications for the public site">Applications</a>
+                </li>
+                <li><a class="dropdown-item text-dark" asp-area="" asp-controller="Applications" asp-action="Duplicates"
+                    title="Check for potential duplicate applications for the public site"
+                    aria-label="Check for potential duplicate applications for the public site">Duplicate
+                    Applications</a>
+                </li>
+                <li><a class="dropdown-item text-dark" asp-area="" asp-controller="Lotteries" asp-action="Index"
+                    title="Manage lotteries for the public site"
+                    aria-label="Manage lotteries for the public site">Lotteries</a>
+                </li>
+              </ul>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                aria-expanded="false">
+                Admin Site
+              </a>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item text-dark" asp-area="" asp-controller="Users" asp-action="Index"
+                    title="Manage admin site users" aria-label="Manage admin site users">Users</a>
+                </li>
+                <li><a class="dropdown-item text-dark" asp-area="" asp-controller="Amenities" asp-action="Index"
+                    title="Manage amenities for listings" aria-label="Manage amenities for listings">Amenities</a></li>
+                <li><a class="dropdown-item text-dark" asp-area="" asp-controller="AMIConfigs" asp-action="Index"
+                    title="Manage AMI configurations" aria-label="Manage AMI configurations">AMIs</a></li>
+                <li><a class="dropdown-item text-dark" asp-area="" asp-controller="Amortizations" asp-action="Index"
+                    title="Manage Amortization Rates" aria-label="Manage Amortization Rates">Amortizations</a></li>
+                <li><a class="dropdown-item text-dark" asp-area="" asp-controller="DocumentTypes" asp-action="Index"
+                    title="Manage document types for listings" aria-label="Manage document types for listings">Document
+                    Types</a></li>
+                <li><a class="dropdown-item text-dark" asp-area="" asp-controller="FundingSources" asp-action="Index"
+                    title="Manage funding sources for listings" aria-label="Manage funding sources for listings">Funding
+                    Sources</a></li>
+                <li><a class="dropdown-item text-dark" asp-area="" asp-controller="MarketingAgents" asp-action="Index"
+                    title="Manage marketing agents for listings"
+                    aria-label="Manage marketing agents for listings">Marketing
+                    Agents</a></li>
+                <li><a class="dropdown-item text-dark" asp-area="" asp-controller="NotificationConfigs"
+                    asp-action="Index" title="Manage notifications sent for various events"
+                    aria-label="Manage notifications sent for various events">Notifications</a></li>
+              </ul>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                aria-expanded="false">
+                Public Site
+              </a>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item text-dark" asp-area="" asp-controller="FAQConfigs" asp-action="Index"
+                    title="Manage FAQs listed on the public site"
+                    aria-label="Manage FAQs listed on the public site">FAQs</a>
+                </li>
+                <li><a class="dropdown-item text-dark" asp-area="" asp-controller="QuoteConfigs" asp-action="Index"
+                    title="Manage quote listed on the home page of the public site"
+                    aria-label="Manage quote listed on the home page of the public site">Home Page Quotes</a>
+                </li>
+                <li><a class="dropdown-item text-dark" asp-area="" asp-controller="ResourceConfigs" asp-action="Index"
+                    title="Manage Videos listed on the public site"
+                    aria-label="Manage Videos listed on the public site">Resources &amp; Links</a>
+                </li>
+                <li><a class="dropdown-item text-dark" asp-area="" asp-controller="VideoConfigs" asp-action="Index"
+                    title="Manage Videos listed on the public site"
+                    aria-label="Manage Videos listed on the public site">Videos</a>
+                </li>
+              </ul>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                aria-expanded="false">
+                Reports
+              </a>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item text-dark" asp-area="" asp-controller="Reports"
+                    asp-action="DemographicsReport" title="View application demographics report"
+                    aria-label="View application demographics report">Demographics Report</a>
+                </li>
+                <li><a class="dropdown-item text-dark" asp-area="" asp-controller="Reports"
+                    asp-action="RegistrationsReport" title="View registrations summary report"
+                    aria-label="View registrations summary report">Registrations Report</a>
+                </li>
+                <li><a class="dropdown-item text-dark" asp-area="" asp-controller="Reports"
+                    asp-action="MarketEvaluationsReport" title="View market evaluations report"
+                    aria-label="View market evaluations report">Market Evaluation Report</a>
+                </li>
+              </ul>
+            </li>
+            <environment exclude="Production">
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                  aria-expanded="false">
+                  Test
+                </a>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item text-dark" asp-area="" asp-controller="EmailTest" asp-action="Index"
+                      title="Test email functionality" aria-label="Test email functionality">Emails</a>
+                  </li>
+                  <li><a class="dropdown-item text-dark" asp-area="" asp-controller="EmfluenceTest" asp-action="Index"
+                      title="Test Emfluence functionality" aria-label="Test Emfluence functionality">Emfluence</a>
+                  </li>
+                </ul>
+              </li>
+            </environment>
+          </ul>
+        </div>
+        <div class="d-flex justify-content-end">
+          @if (authMode == "OKTA")
+          {
+            using (Html.BeginForm("SignOut", "Account", FormMethod.Post))
+            {
+              <a class="smaller" asp-area="" asp-controller="Home" asp-action="Profile" title="My Profile"
+                aria-label="My Profile"><span class="badge bg-whlgreen text-white">@displayName</span></a>
+              <button type="submit" class="btn btn-xs whl-link fs-5" title="Logout" aria-label="Logout"><i
+                  class="fa-solid fa-right-from-bracket"></i></button>
+            }
+          }
+          else
+          {
+            using (Html.BeginForm("Logout", "Home", FormMethod.Post))
+            {
+              <a class="smaller" asp-area="" asp-controller="Home" asp-action="Profile" title="My Profile"
+                aria-label="My Profile"><span class="badge bg-whlgreen text-white">@displayName</span></a>
+              <button type="submit" class="btn btn-xs whl-link fs-5" title="Logout" aria-label="Logout"><i
+                  class="fa-solid fa-right-from-bracket"></i></button>
+            }
+          }
+        </div>
+      </div>
+    </nav>
+  </header>
+  <div class="container-fluid">
+    <main role="main" class="pb-3">
+      @RenderBody()
+    </main>
+  </div>
+
+  <div class="toast-container position-fixed top-0 end-0">
+    <div id="whlToastMain" class="toast whl-toast-main" role="alert" aria-live="assertive" aria-atomic="true">
+      @* <div class="toast-header">
+      <strong class="me-auto whl-toast-header">Title</strong>
+      <small class="whl-toast-timer-message">Just now</small>
+      <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div> *@
+      <div class="toast-body whl-toast-message">
+        Message
+      </div>
+    </div>
+  </div>
+
+  <footer class="border-top bg-whlgreen footer text-white">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-xs-12 col-md-9">
+          HomeSeeker Administration Site. &copy; @DateTime.Now.Year Westchester County.
+        </div>
+        <div class="col-xs-12 col-md-3 text-md-end">
+          @(await Component.InvokeAsync("AppVersion"))
+        </div>
+      </div>
+    </div>
+  </footer>
+  <script src="~/lib/jquery/dist/jquery.min.js"></script>
+  <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="~/js/site.js" asp-append-version="true"></script>
+  @await RenderSectionAsync("Scripts", required: false)
+</body>
+
+</html>

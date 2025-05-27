@@ -1,0 +1,111 @@
+@model UserNotificationsViewModel
+@{
+  ViewData["Title"] = "Notifications";
+  ViewData["MENUID"] = "NOTIFICATIONS";
+}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a class="whl-link" asp-area="" asp-controller="Home" asp-action="Index" title="Home"><i
+          class="fa-solid fa-house"></i></a></li>
+    <li class="breadcrumb-item active" aria-current="page">Notifications</li>
+  </ol>
+</nav>
+
+<div class="text-left mt-32 notifications-page">
+  <div class="card text-bg-light shadow-sm">
+    <div class="card-body">
+      <table class="table table-hover table-sm w-100">
+        <thead>
+          <tr>
+            <th class="text-center" style="width: 32px;">
+              @if (Model.Count > 0)
+              {
+                var readCount = Model.Notifications.Where(w => w.ReadInd)?.Count() ?? 0;
+                if (readCount < Model.Count)
+                {
+                  <button type="button" class="btn btn-sm whl-link whl-action-notification-action"
+                    data-notificationid="-999" data-notificationaction="R" title="Mark all notifications read"
+                    aria-label="Mark all notifications read"><i class="fa-regular fa-circle-dot"></i></button>
+                }
+              }
+            </th>
+            <th class="text-center" style="width: 32px;">
+              @if (Model.Count > 0)
+              {
+                <button type="button" class="btn btn-sm whl-link whl-action-notification-action"
+                  data-notificationid="-999" data-notificationaction="D" title="Delete all notifications"
+                  aria-label="Delete all notifications"><i class="fa-regular fa-trash-can"></i></button>
+              }
+            </th>
+            <th class="text-start" style="width: 240px;">Created On</th>
+            <th>Contents</th>
+            <th class="text-start" style="width: 240px;">Email Sent On</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (Model.Count > 0)
+          {
+            foreach (var notification in Model.Notifications)
+            {
+              <tr>
+                <td class="text-center" style="width: 32px">
+                  @if (!notification.ReadInd)
+                  {
+                    <button type="button" class="btn btn-sm whl-link whl-action-notification-action"
+                      data-notificationid="@notification.NotificationId" data-notificationaction="R"
+                      title="Mark notification read" aria-label="Mark notification read"><i
+                        class="fa-regular fa-circle-dot"></i></button>
+                  }
+                </td>
+                <td class="text-center" style="width: 32px">
+                  <button type="button" class="btn btn-sm whl-link whl-action-notification-action"
+                    data-notificationid="@notification.NotificationId" data-notificationaction="D"
+                    title="Delete notification" aria-label="Delete notification"><i
+                      class="fa-regular fa-trash-can"></i></button>
+                </td>
+                <td class="text-start" style="width: 240px;"><small>@notification.CreatedDate.ToString("g")</small></td>
+                <td>
+                  @if (notification.ReadInd)
+                  {
+                    <small class="fw-medium">@notification.Subject</small>
+                  }
+                  else
+                  {
+                    <small class="fw-bold text-dark">@notification.Subject</small>
+                  }
+                  <br />
+                  <small class="fst-italic text-secondary">@notification.Body</small>
+                </td>
+                <td class="text-start" style="width: 240px;">
+                  <small>
+                    @if (notification.EmailTimestamp.GetValueOrDefault(DateTime.MinValue) > DateTime.MinValue)
+                    {
+                      @($"{notification.EmailTimestamp.Value:f}")
+                    }
+                  </small>
+                </td>
+              </tr>
+            }
+          }
+          else
+          {
+            <tr>
+              <td colspan="5" class="text-center">No notifications</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+@section Scripts
+{
+  <script>
+    //<![CDATA[
+    const updateNotificationUrl = '@Url.Action("UpdateNotification", "Profile")';
+    //]]>
+  </script>
+  <script src="~/js/profile/notifications.actions.js" asp-append-version="true"></script>
+}

@@ -1,0 +1,361 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  background-color: #eeeeee;
+  /* margin-bottom: 60px; */
+}
+
+.bg-whlgreen {
+  background-color: #006056;
+}
+.text-whlgreen {
+  color: #006056;
+}
+
+.nav-link:hover {
+  border-bottom: 4px solid #cccccc;
+}
+.nav-link.active {
+  border-bottom: 4px solid #006056;
+  color: #006056;
+  font-weight: 600;
+}
+
+.whl-link {
+  color: #006056;
+  text-decoration: none;
+  font-weight: bolder;
+}
+.whl-link:hover {
+  color: #006056;
+  text-decoration: underline;
+}
+.whl-nav-link {
+  color: #006056;
+  text-decoration: none;
+}
+.whl-nav-link:hover {
+  color: #006056;
+}
+.whl-listing-link:link, .whl-listing-link:visited, .whl-listing-link:active {
+  text-decoration: none;
+  -webkit-filter: grayscale(0) blur(0);
+  filter: grayscale(0) blur(0);
+  -webkit-transition: .3s ease-in-out;
+  transition: .3s ease-in-out;
+}
+.whl-listing-link:hover > img {
+  -webkit-filter: grayscale(100%) blur(2px);
+  filter: grayscale(100%) blur(2px);
+}
+.whl-listing-link-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: none;
+}
+.whl-listing-link:hover > .whl-listing-link-text {
+  display: block;
+  z-index: 100;
+}
+
+.ml-2 {
+  margin-left: 2px;
+}
+.ml-4 {
+  margin-left: 4px;
+}
+.ml-8 {
+  margin-left: 8px;
+}
+.ml-16 {
+  margin-left: 16px;
+}
+.ml-32 {
+  margin-left: 32px;
+}
+
+.mt-2 {
+  margin-top: 2px;
+}
+.mt-4 {
+  margin-top: 4px;
+}
+.mt-8 {
+  margin-top: 8px;
+}
+.mt-16 {
+  margin-top: 16px;
+}
+.mt-32 {
+  margin-top: 32px;
+}
+.mt-64 {
+  margin-top: 64px;
+}
+
+.mb-2 {
+  margin-bottom: 2px;
+}
+.mb-4 {
+  margin-bottom: 4px;
+}
+.mb-8 {
+  margin-bottom: 8px;
+}
+.mb-16 {
+  margin-bottom: 16px;
+}
+.mb-32 {
+  margin-bottom: 32px;
+}
+.mb-64 {
+  margin-bottom: 64px;
+}
+
+.mr-2 {
+  margin-right: 2px;
+}
+.mr-4 {
+  margin-right: 4px;
+}
+.mr-8 {
+  margin-right: 8px;
+}
+.mr-16 {
+  margin-right: 16px;
+}
+.mr-32 {
+  margin-right: 32px;
+}
+
+.coming-soon {
+  background: #eeeeee url(/images/nycskyline1.jpg) no-repeat center center;
+  height: 64px;
+  opacity: 0.3;
+}
+
+.home-page-jumbotron {
+  z-index: 0;
+}
+.home-page-jumbotron::after {
+  content: "";
+  background: #ffffff url(/images/bg-homepage1.jpg) no-repeat center center;
+  background-size: cover;
+  opacity: 0.2;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  position: absolute;
+  z-index: -1;
+  background-clip: padding-box;
+}
+
+.about-page::after {
+  content: "";
+  background: #ffffff url(/images/bg-about-page.jpg) no-repeat center center;
+  background-size: cover;
+  opacity: 0.1;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  position: absolute;
+  z-index: -1;
+  background-clip: padding-box;
+}
+
+.faqs-page::after {
+  content: "";
+  background: #ffffff url(/images/bg-faqs-page.jpg) no-repeat center center;
+  background-size: cover;
+  opacity: 0.1;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  position: absolute;
+  z-index: -1;
+  background-clip: padding-box;
+}
+
+.resources-page::after {
+  content: "";
+  background: #ffffff url(/images/bg-resources-page.jpg) no-repeat center center;
+  background-size: cover;
+  opacity: 0.1;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  position: absolute;
+  z-index: -1;
+  background-clip: padding-box;
+}
+
+.registration-page::after {
+  content: "";
+  background: #ffffff url(/images/bg-registration-page.jpg) no-repeat center center;
+  background-size: cover;
+  opacity: 0.1;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  position: absolute;
+  z-index: -1;
+  background-clip: padding-box;
+}
+
+.login-page::after {
+  content: "";
+  background: #ffffff url(/images/bg-login-page.jpg) no-repeat center center;
+  background-size: cover;
+  opacity: 0.1;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  position: absolute;
+  z-index: -1;
+  background-clip: padding-box;
+}
+
+.profile-page::after {
+  content: "";
+  background: #ffffff url(/images/bg-profile-page.jpg) no-repeat center center;
+  background-size: cover;
+  opacity: 0.1;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  position: absolute;
+  z-index: -1;
+  background-clip: padding-box;
+}
+
+.household-page::after {
+  content: "";
+  background: #ffffff url(/images/bg-household-page.jpg) no-repeat center center;
+  background-size: cover;
+  opacity: 0.1;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  position: absolute;
+  z-index: -1;
+  background-clip: padding-box;
+}
+
+.notifications-page::after {
+  content: "";
+  background: #ffffff url(/images/bg-notifications-page.jpg) no-repeat center center;
+  background-size: cover;
+  opacity: 0.1;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  position: absolute;
+  z-index: -1;
+  background-clip: padding-box;
+}
+
+.dashboard-page::after {
+  content: "";
+  background: #ffffff url(/images/bg-dashboard-page.jpg) no-repeat center center;
+  background-size: cover;
+  opacity: 0.1;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  position: absolute;
+  z-index: -1;
+  background-clip: padding-box;
+}
+
+.listings-page::after {
+  content: "";
+  background: #ffffff url(/images/bg-listings-page.jpg) no-repeat center center;
+  background-size: cover;
+  opacity: 0.1;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  position: absolute;
+  z-index: -1;
+  background-clip: padding-box;
+}
+
+
+.border-0 {
+  border: 0px;
+}
+
+.work-container {
+  background-color: #fcfcfc;
+  border-radius: 8px;
+}
+.work-sequence-container {
+  width: 32px;
+  height: 32px;
+  margin: 0 auto;
+}
+.work-sequence-text {
+  border: 1px solid #999999;
+  border-radius: 64px;
+  color: #999999;
+}
+
+.quote-container {
+  border-radius: 8px;
+}
+
+.login-container {
+  margin: 0 auto;
+  width: 480px;
+}
+
+.whl-card-title {
+  border-bottom: 1px solid #dddddd;
+  padding-bottom: 8px;
+}
+
+/* Action styles */
+.whl-action-togglelast4ssn {
+  cursor: pointer;
+}
+.whl-action-toggledateofbirth {
+  cursor: pointer;
+}
+
+/* Print form styles */
+
+.form-control-printable {
+  border: 0;
+  border-bottom: 1px dashed #666666;
+  width: 95%;
+}

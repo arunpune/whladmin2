@@ -1,0 +1,101 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+.bg-whlgreen {
+  background-color: #006056;
+}
+.bg-whlgreen-light {
+  background-color: #008058;
+}
+.bg-match-highlight {
+  background-color: #ffff66;
+}
+
+.btn-whl-link {
+  background-color: #006056;
+  color: #ffffff;
+}
+.btn-whl-link:hover {
+  color: #ffffff;
+}
+.whl-link {
+  color: #006056;
+  font-weight: 400;
+  text-decoration: none;
+}
+.ml-4 {
+  margin-left: 4px;
+}
+.ml-8 {
+  margin-left: 8px;
+}
+.ml-16 {
+  margin-left: 16px;
+}
+.ml-32 {
+  margin-left: 32px;
+}
+.mt-4 {
+  margin-top: 4px;
+}
+.mt-8 {
+  margin-top: 8px;
+}
+.mt-16 {
+  margin-top: 16px;
+}
+.mt-32 {
+  margin-top: 32px;
+}
+.mt-64 {
+  margin-top: 64px;
+}
+.mt-128 {
+  margin-top: 128px;
+}
+.mr-4 {
+  margin-right: 4px;
+}
+.mr-8 {
+  margin-right: 8px;
+}
+.mr-16 {
+  margin-right: 16px;
+}
+.mr-32 {
+  margin-right: 32px;
+}
+
+
+.whl-card-title {
+  border-bottom: 1px solid #dddddd;
+  padding-bottom: 8px;
+}
+
+/* Action styles */
+.whl-action-togglelast4ssn {
+  cursor: pointer;
+}
+.whl-action-toggledateofbirth {
+  cursor: pointer;
+}

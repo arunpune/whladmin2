@@ -1,0 +1,191 @@
+﻿@model ListingsViewModel
+@{
+  ViewData["Title"] = "Listings";
+  var listingsCount = Model.Listings?.Count() ?? 0;
+}
+
+<div class="row">
+  <div class="col-xs-12 col-md-9">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a class="whl-link" asp-area="" asp-controller="Home" asp-action="Index"
+            title="Home"><small><i class="fa-solid fa-house"></i></small></a></li>
+        <li class="breadcrumb-item"><small>Listings, Applications &amp; Lotteries</small></li>
+        <li class="breadcrumb-item active fs-6 fw-bolder" aria-current="page"><small>@ViewData["Title"]</small></li>
+      </ol>
+    </nav>
+  </div>
+  <div class="col-xs-12 col-md-3 text-end">
+    <button type="button" class="btn btn-sm btn-link whl-link mr-4 whl-action-refresh-page" title="Refresh"
+      aria-label="Refresh"><i class="fa-solid fa-rotate-right"></i></button>
+  </div>
+</div>
+
+<div class="text-left mt-8">
+  <div class="card bg-light">
+    @if (listingsCount > 0)
+    {
+      <div class="row">
+        <div class="col-xs-12 py-1 px-3">
+          @await Html.PartialAsync("~/Views/Shared/_PagingInfo.cshtml", Model)
+        </div>
+      </div>
+    }
+    <table class="table table-sm table-hover">
+      <thead class="bg-whlgreen text-white">
+        <tr>
+          <th class="text-center" style="width: 60px;">
+            <small>
+              @if (Model.CanEdit)
+              {
+                <a class="whl-link text-white fw-bold whl-action-add-listing" title="Add a new listing"
+                  href="javascript:void(0);"><i class="fa-solid fa-plus"></i>&nbsp;Add</a>
+              }
+            </small>
+          </th>
+          <th class="text-center" style="width: 120px;"><small>Listing ID</small></th>
+          <th class="text-left" style="width: 120px;"><small>Type</small></th>
+          <th class="text-left"><small>Name</small></th>
+          <th class="text-left"><small>Listing Dates</small></th>
+          <th class="text-left" style="width: 120px;"><small>Status</small></th>
+          <th class="text-center" style="width: 120px;"><small>Lottery ID</small></th>
+        </tr>
+      </thead>
+      <tbody class="table-group-divider">
+        @if (listingsCount == 0)
+        {
+        <tbody class="table-group-divider">
+          <tr>
+            <td colspan="7" class="text-center">No listings found</td>
+          </tr>
+        </tbody>
+      }
+      else
+      {
+        <tbody class="table-group-divider">
+          @foreach (var listing in Model.Listings)
+          {
+            <tr>
+              <td class="text-center" style="width: 60px;">
+                <small>
+                  @if (Model.CanEdit)
+                  {
+                    @* <a class="whl-link whl-action-edit-listing" data-listingid="@listing.ListingId" title="Edit listing"
+                        href="javascript:void(0);"><i class="fa-solid fa-pencil"></i></a>
+                      <a class="whl-link whl-action-delete-listing ml-8" data-listingid="@listing.ListingId" title="Delete listing"
+                        href="javascript:void(0);"><i class="fa-solid fa-trash"></i></a> *@
+                  }
+                  <a class="whl-link whl-action-view-audit ml-8" data-entitytype="LISTING"
+                    data-entityid="@listing.ListingId" title="View audit log" href="javascript:void(0);"><i
+                      class="fa-solid fa-list"></i></a>
+                </small>
+              </td>
+              <td class="text-center" style="width: 120px;">
+                <small>
+                  <a class="whl-link" asp-area="" asp-controller="Listings" asp-action="Details"
+                    asp-route-listingId="@listing.ListingId" title="View/Edit Listing Details"
+                    aria-label="View/Edit Listing Details">@listing.ListingId</a>
+                </small>
+              </td>
+              <td class="text-left" style="width: 120px;">@listing.ListingTypeDescription</td>
+              <td class="text-left">
+                <small>
+                  @listing.Name
+                  @if (!string.IsNullOrEmpty(listing.DisplayAddress))
+                  {
+                    <br />
+                    <span class="text-secondary">@listing.DisplayAddress</span>
+                  }
+                </small>
+              </td>
+              <td class="text-left">
+                <small>
+                  @if (!string.IsNullOrEmpty(listing.DisplayListingStartDate))
+                  {
+                    <span>@listing.DisplayListingStartDate</span>
+                    if (!string.IsNullOrEmpty(listing.DisplayListingEndDate))
+                    {
+                      <span>&nbsp;&ndash;&nbsp;@listing.DisplayListingEndDate</span>
+                    }
+                  }
+                </small>
+              </td>
+              <td class="text-left" style="width: 120px;"><small>@listing.StatusDescription</small></td>
+              <td class="text-center" style="width: 120px;">
+                <small>
+                  @if (listing.LotteryId > 0)
+                  {
+                    <a class="whl-link" asp-area="" asp-controller="Lotteries" asp-action="Results"
+                      asp-route-lotteryId="@listing.LotteryId" title="View Lottery Details"
+                      aria-label="View Lottery Details">@listing.LotteryId</a>
+                  }
+                </small>
+              </td>
+            </tr>
+          }
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="7">
+              @await Html.PartialAsync("~/Views/Shared/_PagingInfo.cshtml", Model)
+            </td>
+          </tr>
+        </tfoot>
+      }
+    </table>
+  </div>
+</div>
+
+<!-- Listing Editor Modal -->
+<div class="modal fade" id="listingEditorModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+  aria-labelledby="listingEditorModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="listingEditorModalLabel"><span id="whl-title-listing-action">Listing
+            Editor</span></h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+      </div>
+      <div class="modal-footer">
+        <input type="hidden" id="hidListingAction" name="hidListingAction" value="" />
+        <button type="button" class="btn btn-secondary whl-action-cancel-listing"><i
+            class="fa-solid fa-ban"></i>&nbsp;Cancel</button>
+        <button type="button" class="btn btn-primary whl-action-save-listing"><i
+            class="fa-solid fa-floppy-disk"></i>&nbsp;Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Audit Viewer Modal -->
+@await Html.PartialAsync("~/Views/Shared/_AuditViewerModalPartial.cshtml")
+
+<form asp-area="" asp-action="Index" asp-controller="Listings" method="get" novalidate="novalidate">
+  <input type="hidden" class="whl-formfield-pageno" asp-for="PageNo" />
+  <input type="hidden" class="whl-formfield-pagesize" asp-for="PageSize" />
+  <button type="submit" class="btn btn-sm btn-outline-primary mt-32 whl-action-filter-listings" title="Filter listings"
+    aria-label="Filter listings" style="display: none;">Filter</button>
+</form>
+
+@section Scripts
+{
+  <script>
+    //<![CDATA[
+    const listingAddUrl = '@Url.Action("Add", "Listings")';
+    const listingEditUrl = '@Url.Action("Edit", "Listings")';
+    const listingDeleteUrl = '@Url.Action("Delete", "Listings")';
+    const listingDetailsUrl = '@Url.Action("Details", "Listings")';
+    const auditViewerUrl = '@Url.Action("Index", "Audit")';
+
+    // arcgis
+    const arcGisAddressCandidatesApiUrl = '@(Model.ArcGisSettings?.ApiUrl ?? "")/@(Model.ArcGisSettings?.ApiMethod ?? "")';
+    const arcGisApiToken = '@(Model.ArcGisSettings?.ApiKey ?? "")';
+    let addressCandidates = [];
+    let selectedAddress = {};
+    //]]>
+  </script>
+  <script src="~/js/management/common.js" asp-append-version="true"></script>
+  <script src="~/js/listings/listings.js" asp-append-version="true"></script>
+}

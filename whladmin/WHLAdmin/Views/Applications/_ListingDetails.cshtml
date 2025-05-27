@@ -1,0 +1,59 @@
+@model ListingViewModel
+
+@if (Model == null) return;
+
+<div class="card border-0 border-left bg-light">
+  <div class="card-body">
+    <h5 class="fs-4 border-bottom text-secondary">Application For</h5>
+    <div class="card-text">
+      <div class="row mb-3">
+        <div class="col-xs-12">
+          <span class="fs-5 fw-semibold text-dark">@Model.Name</span>
+        </div>
+      </div>
+      <div class="row mb-3">
+        <div class="col-xs-12">
+          <small class="border-bottom fw-bold">Address</small><br />
+          <span class="fs-6 fw-semibold text-dark">@Model.DisplayAddress</span>
+        </div>
+      </div>
+      @if (Model.Units.Any())
+      {
+        <div class="row mb-3">
+          <div class="col-xs-12">
+            <small class="border-bottom fw-bold">Units</small><br />
+            @foreach (var ami in Model.AreaMedianIncomePcts)
+            {
+              var unitsText = string.Join(", ", Model.Units?.Where(w => w.AreaMedianIncomePct == ami)?.DistinctBy(d => d.UnitTypeCd)?.OrderBy(o => o.BedroomCnt)?.Select(s => s.UnitTypeDescription) ?? []);
+              if (unitsText.Length > 0)
+              {
+                <div class="row">
+                  <div class="col-xs-12 col-sm-3"><span class="fs-6 fw-semibold text-dark">@($"{ami}%")</span></div>
+                  <div class="col-xs-12 col-sm-9">@unitsText</div>
+                </div>
+              }
+            }
+          </div>
+        </div>
+      }
+      @if (!string.IsNullOrEmpty(Model.DisplayApplicationEndDate))
+      {
+        <div class="row mb-3">
+          <div class="col-xs-12">
+            <small class="border-bottom fw-bold">Due Date</small><br />
+            <span class="fs-6 fw-semibold text-dark">@Model.DisplayApplicationEndDate</span>
+          </div>
+        </div>
+      }
+      @if (!string.IsNullOrEmpty(Model.DisplayLotteryDate))
+      {
+        <div class="row mb-3">
+          <div class="col-xs-12">
+            <small class="border-bottom fw-bold">Lottery Date</small><br />
+            <span class="fs-6 fw-semibold text-dark">@Model.DisplayLotteryDate</span>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</div>

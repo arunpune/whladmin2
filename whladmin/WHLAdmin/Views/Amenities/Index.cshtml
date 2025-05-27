@@ -1,0 +1,127 @@
+﻿@model AmenitiesViewModel
+@{
+  ViewData["Title"] = "Amenities";
+  var amenityCount = Model.Amenities?.Count() ?? 0;
+}
+
+<div class="row">
+  <div class="col-xs-12 col-md-9">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a class="whl-link" asp-area="" asp-controller="Home" asp-action="Index"
+            title="Home"><small><i class="fa-solid fa-house"></i></small></a></li>
+        <li class="breadcrumb-item"><small>Admin Site</small></li>
+        <li class="breadcrumb-item active fs-6 fw-bolder" aria-current="page"><small>@ViewData["Title"]</small></li>
+      </ol>
+    </nav>
+  </div>
+  <div class="col-xs-12 col-md-3 text-end">
+    <button type="button" class="btn btn-sm btn-link whl-link mr-4 whl-action-refresh-page" title="Refresh"
+      aria-label="Refresh"><i class="fa-solid fa-rotate-right"></i></button>
+  </div>
+</div>
+
+<div class="text-left mt-8">
+  <div class="card bg-light">
+    <table class="table table-sm table-hover">
+      <thead class="bg-whlgreen text-white">
+        <tr>
+          <th class="text-center" style="width: 120px;">
+            <small>
+              @if (Model.CanEdit)
+              {
+                <a class="whl-link text-white fw-bold whl-action-add-amenity" title="Add a new amenity"
+                  href="javascript:void(0);"><i class="fa-solid fa-plus"></i>&nbsp;Add</a>
+              }
+            </small>
+          </th>
+          <th class="text-left" style="width: 240px;"><small>Name</small></th>
+          <th class="text-left"><small>Description</small></th>
+          <th class="text-center" style="width: 120px;"><small>Usage Count</small></th>
+          <th class="text-center" style="width: 60px;"><small>Active</small></th>
+        </tr>
+      </thead>
+      <tbody class="table-group-divider">
+        @if (amenityCount == 0)
+        {
+          <tr>
+            <td colspan="5" class="text-center">No amenities found</td>
+          </tr>
+        }
+        else
+        {
+          foreach (var amenity in Model.Amenities)
+          {
+            <tr>
+              <td class="text-center" style="width: 120px;">
+                <small>
+                  @if (Model.CanEdit)
+                  {
+                    <a class="whl-link whl-action-edit-amenity" data-amenityid="@amenity.AmenityId" title="Edit amenity"
+                      href="javascript:void(0);"><i class="fa-solid fa-pencil"></i></a>
+                    @* <a class="whl-link whl-action-delete-amenity ml-8" data-amenityid="@amenity.AmenityId" title="Delete amenity"
+                      href="javascript:void(0);"><i class="fa-solid fa-trash"></i></a> *@
+                  }
+                  <a class="whl-link whl-action-view-audit ml-8" data-entitytype="AMENITY"
+                    data-entityid="@amenity.AmenityId" title="View audit log" href="javascript:void(0);"><i
+                      class="fa-solid fa-list"></i></a>
+                </small>
+              </td>
+              <td class="text-left" style="width: 240px;"><small>@amenity.Name</small></td>
+              <td class="text-left"><small>@amenity.Description</small></td>
+              <td class="text-center" style="width: 120px;"><small>@amenity.UsageCount</small></td>
+              <td class="text-center" style="width: 60px;">
+                <small>
+                  @if (amenity.Active)
+                  {
+                    <i class="fa-solid fa-circle text-success"></i>
+                  }
+                </small>
+              </td>
+            </tr>
+          }
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Amenity Editor Modal -->
+<div class="modal fade" id="amenityEditorModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+  aria-labelledby="amenityEditorModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="amenityEditorModalLabel"><span id="whl-title-amenity-action">Amenity
+            Editor</span></h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+      </div>
+      <div class="modal-footer">
+        <input type="hidden" id="hidAmenityAction" name="hidAmenityAction" value="" />
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i
+            class="fa-solid fa-ban"></i>&nbsp;Cancel</button>
+        <button type="button" class="btn btn-primary whl-action-save-amenity"><i
+            class="fa-solid fa-floppy-disk"></i>&nbsp;Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Audit Viewer Modal -->
+@await Html.PartialAsync("~/Views/Shared/_AuditViewerModalPartial.cshtml")
+
+@section Scripts
+{
+  <script>
+    //<![CDATA[
+    const amenityAddUrl = '@Url.Action("Add", "Amenities")';
+    const amenityEditUrl = '@Url.Action("Edit", "Amenities")';
+    const amenityDeleteUrl = '@Url.Action("Delete", "Amenities")';
+    const auditViewerUrl = '@Url.Action("Index", "Audit")';
+    //]]>
+  </script>
+  <script src="~/js/management/common.js" asp-append-version="true"></script>
+  <script src="~/js/management/amenities.js" asp-append-version="true"></script>
+}

@@ -1,0 +1,35 @@
+@model HouseholdAccountViewModel
+
+<div class="card border-0 border-bottom mb-3 h-100">
+  <div class="card-body">
+    <div class="card-title">
+      <span class="fs-5 fw-semibold text-dark">@($"XXXX-{Model.AccountNumber}")</span><br />
+      @if (!string.IsNullOrEmpty(Model.InstitutionName))
+      {
+        <span class="text-secondary">@Model.InstitutionName</span>
+      }
+      else
+      {
+        <span class="text-secondary">Not Specified</span>
+      }
+    </div>
+    <div class="card-text">
+      <div class="row mb-3">
+        <div class="col-xs-12 col-md-6">
+          <small class="border-bottom">Account Type</small><br />
+          <span class="fs-5 fw-semibold text-dark">@Model.DisplayAccountType</span>
+        </div>
+        <div class="col-xs-12 col-md-6">
+          <small class="border-bottom">Account Value</small><br />
+          <span class="fs-5 fw-semibold text-dark">@Model.AccountValueAmt.ToString("C0")</span>
+        </div>
+      </div>
+    </div>
+    <a class="btn btn-sm btn-outline-secondary" asp-area="" asp-controller="Household" asp-action="EditAccount"
+      asp-route-accountid="@Model.AccountId" title="Edit account information" aria-label="Edit account information"
+      data-accountid="@Model.AccountId">Edit</a>
+    <a href="javascript:void(0);" class="btn btn-sm btn-outline-secondary whl-action-deleteaccount"
+      title="Remove account from household" aria-label="Remove account from household" data-accountid="@Model.AccountId"
+      data-accountnumber="@Model.AccountNumber" data-accounttype="@Model.DisplayAccountType">Remove</a>
+  </div>
+</div>

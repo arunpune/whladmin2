@@ -1,0 +1,116 @@
+@model DashboardViewModel
+@{
+  ViewData["Title"] = "Dashboard";
+  ViewData["MENUID"] = "DASHBOARD";
+}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a class="whl-link" asp-area="" asp-controller="Home" asp-action="Index" title="Home"><i
+          class="fa-solid fa-house"></i></a></li>
+    <li class="breadcrumb-item active" aria-current="page">My Dashboard</li>
+  </ol>
+</nav>
+
+<div class="text-left mt-32">
+  <div class="card text-bg-light shadow-sm">
+    <div class="card-body">
+
+      <div class="row mb-3 border-bottom">
+        <div class="col-xs-1 col-md-1">
+          <small class="fw-bold">Application</small>
+        </div>
+        <div class="col-xs-11 col-md-4">
+          <small class="fw-bold">Opportunity</small>
+        </div>
+        <div class="col-xs-12 col-md-1">
+          <small class="fw-bold">Status</small>
+        </div>
+        <div class="col-xs-12 col-md-2">
+          <small class="fw-bold">Due Date</small>
+        </div>
+        <div class="col-xs-12 col-md-2">
+          <small class="fw-bold">Lottery Date</small>
+        </div>
+        <div class="col-xs-12 col-md-2">
+          <small class="fw-bold">Submitted</small>
+        </div>
+      </div>
+      @if (Model.ApplicationsCount > 0)
+      {
+        foreach (var application in Model.Applications)
+        {
+          <div class="row mb-3">
+            <div class="col-xs-1 col-md-1">
+              @if ((application.StatusCd ?? "").Trim().Equals("WITHDRAWN", StringComparison.CurrentCultureIgnoreCase))
+              {
+                <small>@application.ApplicationId</small>
+              }
+              else if ((application.StatusCd ?? "").Trim().Equals("DRAFT", StringComparison.CurrentCultureIgnoreCase))
+              {
+                <small><a class="whl-link" asp-area="" asp-controller="Applications" asp-action="ApplicantInfo" asp-route-applicationId="@application.ApplicationId" title="View/manage application" aria-label="View/manage application">@application.ApplicationId</a></small>
+              }
+              else
+              {
+                <small><a class="whl-link" asp-area="" asp-controller="Applications" asp-action="Submitted" asp-route-applicationId="@application.ApplicationId" title="View submission" aria-label="View submission">@application.ApplicationId</a></small>
+              }
+            </div>
+            <div class="col-xs-11 col-md-4">
+              <small>
+                @application.Name<br />
+                <span class="text-secondary">@($"{application.StreetLine1}, {application.City} {application.StateCd} {application.ZipCode}")</span>
+              </small>
+            </div>
+            <div class="col-xs-12 col-md-1">
+              <small>@application.StatusDescription</small>
+            </div>
+            <div class="col-xs-12 col-md-2">
+              <small>
+                @if (application.ApplicationEndDate.GetValueOrDefault(DateTime.MinValue) > DateTime.MinValue)
+                {
+                  @($"{application.ApplicationEndDate.Value:MMM d, yyyy h:mm tt}")
+                }
+              </small>
+            </div>
+            <div class="col-xs-12 col-md-2">
+              <small>
+                @if (application.LotteryDate.GetValueOrDefault(DateTime.MinValue) > DateTime.MinValue)
+                {
+                  @($"{application.LotteryDate.Value:MMM d, yyyy h:mm tt}")
+                }
+              </small>
+            </div>
+            <div class="col-xs-12 col-md-2">
+              <small>
+                @if (application.SubmittedDate.GetValueOrDefault(DateTime.MinValue) > DateTime.MinValue)
+                {
+                  @($"{application.SubmittedDate.Value:MMM d, yyyy h:mm tt}")
+                }
+              </small>
+            </div>
+          </div>
+        }
+      }
+      else
+      {
+        <div class="row mb-3 mt-32">
+          <div class="col-xs-12 text-center">
+            <p class="lead">You have not drafted or submitted any online housing applications to date.</p>
+          </div>
+        </div>
+      }
+
+    </div>
+  </div>
+</div>
+
+@section Scripts
+{
+  <script>
+    //<![CDATA[
+    $(function () {
+
+    });
+    //]]>
+  </script>
+}

@@ -1,0 +1,1 @@
+deployscript.bat SQL1129 WHL whladmin whladmin123 1_0_0 PROD

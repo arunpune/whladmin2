@@ -1,0 +1,130 @@
+@model EditableVoucherInfoViewModel
+@{
+  ViewData["Title"] = "Edit Voucher Information";
+  ViewData["MENUID"] = "HOUSEHOLD";
+}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a class="whl-link" asp-area="" asp-controller="Home" asp-action="Index" title="Home"><i
+          class="fa-solid fa-house"></i></a></li>
+    <li class="breadcrumb-item"><a class="whl-link" asp-area="" asp-controller="Household" asp-action="Index"
+        title="Household">Household</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Edit Voucher Information</li>
+  </ol>
+</nav>
+
+<div class="text-left mt-32 household-page">
+  <div class="card border-0 shadow-lg">
+    @* <h5 class="card-header">Edit Voucher Information</h5> *@
+    <div class="card-body">
+      <h4 class="text-secondary whl-card-title">Edit Voucher Information</h4>
+      @using (Html.BeginForm("EditVoucherInfo", "Household", FormMethod.Post, new
+      {
+        @class = "form whl-form-edit-voucherinfo",
+        id = "frmEditVoucherInfo",
+        name = "frmEditVoucherInfo"
+      }))
+      {
+
+        if (!string.IsNullOrEmpty((Model.Message ?? "").Trim()))
+        {
+          <div id="divSaveErrorMessage">
+            <h6 class="text-danger"><i class="fa-solid fa-triangle-exclamation"></i>&nbsp;Error</h6>
+            <p id="lblSaveErrorMessage">@Model.Message</p>
+            <hr />
+          </div>
+        }
+
+        <div class="row mb-3">
+          <div class="col-xs-12">
+            <small><strong>Note:</strong> This information is used to determine what eligibility levels apply to your application. New York State
+              Human Rights Law prohibits the discrimination in housing based on lawful source of income, including
+              whether you have a Section 8 voucher.</small>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-xs-12 col-md-6">
+            <label class="form-label small fw-bolder">Does any one in your household receive rental assistance that will move with them to a new apartment?</label><br />
+            <div id="whl-formfield-helptext-voucherind" class="form-text">Vouchers and rental subsidies such as Section 8, or VASH are all accepted. Minimum income requirements
+              do not apply if you have a voucher or a rental subsidy. However, rent should be within maximum limits
+              allowed by your voucher or rental assistance program.</div>
+          </div>
+          <div class="col-xs-12 col-md-6">
+            <div class="form-check form-switch">
+              <input type="checkbox" class="form-check-input whl-formfield-voucherind" role="switch" asp-for="VoucherInd" />
+              <label class="form-check-label small fw-bolder" asp-for="VoucherInd">Yes</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="whl-formfieldrow-vouchercds mt-32" style="display: none;">
+
+          @await Html.PartialAsync("~/Views/Shared/_RequiredFieldBlurb.cshtml")
+
+          <div class="row mt-32 mb-3 whl-formfieldrow-vouchercds">
+            <div class="col-xs-12 col-md-6">
+              <label class="form-check-label small fw-bolder">Voucher Types <span class="fw-bold text-danger">*</span></label>
+            </div>
+            <div class="col-xs-12 col-md-6">
+              @Html.HiddenFor(h => h.VoucherCds, htmlAttributes: new { @class = "whl-formfield-vouchercds" })
+              <div class="form-check form-switch">
+                @foreach (var item in Model.VoucherTypes)
+                {
+                  var itemName = $"chkVoucherTypeCd_{item.Key}";
+                  var itemSelected = (Model.VoucherCds ?? "").Split(",", StringSplitOptions.RemoveEmptyEntries).Contains(item.Key);
+                  if (itemSelected)
+                  {
+                    <input type="checkbox" class="form-check-input whl-formfield-vouchercd" value="@item.Key" id="@itemName" name="@itemName" checked="checked" aria-checked="true" role="switch" />
+                  }
+                  else
+                  {
+                    <input type="checkbox" class="form-check-input whl-formfield-vouchercd" value="@item.Key" id="@itemName" name="@itemName" aria-checked="false" role="switch" />
+                  }
+                  <label for="@itemName">@item.Value</label><br />
+                }
+              </div>
+            </div>
+          </div>
+
+          <div class="row mt-32 mb-3 whl-formfieldrow-voucherother" style="display: none;">
+            <div class="col-xs-12 col-md-6">
+              <label class="form-label small fw-bolder" asp-for="VoucherOther">Other Voucher Type(s) <span class="fw-bold text-danger">*</span></label>
+            </div>
+            <div class="col-xs-12 col-md-6">
+              <input type="text" class="form-control whl-formfield-voucherother" maxlength="500" placeholder="Specify other voucher type(s)" autocomplete="off" asp-for="VoucherOther" />
+              <div id="whl-formfield-helptext-voucherother" class="form-text">Please specify other voucher type(s) as a comma-separated list.</div>
+            </div>
+          </div>
+
+          <div class="row mt-32 mb-3 whl-formfieldrow-voucheradminname" style="display: none;">
+            <div class="col-xs-12 col-md-6">
+              <label class="form-label small fw-bolder" asp-for="VoucherAdminName">Office(s) that administer(s) your subsidy(ies)/voucher(s) <span class="fw-bold text-danger">*</span></label>
+            </div>
+            <div class="col-xs-12 col-md-6">
+              <input type="text" class="form-control whl-formfield-voucheradminname" maxlength="500" placeholder="Specify the office(s) that administer your subsidy(ies)/voucher(s)" autocomplete="off" asp-for="VoucherAdminName" />
+              <div id="whl-formfield-helptext-voucheradminname" class="form-text">Please specify the name(s) of the office(s) that administer your subsidy(ies)/voucher(s) as a comma-separated list.</div>
+            </div>
+          </div>
+
+        </div>
+
+        <hr />
+
+        @Html.HiddenFor(h => h.Username)
+        @Html.HiddenFor(h => h.HouseholdId)
+        <input type="hidden" id="hidSaveVoucherInfoAction" name="hidSaveVoucherInfoAction" value="" />
+        <a class="btn btn-outline-secondary whl-action-cancel-voucherinfo" asp-area="" asp-controller="Household" asp-action="Index" title="Cancel Changes" aria-label="Cancel Changes">Cancel</a>
+        <button type="submit" class="btn btn-primary whl-action-save-voucherinfo" title="Save Changes" aria-label="Save Changes">Save Changes</button>
+
+      }
+    </div>
+  </div>
+</div>
+
+@section Scripts
+{
+  <script src="~/js/household/voucher.actions.js" asp-append-version="true"></script>
+  <script src="~/js/household/voucher.validations.js" asp-append-version="true"></script>
+}

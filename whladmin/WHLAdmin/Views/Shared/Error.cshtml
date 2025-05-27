@@ -1,0 +1,33 @@
+﻿@inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment environment
+@using Microsoft.Extensions.Hosting;
+
+@model ErrorViewModel
+@{
+  ViewData["Title"] = "Error";
+}
+
+<h4 class="text-danger mt-32">Error.</h4>
+<p class="text-danger">An error occurred while processing your request. Please try again later.</p>
+
+@if (Model.ShowRequestId)
+{
+  <p><strong>Request ID:</strong> <code>@Model.RequestId</code><br />
+    <small class="text-secondary">Please reference the Request ID listed above if contacting the support team.</small>
+  </p>
+}
+
+@if (environment.IsDevelopment())
+{
+  <div class="card card-light border-0 mt-64">
+    <div class="card-header"><h5>Exception Details</h5></div>
+    <div class="card-body">
+      <div class="card-text font-monospace">
+        Correlation: <code>@Model.CorrelationId</code><br />
+        Code: <code>@Model.Code</code><br />
+        Message: <code>@Model.Message</code><br />
+        Stack Trace:
+      </div>
+      <blockquote class="font-monospace mt-16 mb-3" style="padding-left: 32px; border-left: 8px solid #ff0000;">@Model.Details</blockquote>
+    </div>
+  </div>
+}

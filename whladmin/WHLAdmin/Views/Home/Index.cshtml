@@ -1,0 +1,103 @@
+﻿@{
+  ViewData["Title"] = "Home Page";
+}
+
+<div class="text-left mt-128">
+  <div class="row row-cols-1 row-cols-md-3 g-4">
+    <div class="col">
+      <h5 class="fs-5 border-bottom mb-3">Listings, Applications &amp; Lotteries</h5>
+      <ul class="mt-16 mb-3">
+        <li><a class="whl-link" asp-area="" asp-controller="Listings" asp-action="Index"
+            title="Manage listings for the public site" aria-label="Manage listings for the public site">Listings
+            Management</a></li>
+        <li><a class="whl-link" asp-area="" asp-controller="Applications" asp-action="Index"
+            title="Manage paper applications for the public site"
+            aria-label="Manage paper applications for the public site">Applications
+            Management</a></li>
+        <li><a class="whl-link" asp-area="" asp-controller="Applications" asp-action="Duplicates"
+            title="Check for potential duplicate applications for the public site"
+            aria-label="Check for potential duplicate applications for the public site">Potential Duplicate
+            Applications Management</a></li>
+        <li><a class="whl-link" asp-area="" asp-controller="Lotteries" asp-action="Index"
+            title="Manage lotteries for the public site" aria-label="Manage lotteries for the public site">Lotteries
+            Management</a></li>
+      </ul>
+    </div>
+    <div class="col">
+      <h5 class="fs-5 border-bottom mb-3">Admin Site Features</h5>
+      <ul class="mt-16 mb-3">
+        <li><a class="whl-link" asp-area="" asp-controller="Users" asp-action="Index" title="Manage admin site users"
+            aria-label="Manage admin site users">User Management</a></li>
+        <li><a class="whl-link" asp-area="" asp-controller="Amenities" asp-action="Index"
+            title="Manage amenities for listings" aria-label="Manage amenities for listings">Amenities
+            Management</a>
+        </li>
+        <li><a class="whl-link" asp-area="" asp-controller="AMIConfigs" asp-action="Index"
+            title="Manage AMIs configurations" aria-label="Manage AMI configurations">AMIs Management</a>
+        </li>
+        <li><a class="whl-link" asp-area="" asp-controller="Amortizations" asp-action="Index"
+            title="Manage Amortization Rates" aria-label="Manage Amortization Rates">Amortization Rates Management</a>
+        </li>
+        <li><a class="whl-link" asp-area="" asp-controller="DocumentTypes" asp-action="Index"
+            title="Manage document types for listings" aria-label="Manage document types for listings">Document Types
+            Management</a>
+        </li>
+        <li><a class="whl-link" asp-area="" asp-controller="FundingSources" asp-action="Index"
+            title="Manage funding sources for listings" aria-label="Manage funding sources for listings">Funding Sources
+            Management</a>
+        </li>
+        <li><a class="whl-link" asp-area="" asp-controller="MarketingAgents" asp-action="Index"
+            title="Manage marketing agents for listings" aria-label="Manage marketing agents for listings">Marketing
+            Agents Management</a></li>
+        <li><a class="whl-link" asp-area="" asp-controller="NotificationConfigs" asp-action="Index"
+            title="Manage notifications sent for various events"
+            aria-label="Manage notifications sent for various events">Notifications Management</a></li>
+      </ul>
+    </div>
+    <div class="col">
+      <h5 class="fs-5 border-bottom mb-3">Public Site Features</h5>
+      <ul class="mt-16 mb-3">
+        <li><a class="whl-link" asp-area="" asp-controller="FAQConfigs" asp-action="Index"
+            title="Manage FAQs listed on the public site" aria-label="Manage FAQs listed on the public site">FAQs
+            Management</a></li>
+        <li><a class="whl-link" asp-area="" asp-controller="QuoteConfigs" asp-action="Index"
+            title="Manage quote listed on the home page of the public site"
+            aria-label="Manage quote listed on the home page of the public site">Home Page Quotes
+            Management</a></li>
+        <li><a class="whl-link" asp-area="" asp-controller="ResourceConfigs" asp-action="Index"
+            title="Manage Quotes listed on the public site"
+            aria-label="Manage Resources and Links listed on the public site">Resources &amp; Links
+            Management</a></li>
+        <li><a class="whl-link" asp-area="" asp-controller="VideoConfigs" asp-action="Index"
+            title="Manage Videos listed on the public site" aria-label="Manage Videos listed on the public site">Videos
+            Management</a></li>
+      </ul>
+    </div>
+    <div class="col">
+      <h5 class="fs-5 border-bottom mb-3">Reports</h5>
+      <ul class="mt-16 mb-3">
+        <li><a class="whl-link" asp-area="" asp-controller="Reports" asp-action="DemographicsReport"
+            title="View application demographics report" aria-label="View application demographics report">Application
+            Demographics</a></li>
+        <li><a class="whl-link" asp-area="" asp-controller="Reports" asp-action="RegistrationsReport"
+            title="View registrations summary report" aria-label="View registrations summary report">Registrations
+            Summary</a></li>
+        <li><a class="whl-link" asp-area="" asp-controller="Reports" asp-action="MarketEvaluationsReport"
+            title="View market evaluations report" aria-label="View market evaluations report">Market
+            Evaluations</a></li>
+      </ul>
+    </div>
+    <environment exclude="Production">
+      <div class="col">
+        <h5 class="fs-5 border-bottom mb-3">Test Features</h5>
+        <ul class="mt-16 mb-3">
+          <li><a class="whl-link" asp-area="" asp-controller="EmailTest" asp-action="Index"
+              title="Test email functionality" aria-label="Test email Functionality">Emails</a></li>
+          <li><a class="whl-link" asp-area="" asp-controller="EmfluenceTest" asp-action="Index"
+              title="Test Emfluence functionality" aria-label="Test Emfluence functionality">Emfluence</a>
+          </li>
+        </ul>
+      </div>
+    </environment>
+  </div>
+</div>

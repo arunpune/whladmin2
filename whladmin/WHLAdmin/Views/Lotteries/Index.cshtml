@@ -1,0 +1,123 @@
+﻿@model ListingsViewModel
+@{
+  ViewData["Title"] = "Lotteries";
+  var listingsCount = Model.Listings?.Count() ?? 0;
+}
+
+<div class="row">
+  <div class="col-xs-12 col-md-9">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a class="whl-link" asp-area="" asp-controller="Home" asp-action="Index"
+            title="Home"><small><i class="fa-solid fa-house"></i></small></a></li>
+        <li class="breadcrumb-item"><small>Listings, Applications &amp; Lotteries</small></li>
+        <li class="breadcrumb-item active fs-6 fw-bolder" aria-current="page"><small>@ViewData["Title"]</small></li>
+      </ol>
+    </nav>
+  </div>
+  <div class="col-xs-12 col-md-3 text-end">
+    <button type="button" class="btn btn-sm btn-link whl-link mr-4 whl-action-refresh-page" title="Refresh"
+      aria-label="Refresh"><i class="fa-solid fa-rotate-right"></i></button>
+  </div>
+</div>
+
+<div class="text-left mt-8">
+  <div class="card bg-light">
+    <table class="table table-sm table-hover">
+      <thead class="bg-whlgreen text-white">
+        <tr>
+          <th class="text-center" style="width: 60px;"><small>&nbsp;</small></th>
+          <th class="text-center" style="width: 180px;"><small>Lottery ID</small></th>
+          <th class="text-center" style="width: 180px;"><small>Listing ID</small></th>
+          <th class="text-left"><small>Name</small></th>
+          <th class="text-left" style="width: 240px;"><small>Lottery Date/Time</small></th>
+          <th class="text-center" style="width: 120px;"><small>Status</small></th>
+        </tr>
+      </thead>
+      <tbody class="table-group-divider">
+        @if (listingsCount == 0)
+        {
+          <tr>
+            <td colspan="6" class="text-center">No lotteries found</td>
+          </tr>
+        }
+        else
+        {
+          foreach (var listing in Model.Listings)
+          {
+            <tr>
+              <td class="text-center" style="width: 60px;">
+                <small>
+                  @if (listing.LotteryId > 0)
+                  {
+                    <a class="whl-link whl-action-view-audit ml-8" data-entitytype="LOTTERY"
+                      data-entityid="@listing.LotteryId" title="View audit log" href="javascript:void(0);"><i
+                        class="fa-solid fa-list"></i></a>
+                  }
+                </small>
+              </td>
+              <td class="text-center" style="width: 180px;">
+                <small>
+                  @if (listing.LotteryId > 0)
+                  {
+                    <a class="whl-link whl-action-view-results" data-lotteryid="@listing.LotteryId" title="View results"
+                      asp-area="" asp-controller="Lotteries" asp-action="Results"
+                      asp-route-lotteryId="@listing.LotteryId">@listing.LotteryId</a>
+                  }
+                  else
+                  {
+                    if (Model.CanEdit && listing.CanRunLottery)
+                    {
+                      <a href="javascript:void(0);" class="whl-link whl-action-run-lottery" data-listingid="@listing.ListingId"
+                        data-listingname="@listing.Name" data-listingaddress="@listing.DisplayAddress" title="Run lottery"><i
+                          class="fa-solid fa-play"></i></a>
+                    }
+                  }
+                </small>
+              </td>
+              <td class="text-center" style="width: 180px;">
+                <small>
+                  <a class="whl-link whl-action-view-listing" title="View listing" asp-area="" asp-controller="Listings"
+                    asp-action="Details" asp-route-listingId="@listing.ListingId">@listing.ListingId</a>
+                </small>
+              </td>
+              <td class="text-left">
+                <small>@listing.Name<br />
+                  <span class="text-secondary">@listing.DisplayAddress</span></small>
+              </td>
+              <td class="text-left" style="width: 240px;">
+                <small>
+                  @if (!string.IsNullOrEmpty(listing.DisplayLotteryDate))
+                  {
+                    <span>@listing.DisplayLotteryDate</span>
+                  }
+                </small>
+              </td>
+              <td class="text-center" style="width: 120px;"><small>@(listing.LotteryId > 0 ? "Complete" : "Not Run")</small>
+              </td>
+            </tr>
+          }
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Run Lottery Modal -->
+@await Html.PartialAsync("~/Views/Lotteries/_RunLottery.cshtml", "RUN")
+
+<!-- Audit Viewer Modal -->
+@await Html.PartialAsync("~/Views/Shared/_AuditViewerModalPartial.cshtml")
+
+@section Scripts
+{
+  <script>
+    //<![CDATA[
+    const lotteryRunUrl = '@Url.Action("RunLottery", "Lotteries")';
+    const lotteryResultsUrl = '@Url.Action("Results", "Lotteries")';
+    const auditViewerUrl = '@Url.Action("Index", "Audit")';
+    //]]>
+  </script>
+  <script src="~/js/management/common.js" asp-append-version="true"></script>
+  <script src="~/js/lotteries/lotteries.js" asp-append-version="true"></script>
+}

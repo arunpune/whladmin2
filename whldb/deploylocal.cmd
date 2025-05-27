@@ -1,0 +1,1 @@
+deployscript.bat localhost WHL whladmin whladmin123 0_1_4 DEV

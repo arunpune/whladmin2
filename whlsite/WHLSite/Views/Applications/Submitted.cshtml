@@ -1,0 +1,848 @@
+@model HousingApplicationViewModel
+@{
+  ViewData["Title"] = "Application Complete";
+  ViewData["MENUID"] = "DASHBOARD";
+}
+
+@await Html.PartialAsync("_Breadcrumb.cshtml", new RailroadViewModel(Model.Username, Model.ApplicationId,
+  Model.ListingId, 99))
+
+<div class="text-left mt-32 bg-white dashboard-page">
+  @await Html.PartialAsync("_Railroad.cshtml", new RailroadViewModel(Model.Username, Model.ApplicationId,
+      Model.ListingId, 99, true))
+  <div class="row mb-3">
+    <div class="col-xs-12 col-md-9">
+      <div class="card border-0">
+        <div class="card-body">
+          <h5 class="fs-4 border-bottom text-success">Application Complete</h5>
+
+          <div class="card mt-16 border-0">
+            <div class="card-body">
+              @if (Model.IsPotentialDuplicate)
+              {
+                <div class="alert alert-warning" role="alert">
+                  <div class="mb-2">
+                    This application has been identified as a <strong>Potential Duplicate</strong>. You may review/respond to the administrator using the <strong>Comments</strong> section.
+                  </div>
+                  <div>
+                    <a class="btn btn-outline-secondary whl-action-view-comments mr-2" href="#COMMENTS" title="View Comments"
+                      aria-label="View Comments">View Comments</a>
+                  </div>
+                </div>
+              }
+              <p class="lead">You submitted this housing application on <strong>@($"{Model.SubmittedDate:f}")</strong>. You may review the details of this
+                submission below, manage documents for this application, or return to the Dashboard by clicking
+                <strong>Close</strong>, or to the <strong>Listings</strong> page to review and apply for other
+                opportunities.</p>
+              @await Html.PartialAsync("_Actions.cshtml", new ApplicationActionsViewModel(Model.Username,
+                     Model.ApplicationId, Model.ListingId, 99, Model.DocumentsReqdInd, Model.CanWithdraw))
+            </div>
+          </div>
+
+          <hr />
+
+          <div class="text-left mt-32">
+            <div class="card text-bg-light border-0">
+              <div class="card-body">
+                <h4 class="text-secondary whl-card-title">Profile Information</h4>
+                <div class="card-text">
+                  <div class="row mb-3 mt-16">
+                    <div class="col-xs-12 col-sm-6 col-md-4"><small class="border-bottom">Name</small><br />
+                      @if (!string.IsNullOrEmpty(Model.DisplayName))
+                      {
+                        <span class="fs-5 fw-semibold text-dark">@Model.DisplayName</span>
+                      }
+                      else
+                      {
+                        <span class="fs-5 fw-light text-secondary">Not Specified</span>
+                      }
+                    </div>
+                    <div class="col-xs-12 col-sm-6 col-md-4"><small class="border-bottom">Last 4 of
+                        SSN/ITIN</small><br />
+                      @if (!string.IsNullOrEmpty(Model.Last4SSN))
+                      {
+                        <span class="fs-5 fw-semibold text-dark whl-show-last4ssn" style="display: block;">***-**-**** <i
+                            class="fa-regular fa-eye whl-action-togglelast4ssn" title="Show Last 4 of SSN/ITIN"
+                            aria-label="Show Last 4 of SSN/ITIN"></i></span>
+                        <span class="fs-5 fw-semibold text-dark whl-hide-last4ssn"
+                          style="display: none;">@($"***-**-{Model.Last4SSN}") <i
+                            class="fa-regular fa-eye-slash whl-action-togglelast4ssn" title="Hide Last 4 of SSN/ITIN"
+                            aria-label="Hide Last 4 of SSN/ITIN"></i></span>
+                      }
+                      else
+                      {
+                        <span class="fs-5 fw-light text-secondary">Not Specified</span>
+                      }
+                    </div>
+                    <div class="col-xs-12 col-sm-6 col-md-4"><small class="border-bottom">Date of Birth</small><br />
+                      @if (!string.IsNullOrEmpty(Model.DisplayDateOfBirth))
+                      {
+                        <span class="fs-5 fw-semibold text-dark whl-show-dateofbirth" style="display: block;">**/**/****
+                          <i class="fa-regular fa-eye whl-action-toggledateofbirth" title="Show Date of Birth"
+                            aria-label="Show Date of Birth"></i></span>
+                        <span class="fs-5 fw-semibold text-dark whl-hide-dateofbirth"
+                          style="display: none;">@($"{Model.DisplayDateOfBirth}") <i
+                            class="fa-regular fa-eye-slash whl-action-toggledateofbirth" title="Hide Date of Birth"
+                            aria-label="Hide Date of Birth"></i></span>
+                      }
+                      else
+                      {
+                        <span class="fs-5 fw-light text-secondary">Not Specified</span>
+                      }
+                    </div>
+                  </div>
+                  <div class="row mb-3 mt-16">
+                    <div class="col-xs-12 col-sm-6 col-md-6"><small class="border-bottom">Identification
+                        Document</small><br />
+                      @if (!string.IsNullOrEmpty(Model.DisplayIdTypeValue))
+                      {
+                        if (!string.IsNullOrEmpty(Model.DisplayIdIssueDate))
+                        {
+                          <span class="fs-5 fw-semibold text-dark">@Model.DisplayIdTypeValue</span>
+
+                          <br />
+                          <small>Issued: @Model.DisplayIdIssueDate</small>
+                        }
+                        else
+                        {
+                          <span class="fs-5 fw-semibold text-dark">@Model.DisplayIdTypeValue</span>
+                        }
+                      }
+                      else
+                      {
+                        <span class="fs-5 fw-light text-secondary">Not Specified</span>
+                      }
+                    </div>
+                  </div>
+                  <div class="row mb-3 mt-16">
+                    <div class="col-xs-12 col-sm-6 col-md-4"><small class="border-bottom">Gender</small><br />
+                      @if (!string.IsNullOrEmpty(Model.GenderDescription) &&
+                      Model.GenderCd != "NOTSPEC")
+                      {
+                        <span class="fs-5 fw-semibold text-dark">@Model.GenderDescription</span>
+                      }
+                      else
+                      {
+                        <span class="fs-5 fw-light text-secondary">Not Specified</span>
+                      }
+                    </div>
+                    <div class="col-xs-12 col-sm-6 col-md-4"><small class="border-bottom">Race</small><br />
+                      @if (!string.IsNullOrEmpty(Model.RaceDescription) && Model.RaceCd !=
+                      "NOTSPEC")
+                      {
+                        <span class="fs-5 fw-semibold text-dark">@Model.RaceDescription</span>
+                      }
+                      else
+                      {
+                        <span class="fs-5 fw-light text-secondary">Not Specified</span>
+                      }
+                    </div>
+                    <div class="col-xs-12 col-sm-6 col-md-4"><small class="border-bottom">Ethnicity</small><br />
+                      @if (!string.IsNullOrEmpty(Model.EthnicityDescription) &&
+                      Model.EthnicityCd != "NOTSPEC")
+                      {
+                        <span class="fs-5 fw-semibold text-dark">@Model.EthnicityDescription</span>
+                      }
+                      else
+                      {
+                        <span class="fs-5 fw-light text-secondary">Not Specified</span>
+                      }
+                    </div>
+                  </div>
+                  <div class="row mb-3">
+                    <div class="col-xs-12 col-sm-6 col-md-4"><small class="border-bottom">Student</small><br />
+                      <span class="fs-5 fw-semibold text-dark">@(Model.StudentInd ? "Yes" : "No")</span>
+                    </div>
+                    <div class="col-xs-12 col-sm-6 col-md-4"><small class="border-bottom">Disabled</small><br />
+                      <span class="fs-5 fw-semibold text-dark">@(Model.DisabilityInd ? "Yes" :
+                        "No")</span>
+                    </div>
+                    <div class="col-xs-12 col-sm-6 col-md-4"><small class="border-bottom">Veteran</small><br />
+                      <span class="fs-5 fw-semibold text-dark">@(Model.VeteranInd ? "Yes" : "No")</span>
+                    </div>
+                  </div>
+                  <div class="row mb-3">
+                    <div class="col-xs-12 col-sm-6 col-md-4"><small class="border-bottom">Ever lived in Westchester
+                        County?</small><br />
+                      <span class="fs-5 fw-semibold text-dark">@(Model.EverLivedInWestchesterInd ? "Yes"
+                        : "No")</span>
+                    </div>
+                    <div class="col-xs-12 col-sm-6 col-md-4"><small class="border-bottom">Currently work in Westchester
+                        County?</small><br />
+                      <span class="fs-5 fw-semibold text-dark">@(Model.CurrentlyWorkingInWestchesterInd ?
+                        "Yes" : "No")</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="text-left mt-16">
+            <div class="card text-bg-light border-0">
+              <div class="card-body">
+                <h4 class="text-secondary whl-card-title">Contact Information</h4>
+                <div class="card-text mt-16">
+                  <div class="row mb-3">
+                    <div class="col-xs-12 col-sm-6 col-md-6"><small class="border-bottom">Primary Phone
+                        Number</small><br />
+                      <span class="fs-5 fw-semibold text-dark">
+                        @if (Model.PhoneNumberTypeCd == "CELL")
+                        {
+                          <i class="fa-solid fa-mobile-screen" title="@Model.PhoneNumberTypeDescription"
+                            aria-label="@Model.PhoneNumberTypeDescription"></i>
+                        }
+                        else if (Model.PhoneNumberTypeCd == "LAND")
+                        {
+                          <i class="fa-solid fa-phone" title="@Model.PhoneNumberTypeDescription"
+                            aria-label="@Model.PhoneNumberTypeDescription"></i>
+                        }
+                        else
+                        {
+                          <i class="fa-solid fa-square-phone" title="@Model.PhoneNumberTypeDescription"
+                            aria-label="@Model.PhoneNumberTypeDescription"></i>
+                        }
+                        @Model.DisplayPhoneNumber
+                        @if (!string.IsNullOrEmpty(Model.PhoneNumberExtn))
+                        {
+                          <br />
+                          <small class="text-secondary">Extension @Model.PhoneNumberExtn</small>
+                        }
+                      </span>
+                    </div>
+                    <div class="col-xs-12 col-sm-6 col-md-6"><small class="border-bottom">Alternate Phone
+                        Number</small><br />
+                      @if (!string.IsNullOrEmpty(Model.AltPhoneNumber))
+                      {
+                        <span class="fs-5 fw-semibold text-dark">
+                          @if (Model.AltPhoneNumberTypeCd == "CELL")
+                          {
+                            <i class="fa-solid fa-mobile-screen" title="@Model.AltPhoneNumberTypeDescription"
+                              aria-label="@Model.AltPhoneNumberTypeDescription"></i>
+                          }
+                          else if (Model.AltPhoneNumberTypeCd == "LAND")
+                          {
+                            <i class="fa-solid fa-phone" title="@Model.AltPhoneNumberTypeDescription"
+                              aria-label="@Model.AltPhoneNumberTypeDescription"></i>
+                          }
+                          else
+                          {
+                            <i class="fa-solid fa-square-phone" title="@Model.AltPhoneNumberTypeDescription"
+                              aria-label="@Model.AltPhoneNumberTypeDescription"></i>
+                          }
+                          @Model.DisplayAltPhoneNumber
+                          @if (!string.IsNullOrEmpty(Model.AltPhoneNumberExtn))
+                          {
+                            <br />
+                            <small class="text-secondary">Extension @Model.AltPhoneNumberExtn</small>
+                          }
+                        </span>
+                      }
+                      else
+                      {
+                        <span class="fs-5 fw-light text-secondary">Not Specified</span>
+                      }
+                    </div>
+                  </div>
+                  <div class="row mb-3 mt-16">
+                    <div class="col-xs-12 col-sm-6 col-md-6"><small class="border-bottom">Email Address</small><br />
+                      <span class="fs-5 fw-semibold text-primary">@Model.EmailAddress</span>
+                    </div>
+                    <div class="col-xs-12 col-sm-6 col-md-6"><small class="border-bottom">Alternate Email
+                        Address</small><br />
+                      @if (!string.IsNullOrEmpty(Model.AltEmailAddress))
+                      {
+                        <span class="fs-5 fw-semibold text-dark">@Model.AltEmailAddress</span>
+                      }
+                      else
+                      {
+                        <span class="fs-5 fw-light text-secondary">Not Specified</span>
+                      }
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="text-left mt-16">
+            <div class="card text-bg-light border-0">
+              <div class="card-body">
+                <h4 class="text-secondary whl-card-title">Address Information</h4>
+                <div class="card-text mt-16">
+                  <div class="row mb-3">
+                    <div class="col-xs-12 col-md-6">
+                      <small class="border-bottom">Physical Address</small><br />
+                      @if (!string.IsNullOrEmpty(Model.PhysicalStreetLine1))
+                      {
+                        @await Html.PartialAsync("~/Views/Household/_AddressDisplay.cshtml", new AddressViewModel()
+                 {
+                   StreetLine1 = Model.PhysicalStreetLine1,
+                   StreetLine2 = Model.PhysicalStreetLine2,
+                   StreetLine3 = Model.PhysicalStreetLine3,
+                   City = Model.PhysicalCity,
+                   StateCd = Model.PhysicalStateCd,
+                   ZipCode = Model.PhysicalZipCode,
+                   County = Model.PhysicalCounty
+                 })
+                        ;
+                      }
+                      else
+                      {
+                        <span class="fs-5 fw-light text-secondary">Not Specified</span>
+                      }
+                    </div>
+                    @if (!string.IsNullOrEmpty(Model.PhysicalStreetLine1))
+                    {
+                      <div class="col-xs-12 col-md-6">
+                        <small class="border-bottom">Mailing Address</small><br />
+                        @if (Model.DifferentMailingAddressInd)
+                        {
+                          if (!string.IsNullOrEmpty(Model.MailingStreetLine1))
+                          {
+                            @await Html.PartialAsync("~/Views/Household/_AddressDisplay.cshtml", new AddressViewModel()
+                 {
+                   StreetLine1 = Model.MailingStreetLine1,
+                   StreetLine2 = Model.MailingStreetLine2,
+                   StreetLine3 = Model.MailingStreetLine3,
+                   City = Model.MailingCity,
+                   StateCd = Model.MailingStateCd,
+                   ZipCode = Model.MailingZipCode,
+                   County = Model.MailingCounty
+                 })
+                            ;
+                          }
+                          else
+                          {
+                            <span class="fs-5 fw-light text-secondary">Not Specified</span>
+                          }
+                        }
+                        else
+                        {
+                          <span class="fs-5 fw-semibold text-dark">Same as Physical Address</span>
+                        }
+                      </div>
+                    }
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="text-left mt-16">
+            <div class="card text-bg-light border-0">
+              <div class="card-body">
+                <h4 class="text-secondary whl-card-title">Vouchers / Rental Assistance</h4>
+                <div class="card-text mt-16">
+                  <div class="row mb-3">
+                    <div class="col-xs-12">
+                      <small><strong>Note:</strong> This information is used to determine what eligibility levels apply
+                        to your application. New York State Human Rights Law prohibits the discrimination in housing
+                        based on lawful source of income, including whether you have a Section 8 voucher.</small>
+                    </div>
+                  </div>
+                  <div class="row mb-3">
+                    <div class="col-xs-12 col-md-10">
+                      <small>Does any one in your household receive rental assistance that will move with them to a new
+                        apartment?<br />
+                        <span class="text-secondary">Vouchers and rental subsidies such as Section 8, or VASH are all
+                          accepted. Minimum income requirements do not apply if you have a voucher or a rental subsidy.
+                          However,
+                          rent should be within maximum limits allowed by your voucher or rental assistance
+                          program.</span>
+                      </small>
+                    </div>
+                    <div class="col-xs-12 col-md-2">
+                      <span class="fs-5 fw-semibold text-dark">@(Model.VoucherInd ? "Yes" :
+                        "No")</span>
+                    </div>
+                  </div>
+                  @if (Model.VoucherInd)
+                  {
+                    <div class="row mb-3">
+                      <div class="col-xs-12 col-md-6">
+                        <small>What types of rental assistance does your household receive?</small>
+                      </div>
+                      <div class="col-xs-12 col-md-6">
+                        @if (!string.IsNullOrEmpty(Model.DisplayVouchers))
+                        {
+                          <span class="fs-5 fw-semibold text-dark">@Model.DisplayVouchers</span>
+                        }
+                        else
+                        {
+                          <span class="fs-5 fw-light text-secondary">Not Specified</span>
+                        }
+                      </div>
+                    </div>
+                    <div class="row mb-3">
+                      <div class="col-xs-12 col-md-6">
+                        <small>Name(s) of the office(s) that administer(s) your subsidy(ies)/voucher(s)?</small>
+                      </div>
+                      <div class="col-xs-12 col-md-6">
+                        @if (!string.IsNullOrEmpty(Model.VoucherAdminName))
+                        {
+                          <span class="fs-5 fw-semibold text-dark">@Model.VoucherAdminName</span>
+                        }
+                        else
+                        {
+                          <span class="fs-5 fw-light text-secondary">Not Specified</span>
+                        }
+                      </div>
+                    </div>
+                  }
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="text-left mt-16">
+            <div class="card text-bg-light border-0">
+              <div class="card-body">
+                <h4 class="text-secondary whl-card-title">Live-in Aide Information</h4>
+                <div class="card-text mt-16">
+                  <div class="row mb-3">
+                    <div class="col-xs-12 col-md-10">
+                      <small>Does your household have a live-in aide or assistant?</small>
+                    </div>
+                    <div class="col-xs-12 col-md-2">
+                      <span class="fs-5 fw-semibold text-dark">@(Model.LiveInAideInd ? "Yes" :
+                        "No")</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="text-left mt-16">
+            <div class="card text-bg-light border-0">
+              <div class="card-body">
+                <h4 class="text-secondary whl-card-title">Units Applying For</h4>
+                <div class="card-text mt-16">
+                  <div class="row mb-3">
+                    <div class="col-xs-12">
+                      @foreach (var item in Model.UnitTypes)
+                      {
+                        var itemSelected = (Model.UnitTypeCds ?? "").Split(",", StringSplitOptions.RemoveEmptyEntries).Contains(item.Key);
+                        if (itemSelected)
+                        {
+                          <span class="fs-5 fw-semibold text-dark mr-16"><i class="fa-solid fa-circle small"></i>
+                            @item.Value</span>
+                        }
+                      }
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="text-left mt-16">
+            <div class="card text-bg-light border-0">
+              <div class="card-body">
+                <h4 class="text-secondary whl-card-title">Additional Members Information</h4>
+                <div class="card-text mt-16">
+                  @if (Model.Members.Any())
+                  {
+                    <div class="row mb-3 border-bottom">
+                      <div class="col-xs-12 col-md-2 text-center">
+                        <small class="fw-bold">Co-Applicant</small>
+                      </div>
+                      <div class="col-xs-11 col-md-3">
+                        <small class="fw-bold">Relation Type</small>
+                      </div>
+                      <div class="col-xs-12 col-md-3">
+                        <small class="fw-bold">Name</small>
+                      </div>
+                      <div class="col-xs-12 col-md-2 text-end">
+                        <small class="fw-bold">Income</small>
+                      </div>
+                      <div class="col-xs-12 col-md-2 text-end">
+                        <small class="fw-bold">Real Estate</small>
+                      </div>
+                    </div>
+                    @foreach (var member in Model.Members)
+                    {
+                      <div class="row mb-3">
+                        <div class="col-xs-12 col-md-2 text-center">
+                          @if (member.MemberId == Model.CoApplicantMemberId && Model.CoApplicantMemberId > 0)
+                          {
+                            <i class="fa-solid fa-circle smaller"></i>
+                          }
+                        </div>
+                        <div class="col-xs-11 col-md-3">
+                          @member.RelationTypeDescription
+                        </div>
+                        <div class="col-xs-12 col-md-3">
+                          @member.DisplayName
+                        </div>
+                        <div class="col-xs-12 col-md-2 text-end">
+                          @member.IncomeValueAmt.ToString("C0")
+                        </div>
+                        <div class="col-xs-12 col-md-2 text-end">
+                          @member.RealEstateValueAmt.ToString("C0")
+                        </div>
+                      </div>
+                    }
+                    <div class="row mb-3 bg-light border-top">
+                      <div class="col-xs-12 col-md-2">&nbsp;</div>
+                      <div class="col-xs-12 col-md-6">
+                        <span class="fw-bolder">Total</span>
+                      </div>
+                      <div class="col-xs-12 col-md-2 text-end">
+                        <span class="fw-bolder">@Model.Members.Select(s => s.IncomeValueAmt).Sum().ToString("C0")</span>
+                      </div>
+                      <div class="col-xs-12 col-md-2 text-end">
+                        <span class="fw-bolder">@Model.Members.Select(s => s.RealEstateValueAmt).Sum().ToString("C0")</span>
+                      </div>
+                    </div>
+                  }
+                  else
+                  {
+                    <p>There are no additional members included with this application.</p>
+                  }
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="text-left mt-16">
+            <div class="card text-bg-light border-0">
+              <div class="card-body">
+                <h4 class="text-secondary whl-card-title">Accounts &amp; Assets Information</h4>
+                <div class="card-text mt-16">
+                  @if (Model.Accounts.Any())
+                  {
+                    <div class="row mb-3 border-bottom">
+                      <div class="col-xs-11 col-md-4">
+                        <small class="fw-bold">Asset Type/Number</small>
+                      </div>
+                      <div class="col-xs-11 col-md-3">
+                        <small class="fw-bold">Institution Name</small>
+                      </div>
+                      <div class="col-xs-12 col-md-3">
+                        <small class="fw-bold">Primary Holder</small>
+                      </div>
+                      <div class="col-xs-12 col-md-2 text-end">
+                        <small class="fw-bold">Value</small>
+                      </div>
+                    </div>
+                    @foreach (var account in Model.Accounts)
+                    {
+                      <div class="row mb-3">
+                        <div class="col-xs-12 col-md-4">
+                          @account.DisplayAccountType
+                          @if (!string.IsNullOrEmpty(account.DisplayAccountNumber))
+                          {
+                            <br />
+                            @account.DisplayAccountNumber
+                          }
+                        </div>
+                        <div class="col-xs-12 col-md-3">
+                          @account.InstitutionName
+                        </div>
+                        <div class="col-xs-12 col-md-3">
+                          @account.PrimaryHolderMemberName
+                        </div>
+                        <div class="col-xs-12 col-md-2 text-end">
+                          @account.AccountValueAmt.ToString("C0")
+                        </div>
+                      </div>
+                    }
+                    <div class="row mb-3 bg-light border-top">
+                      <div class="col-xs-12 col-md-10">
+                        <span class="fw-bolder">Total</span>
+                      </div>
+                      <div class="col-xs-12 col-md-2 text-end">
+                        <span class="fw-bolder">@Model.Accounts.Select(s => s.AccountValueAmt).Sum().ToString("C0")</span>
+                      </div>
+                    </div>
+                  }
+                  else
+                  {
+                    <p>There are no accounts &amp; assets included with this application.</p>
+                  }
+                </div>
+              </div>
+            </div>
+          </div>
+
+          @if ((Model.ListingDetails?.Accessibilities?.Count() ?? 0) > 0)
+          {
+            var accessibilityKeys = new string[] { "WHEELCHAIR", "HEARING", "VISION" };
+            var accessibilityCds = (Model.AccessibilityCds ?? "").Trim().Split(",", StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+            <div class="text-left mt-16">
+              <div class="card text-bg-light border-0">
+                <div class="card-body">
+                  <h4 class="text-secondary whl-card-title">Accessible Units</h4>
+                  <div class="card-text mt-16">
+                    @foreach (var key in accessibilityKeys)
+                    {
+                      if (Model.ListingDetails.Accessibilities.ContainsKey(key))
+                      {
+                        <div class="row mb-3">
+                          <div class="col-xs-12 col-md-10">
+                            @switch (key)
+                            {
+                              case "WHEELCHAIR":
+                                <label class="form-label">Certain apartment units are fully accessible and adapted for
+                                  wheelchair use. Do any of your household members have a physical disability with mobility
+                                  impairment that requires a unit adapted for wheelchair use? <span
+                                    class="text-danger fw-bolder">*</span></label>
+                                break;
+
+                              case "HEARING":
+                                <label class="form-label">Certain apartment units are fully accessible and adapted for
+                                  individuals with hearing impairments. Do any of the household members require a unit that
+                                  has been adapted for hearing impairment? <span class="text-danger fw-bolder">*</span></label>
+                                break;
+
+                              case "VISION":
+                                <label class="form-label">Certain apartment units are fully accessible and adapted for
+                                  individuals with vision impairments. Do any of the household members require a unit that
+                                  has been adapted for vision impairment? <span class="text-danger fw-bolder">*</span></label>
+                                break;
+                            }
+                          </div>
+                          <div class="col-xs-12 col-md-2">
+                            <span class="fs-5 fw-semibold text-dark">@(accessibilityCds.Contains(key) ? "Yes" : "No")</span>
+                          </div>
+                        </div>
+                      }
+                    }
+                  </div>
+                </div>
+              </div>
+            </div>
+          }
+
+          <div class="text-left mt-16">
+            <div class="card text-bg-light border-0">
+              <div class="card-body">
+                <h4 class="text-secondary whl-card-title">How Did You Hear About This Opportunity?</h4>
+                <div class="card-text mt-16">
+                  <div class="row mb-3">
+                    <div class="col-xs-12 col-md-6">
+                      <span class="fs-5 fw-semibold text-dark">@Model.DisplayLeadType</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          @if (Model.DocumentsReqdInd)
+          {
+            <a name="DOCS"></a>
+            <div class="text-left mt-32">
+              <div class="card text-bg-light border-0">
+                <div class="card-body">
+                  <h4 class="text-secondary whl-card-title">Documents</h4>
+                  <div class="card-text">
+                    <div class="row mb-3">
+                      <div class="col-xs-2 col-md-2 text-center"><small>&nbsp;</small></div>
+                      <div class="col-xs-10 col-md-3"><small class="fw-bold">Document Type</small></div>
+                      <div class="col-xs-10 col-md-4"><small class="fw-bold">Document Name</small></div>
+                      <div class="col-xs-10 col-md-3"><small class="fw-bold">Uploaded On</small></div>
+                    </div>
+                    @if ((Model.ApplicationDocuments?.Count() ?? 0) > 0)
+                    {
+                      foreach (var document in Model.ApplicationDocuments)
+                      {
+                        <div class="row mb-3">
+                          <div class="col-xs-12 col-md-2 text-center">
+                            <button class="btn btn-sm whl-link whl-action-viewdocument" data-applicationid="@Model.ApplicationId" data-docid="@document.DocId" data-docname="@document.DocName" title="Download document" aria-label="Download document"><i class="fa-regular fa-file"></i></button>
+                            <button class="btn btn-sm whl-link ml-2 whl-action-deletedocument" data-applicationid="@Model.ApplicationId" data-docid="@document.DocId" data-docname="@document.DocName" title="Delete document" aria-label="Delete document"><i class="fa-regular fa-trash-can"></i></button>
+                          </div>
+                          <div class="col-xs-12 col-md-3"><small>@document.DocTypeDescription</small></div>
+                          <div class="col-xs-12 col-md-4">
+                            <small>@document.DocName</small><br />
+                            <small class="text-secondary">@document.FileName</small>
+                          </div>
+                          <div class="col-xs-12 col-md-3"><small>@($"{document.CreatedDate:f}")</small></div>
+                        </div>
+                      }
+                    }
+                    else
+                    {
+                      <div class="row mb-3">
+                        <div class="col-xs-12 text-center">
+                          <small class="text-secondary"><i class="fa-solid fa-triangle-exclamation text-warning"></i>&nbsp;No
+                            documents have been uploaded for this application!</small>
+                        </div>
+                      </div>
+                    }
+                    <a class="btn btn-sm btn-outline-primary mt-8" asp-area="" asp-controller="Applications"
+                      asp-action="AddDocument" asp-route-applicationId="@Model.ApplicationId" title="Add Document"
+                      aria-label="Add Document">Add Document</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          }
+
+          @if ((Model.ApplicationComments?.Count() ?? 0) > 0)
+          {
+            <a name="COMMENTS"></a>
+            <div class="text-left mt-32">
+              <div class="card text-bg-light border-0">
+                <div class="card-body">
+                  <h4 class="text-secondary whl-card-title">Comments</h4>
+                  <div class="card-text">
+                    <div class="row mb-3">
+                      <div class="col-xs-12 col-md-3"><small class="fw-bold">Timestamp</small></div>
+                      <div class="col-xs-12 col-md-2"><small class="fw-bold">Comment By</small></div>
+                      <div class="col-xs-12 col-md-7"><small class="fw-bold">Comments</small></div>
+                    </div>
+                    @if ((Model.ApplicationComments?.Count() ?? 0) > 0)
+                    {
+                      foreach (var comment in Model.ApplicationComments)
+                      {
+                        <div class="row mb-3">
+                          <div class="col-xs-12 col-md-3"><small>@($"{comment.CreatedDate:f}")</small></div>
+                          <div class="col-xs-12 col-md-2"><small>@(comment.CreatedBy.Equals(Model.CreatedBy, StringComparison.CurrentCultureIgnoreCase) ? "You" : "Administrator")</small></div>
+                          <div class="col-xs-12 col-md-7"><small>@comment.Comments</small></div>
+                        </div>
+                      }
+                    }
+                    else
+                    {
+                      <div class="row mb-3">
+                        <div class="col-xs-12 text-center">
+                          <small class="text-secondary"><i class="fa-solid fa-triangle-exclamation text-warning"></i>&nbsp;No
+                            comments have been added for this application!</small>
+                        </div>
+                      </div>
+                    }
+                    @if (Model.CanComment)
+                    {
+                      <a class="btn btn-sm btn-outline-primary mt-8" asp-area="" asp-controller="Applications"
+                        asp-action="AddComment" asp-route-applicationId="@Model.ApplicationId" title="Add Comment"
+                        aria-label="Add Comment">Add Comment</a>
+                    }
+                  </div>
+                </div>
+              </div>
+            </div>
+          }
+
+          <div class="mt-32">
+            @await Html.PartialAsync("_Actions.cshtml", new ApplicationActionsViewModel(Model.Username,
+                   Model.ApplicationId, Model.ListingId, 99, false, Model.CanWithdraw))
+          </div>
+
+        </div>
+      </div>
+    </div>
+    <div class="col-xs-12 col-md-3">
+      @await Html.PartialAsync("_ListingDetails.cshtml", Model.ListingDetails)
+    </div>
+  </div>
+</div>
+
+@await Html.PartialAsync("~/Views/Applications/_WithdrawApplication.cshtml")
+
+@section Scripts
+{
+  <script>
+    //<![CDATA[
+    $(function () {
+
+      var ssnShown = false;
+      $('.whl-action-togglelast4ssn').on('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        ssnShown = !ssnShown;
+        if (ssnShown) {
+          $('.whl-show-last4ssn').hide();
+          $('.whl-hide-last4ssn').show();
+        } else {
+          $('.whl-show-last4ssn').show();
+          $('.whl-hide-last4ssn').hide();
+        }
+      });
+
+      var dobShown = false;
+      $('.whl-action-toggledateofbirth').on('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        dobShown = !dobShown;
+        if (dobShown) {
+          $('.whl-show-dateofbirth').hide();
+          $('.whl-hide-dateofbirth').show();
+        } else {
+          $('.whl-show-dateofbirth').show();
+          $('.whl-hide-dateofbirth').hide();
+        }
+      });
+
+      $('.whl-action-viewdocument').on('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        const ai = $(this).data('applicationid');
+        const di = $(this).data('docid');
+        const n = $(this).data('docname');
+        const a = document.createElement('a');
+        a.download = '';
+        a.href = '@Url.Action("GetDocument", "Applications")?applicationId=' + ai + '&docId=' + di;
+        a.click();
+      });
+
+      $('.whl-action-deletedocument').on('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        const ai = $(this).data('applicationid');
+        const di = $(this).data('docid');
+        const n = $(this).data('docname');
+        if (confirm('Are you sure you want to delete the document - ' + n + '?')) {
+          $.post('@Url.Action("DeleteDocument", "Applications")?applicationId=' + ai + '&docId=' + di)
+              .done(function (data) {
+                alert('Deleted document - ' + n);
+                const t = setTimeout(() => {
+                  clearTimeout(t);
+                  window.location.href = '@Url.Action("Submitted", "Applications")?applicationId=' + ai + '#DOCS';
+                  window.location.reload();
+                }, 1000);
+              })
+              .fail(function (error) {
+                console.error(error);
+                alert('Failed to delete document - ' + n);
+                window.location.reload();
+              });
+        }
+      });
+
+      $('.whl-action-withdraw-application').on('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        $('#withdrawApplicationModal').modal('show');
+        $('.whl-action-cancel-withdraw-application').show();
+        $('.whl-action-confirm-withdraw-application').show();
+        $('.whl-label-confirm-withdraw-application-inprogress').hide();
+      });
+      $('.whl-action-confirm-withdraw-application').on('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        const applicationId = $(e.currentTarget).data('applicationid');
+        $('.whl-action-cancel-withdraw-application').hide();
+        $('.whl-action-confirm-withdraw-application').hide();
+        $('.whl-label-confirm-withdraw-application-inprogress').show();
+        $.post('@Url.Action("Withdraw", "Applications")?applicationId=' + applicationId)
+          .done(function (response) {
+            $('#withdrawApplicationModal').modal('hide');
+            window.location.href = '@Url.Action("Dashboard", "Applications")';
+          })
+          .fail(function (error) {
+            $('#withdrawApplicationModal').modal('hide');
+            var message = error.responseJSON && error.responseJSON.message && error.responseJSON.message.length > 0 ? error.responseJSON.message : 'Failed to withdraw application due to one or more errors';
+            if (error.responseJSON && error.responseJSON.details && error.responseJSON.details.length > 0) {
+              message += '<br />' + error.responseJSON.details;
+            }
+            alert('Failed to withdraw application due to one or more errors!');
+          });
+      });
+
+    });
+    //]]>
+  </script>
+}

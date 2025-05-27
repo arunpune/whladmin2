@@ -1,0 +1,279 @@
+﻿@model EditableListingUnitViewModel
+<div class="text-left">
+  @using (Html.BeginForm("Add", "Listings", FormMethod.Post))
+  {
+    <div id="divUnitSaveErrorMessage" style="display: none;">
+      <h6 class="text-danger"><i class="fa-solid fa-triangle-exclamation"></i>&nbsp;Error</h6>
+      <p id="lblUnitSaveErrorMessage">Failed to save listing unit information</p>
+      <hr />
+    </div>
+
+    <input type="hidden" id="UnitListingId" name="UnitListingId" value="@Model.ListingId" />
+    @Html.HiddenFor(h => h.UnitId);
+
+    <div class="row mb-3">
+      @Html.LabelFor(l => l.UnitTypeCd, htmlAttributes: new { @class = "col-sm-3 col-form-label" })
+      <div class="col-sm-3">
+        @Html.DropDownListFor(e => e.UnitTypeCd, new SelectList(Model.UnitTypes, "Key", "Value", Model.UnitTypeCd), htmlAttributes: new { @class = "form-select whl-formfield-unittypecd", placeholder = "Select Unit Type" })
+        @Html.ValidationMessageFor(v => v.UnitTypeCd)
+      </div>
+      @Html.LabelFor(l => l.SquareFootage, htmlAttributes: new { @class = "col-sm-3 col-form-label" })
+      <div class="col-sm-3">
+        @Html.TextBoxFor(e => e.SquareFootage, htmlAttributes: new { @class = "form-control whl-formfield-squarefootage whl-formfield-numbersonly", placeholder = "Enter Square Footage" })
+        @Html.ValidationMessageFor(v => v.SquareFootage)
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      @Html.LabelFor(l => l.BedroomCnt, htmlAttributes: new { @class = "col-sm-3 col-form-label" })
+      <div class="col-sm-3">
+        @Html.TextBoxFor(e => e.BedroomCnt, htmlAttributes: new { @class = "form-control whl-formfield-bedroomcnt whl-formfield-numbersonly", placeholder = "Enter Bedrooms", maxlength = "2" })
+        @Html.ValidationMessageFor(v => v.BedroomCnt)
+      </div>
+      @Html.LabelFor(l => l.BathroomCnt, htmlAttributes: new { @class = "col-sm-3 col-form-label" })
+      <div class="col-sm-3">
+        <div class="input-group">
+          <input type="text" class="form-control whl-formfield-bathroomcnt-whole whl-formfield-bathroomcnt-field whl-formfield-numbersonly" placeholder="Enter Bathrooms" maxlength="2" asp-for="BathroomCnt" value="@Model.BathroomCnt" />
+          <span class="input-group-text">.</span>
+          <select type="text" class="form-select whl-formfield-bathroomcnt-part whl-formfield-bathroomcnt-field" placeholder="Enter Partial Bathrooms" asp-for="BathroomCntPart" asp-items="@(new SelectList(Model.BathroomPartOptions, "Key", "Value", Model.BathroomCntPart))">
+          </select>
+        </div>
+        @Html.ValidationMessageFor(v => v.BathroomCnt)
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      @Html.LabelFor(l => l.AreaMedianIncomePct, htmlAttributes: new { @class = "col-sm-3 col-form-label" })
+      <div class="col-sm-3">
+        @Html.TextBoxFor(e => e.AreaMedianIncomePct, htmlAttributes: new { @class = "form-control whl-formfield-areamedianincomepct whl-formfield-numbersonly", placeholder = "Enter AMI %", maxlength = "3" })
+        @Html.ValidationMessageFor(v => v.AreaMedianIncomePct)
+      </div>
+      @Html.LabelFor(l => l.UnitsAvailableCnt, htmlAttributes: new { @class = "col-sm-3 col-form-label" })
+      <div class="col-sm-3">
+        @Html.TextBoxFor(e => e.UnitsAvailableCnt, htmlAttributes: new { @class = "form-control whl-formfield-unitsavailablecnt whl-formfield-numbersonly", placeholder = "Enter # Units Available", maxlength = "3" })
+        @Html.ValidationMessageFor(v => v.UnitsAvailableCnt)
+      </div>
+    </div>
+
+    @if (Model.IsRental)
+    {
+      <div class="row mb-3">
+        @Html.LabelFor(l => l.MonthlyRentAmt, htmlAttributes: new { @class = "col-sm-3 col-form-label" })
+        <div class="col-sm-3">
+          @Html.TextBoxFor(e => e.MonthlyRentAmt, htmlAttributes: new { @class = "form-control whl-formfield-monthlyrentamt whl-formfield-numbersonly", placeholder = "Enter Monthly Rent Amount", maxlength = "6" })
+          @Html.ValidationMessageFor(v => v.MonthlyRentAmt)
+        </div>
+      </div>
+      @Html.HiddenFor(h => h.AssetLimitAmt)
+      @Html.HiddenFor(h => h.SubsidyAmt)
+      @Html.HiddenFor(h => h.MonthlyMaintenanceAmt)
+      @Html.HiddenFor(h => h.MonthlyTaxesAmt)
+      @Html.HiddenFor(h => h.EstimatedPriceAmt)
+    }
+    else
+    {
+      @Html.HiddenFor(h => h.MonthlyRentAmt)
+      @Html.HiddenFor(h => h.AssetLimitAmt)
+      <div class="row mb-3">
+        @Html.LabelFor(l => l.EstimatedPriceAmt, htmlAttributes: new { @class = "col-sm-3 col-form-label" })
+        <div class="col-sm-3">
+          @Html.TextBoxFor(e => e.EstimatedPriceAmt, htmlAttributes: new { @class = "form-control whl-formfield-estimatedpriceamt whl-formfield-numbersonly", placeholder = "Enter Estimated Price Amount", maxlength = "9" })
+          @Html.ValidationMessageFor(v => v.EstimatedPriceAmt)
+        </div>
+        @Html.LabelFor(l => l.SubsidyAmt, htmlAttributes: new { @class = "col-sm-3 col-form-label" })
+        <div class="col-sm-3">
+          @Html.TextBoxFor(e => e.SubsidyAmt, htmlAttributes: new { @class = "form-control whl-formfield-subsidytamt whl-formfield-numbersonly", placeholder = "Enter Subsidy Amount", maxlength = "9" })
+          @Html.ValidationMessageFor(v => v.SubsidyAmt)
+        </div>
+      </div>
+      <div class="row mb-3">
+        @Html.LabelFor(l => l.MonthlyTaxesAmt, htmlAttributes: new { @class = "col-sm-3 col-form-label" })
+        <div class="col-sm-3">
+          @Html.TextBoxFor(e => e.MonthlyTaxesAmt, htmlAttributes: new { @class = "form-control whl-formfield-monthlytaxesamt whl-formfield-numbersonly", placeholder = "Enter Monthly Taxes Amount", maxlength = "6" })
+          @Html.ValidationMessageFor(v => v.MonthlyTaxesAmt)
+        </div>
+        @Html.LabelFor(l => l.MonthlyMaintenanceAmt, htmlAttributes: new { @class = "col-sm-3 col-form-label" })
+        <div class="col-sm-3">
+          @Html.TextBoxFor(e => e.MonthlyMaintenanceAmt, htmlAttributes: new { @class = "form-control whl-formfield-monthlymaintenanceamt whl-formfield-numbersonly", placeholder = "Enter Monthly Maintenace Amount", maxlength = "6" })
+          @Html.ValidationMessageFor(v => v.MonthlyMaintenanceAmt)
+        </div>
+      </div>
+      <div class="row mb-3">
+        @Html.LabelFor(l => l.MonthlyInsuranceAmt, htmlAttributes: new { @class = "col-sm-3 col-form-label" })
+        <div class="col-sm-3">
+          @Html.TextBoxFor(e => e.MonthlyInsuranceAmt, htmlAttributes: new { @class = "form-control whl-formfield-monthlyinsuranceamt whl-formfield-numbersonly", placeholder = "Enter Monthly (Walls In) Insurance Amount", maxlength = "6" })
+          @Html.ValidationMessageFor(v => v.MonthlyInsuranceAmt)
+        </div>
+      </div>
+    }
+
+    <hr />
+
+    <h5>Household Criteria</h5>
+
+    <div class="row mb-3">
+      <div class="col-sm-3 col-form-label">&nbsp;</div>
+      <div class="col-sm-6 col-form-label"><strong>Annual Household Income</strong></div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-sm-3 col-form-label"><strong>Household Size</strong></div>
+      <div class="col-sm-3 col-form-label"><strong>Min. Income ($)</strong></div>
+      <div class="col-sm-3 col-form-label"><strong>Max. Income ($)</strong></div>
+    </div>
+
+    <div class="row mb-3">
+      @Html.LabelFor(l => l.MinHouseholdIncomeAmt1, htmlAttributes: new { @class = "col-sm-3 col-form-label" })
+      <div class="col-sm-3">
+        @Html.TextBoxFor(e => e.MinHouseholdIncomeAmt1, htmlAttributes: new { @class = "form-control whl-formfield-minhouseholdincomeamt1 whl-formfield-numbersonly", placeholder = "Enter Min. Household Income Amount", maxlength = "6" })
+        @Html.ValidationMessageFor(v => v.MinHouseholdIncomeAmt1)
+      </div>
+      <div class="col-sm-3">
+        @Html.TextBoxFor(e => e.MaxHouseholdIncomeAmt1, htmlAttributes: new { @class = "form-control whl-formfield-maxhouseholdincomeamt1 whl-formfield-numbersonly", placeholder = "Enter Max. Household Income Amount", maxlength = "6" })
+        @Html.ValidationMessageFor(v => v.MaxHouseholdIncomeAmt1)
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      @Html.LabelFor(l => l.MinHouseholdIncomeAmt2, htmlAttributes: new { @class = "col-sm-3 col-form-label" })
+      <div class="col-sm-3">
+        @Html.TextBoxFor(e => e.MinHouseholdIncomeAmt2, htmlAttributes: new { @class = "form-control whl-formfield-minhouseholdincomeamt2 whl-formfield-numbersonly", placeholder = "Enter Min. Household Income Amount", maxlength = "6" })
+        @Html.ValidationMessageFor(v => v.MinHouseholdIncomeAmt2)
+      </div>
+      <div class="col-sm-3">
+        @Html.TextBoxFor(e => e.MaxHouseholdIncomeAmt2, htmlAttributes: new { @class = "form-control whl-formfield-maxhouseholdincomeamt2 whl-formfield-numbersonly", placeholder = "Enter Max. Household Income Amount", maxlength = "6" })
+        @Html.ValidationMessageFor(v => v.MaxHouseholdIncomeAmt2)
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      @Html.LabelFor(l => l.MinHouseholdIncomeAmt3, htmlAttributes: new { @class = "col-sm-3 col-form-label" })
+      <div class="col-sm-3">
+        @Html.TextBoxFor(e => e.MinHouseholdIncomeAmt3, htmlAttributes: new { @class = "form-control whl-formfield-minhouseholdincomeamt3 whl-formfield-numbersonly", placeholder = "Enter Min. Household Income Amount", maxlength = "6" })
+        @Html.ValidationMessageFor(v => v.MinHouseholdIncomeAmt3)
+      </div>
+      <div class="col-sm-3">
+        @Html.TextBoxFor(e => e.MaxHouseholdIncomeAmt3, htmlAttributes: new { @class = "form-control whl-formfield-maxhouseholdincomeamt3 whl-formfield-numbersonly", placeholder = "Enter Max. Household Income Amount", maxlength = "6" })
+        @Html.ValidationMessageFor(v => v.MaxHouseholdIncomeAmt3)
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      @Html.LabelFor(l => l.MinHouseholdIncomeAmt4, htmlAttributes: new { @class = "col-sm-3 col-form-label" })
+      <div class="col-sm-3">
+        @Html.TextBoxFor(e => e.MinHouseholdIncomeAmt4, htmlAttributes: new { @class = "form-control whl-formfield-minhouseholdincomeamt4 whl-formfield-numbersonly", placeholder = "Enter Min. Household Income Amount", maxlength = "6" })
+        @Html.ValidationMessageFor(v => v.MinHouseholdIncomeAmt4)
+      </div>
+      <div class="col-sm-3">
+        @Html.TextBoxFor(e => e.MaxHouseholdIncomeAmt4, htmlAttributes: new { @class = "form-control whl-formfield-maxhouseholdincomeamt4 whl-formfield-numbersonly", placeholder = "Enter Max. Household Income Amount", maxlength = "6" })
+        @Html.ValidationMessageFor(v => v.MaxHouseholdIncomeAmt4)
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      @Html.LabelFor(l => l.MinHouseholdIncomeAmt5, htmlAttributes: new { @class = "col-sm-3 col-form-label" })
+      <div class="col-sm-3">
+        @Html.TextBoxFor(e => e.MinHouseholdIncomeAmt5, htmlAttributes: new { @class = "form-control whl-formfield-minhouseholdincomeamt5 whl-formfield-numbersonly", placeholder = "Enter Min. Household Income Amount", maxlength = "6" })
+        @Html.ValidationMessageFor(v => v.MinHouseholdIncomeAmt5)
+      </div>
+      <div class="col-sm-3">
+        @Html.TextBoxFor(e => e.MaxHouseholdIncomeAmt5, htmlAttributes: new { @class = "form-control whl-formfield-maxhouseholdincomeamt5 whl-formfield-numbersonly", placeholder = "Enter Max. Household Income Amount", maxlength = "6" })
+        @Html.ValidationMessageFor(v => v.MaxHouseholdIncomeAmt5)
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      @Html.LabelFor(l => l.MinHouseholdIncomeAmt6, htmlAttributes: new { @class = "col-sm-3 col-form-label" })
+      <div class="col-sm-3">
+        @Html.TextBoxFor(e => e.MinHouseholdIncomeAmt6, htmlAttributes: new { @class = "form-control whl-formfield-minhouseholdincomeamt6 whl-formfield-numbersonly", placeholder = "Enter Min. Household Income Amount", maxlength = "6" })
+        @Html.ValidationMessageFor(v => v.MinHouseholdIncomeAmt6)
+      </div>
+      <div class="col-sm-3">
+        @Html.TextBoxFor(e => e.MaxHouseholdIncomeAmt6, htmlAttributes: new { @class = "form-control whl-formfield-maxhouseholdincomeamt6 whl-formfield-numbersonly", placeholder = "Enter Max. Household Income Amount", maxlength = "6" })
+        @Html.ValidationMessageFor(v => v.MaxHouseholdIncomeAmt6)
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      @Html.LabelFor(l => l.MinHouseholdIncomeAmt7, htmlAttributes: new { @class = "col-sm-3 col-form-label" })
+      <div class="col-sm-3">
+        @Html.TextBoxFor(e => e.MinHouseholdIncomeAmt7, htmlAttributes: new { @class = "form-control whl-formfield-minhouseholdincomeamt7 whl-formfield-numbersonly", placeholder = "Enter Min. Household Income Amount", maxlength = "6" })
+        @Html.ValidationMessageFor(v => v.MinHouseholdIncomeAmt7)
+      </div>
+      <div class="col-sm-3">
+        @Html.TextBoxFor(e => e.MaxHouseholdIncomeAmt7, htmlAttributes: new { @class = "form-control whl-formfield-maxhouseholdincomeamt7 whl-formfield-numbersonly", placeholder = "Enter Max. Household Income Amount", maxlength = "6" })
+        @Html.ValidationMessageFor(v => v.MaxHouseholdIncomeAmt7)
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      @Html.LabelFor(l => l.MinHouseholdIncomeAmt8, htmlAttributes: new { @class = "col-sm-3 col-form-label" })
+      <div class="col-sm-3">
+        @Html.TextBoxFor(e => e.MinHouseholdIncomeAmt8, htmlAttributes: new { @class = "form-control whl-formfield-minhouseholdincomeamt8 whl-formfield-numbersonly", placeholder = "Enter Min. Household Income Amount", maxlength = "6" })
+        @Html.ValidationMessageFor(v => v.MinHouseholdIncomeAmt8)
+      </div>
+      <div class="col-sm-3">
+        @Html.TextBoxFor(e => e.MaxHouseholdIncomeAmt8, htmlAttributes: new { @class = "form-control whl-formfield-maxhouseholdincomeamt8 whl-formfield-numbersonly", placeholder = "Enter Max. Household Income Amount", maxlength = "6" })
+        @Html.ValidationMessageFor(v => v.MaxHouseholdIncomeAmt8)
+      </div>
+    </div>
+
+    @if (Model.UnitId > 0)
+    {
+      <div class="row mb-3">
+        <div class="col-sm-3">&nbsp;</div>
+        <div class="form-check form-switch col-sm-9">
+          @Html.CheckBoxFor(m => m.Active, htmlAttributes: new { @class = "form-check-input", role = "switch", id = "UnitActive" })
+          @Html.LabelFor(l => l.Active, htmlAttributes: new { @class = "form-check-label" })
+        </div>
+      </div>
+    }
+  }
+</div>
+
+<script>
+  //<![CDATA[
+
+  $(function() {
+
+    $('.whl-formfield-unittypecd').on('change', function (e) {
+      var v = $(this).val();
+      if (v !== undefined && v !== null && v.trim().length > 0) {
+        var b = 0;
+        switch (v) {
+          case '1BED': b = 1; break;
+          case '2BED': b = 2; break;
+          case '3BED': b = 3; break;
+          case '4BED': b = 4; break;
+        }
+        $('.whl-formfield-bedroomcnt').val(b.toString());
+      }
+    });
+
+    $('.whl-formfield-bedroomcnt').on('change', function (e) {
+      var u = $('.whl-formfield-unittypecd').val();
+      var v = $(this).val();
+      var b = 0;
+      if (v !== undefined && v !== null && !isNaN(parseInt(v))) {
+        var b = parseInt(v);
+        switch (u) {
+          case 'STUDIO': b = 0; break;
+          case '1BED': b = b < 1 ? 1 : b; break;
+          case '2BED': b = b < 2 ? 2 : b; break;
+          case '3BED': b = b < 3 ? 3 : b; break;
+          case '4BED': b = b < 4 ? 4 : b; break;
+        }
+      }
+      $('.whl-formfield-bedroomcnt').val(b.toString());
+    });
+
+    $('.whl-formfield-numbersonly').on('keypress', function (e) {
+      var reg = /^\d+$/;
+      var k = e.key;
+      return reg.test(e.key);
+    });
+
+  });
+
+  //]]>
+</script>

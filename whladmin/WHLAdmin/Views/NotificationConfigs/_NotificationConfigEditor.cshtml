@@ -1,0 +1,228 @@
+﻿@model EditableNotificationConfigViewModel
+
+<div class="text-left">
+  @using (Html.BeginForm("Add", "NotificationConfigs", FormMethod.Post))
+  {
+    <div id="divSaveErrorMessage" style="display: none;">
+      <h6 class="text-danger"><i class="fa-solid fa-triangle-exclamation"></i>&nbsp;Error</h6>
+      <p id="lblSaveErrorMessage">Failed to save notification information</p>
+      <hr />
+    </div>
+
+    @Html.HiddenFor(h => h.NotificationId);
+
+    <div class="row mb-3">
+      @Html.LabelFor(l => l.CategoryCd, htmlAttributes: new { @class = "col-sm-3 col-form-label" })
+      <div class="col-sm-9">
+        @Html.DropDownListFor(e => e.CategoryCd, new SelectList(Model.Categories, "Key", "Value", Model.CategoryCd), htmlAttributes: new { @class = "form-select whl-formfield-categorycd", placeholder = "Select Category" })
+        @Html.ValidationMessageFor(v => v.CategoryCd)
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      @Html.LabelFor(l => l.Title, htmlAttributes: new { @class = "col-sm-3 col-form-label" })
+      <div class="col-sm-9">
+        @Html.TextBoxFor(e => e.Title, htmlAttributes: new { @class = "form-control whl-formfield-title", placeholder = "Enter Title", maxlength = 200 })
+        @Html.ValidationMessageFor(v => v.Title)
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      @Html.LabelFor(l => l.Text, htmlAttributes: new { @class = "col-sm-3 col-form-label" })
+      <div class="col-sm-9">
+        @Html.TextAreaFor(e => e.Text, htmlAttributes: new { @class = "form-control whl-formfield-text", placeholder = "Enter Text", rows = 5, maxlength = 1000 })
+        @Html.ValidationMessageFor(v => v.Text)
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      @Html.LabelFor(l => l.FrequencyCd, htmlAttributes: new { @class = "col-sm-3 col-form-label" })
+      <div class="col-sm-9">
+        @Html.DropDownListFor(e => e.FrequencyCd, new SelectList(Model.Frequencies, "Key", "Value", Model.FrequencyCd), htmlAttributes: new { @class = "form-select whl-formfield-frequencycd", placeholder = "Select Frequency Type" })
+        @Html.ValidationMessageFor(v => v.FrequencyCd)
+      </div>
+    </div>
+
+    <div class="row mb-3 whl-formrow-frequencyinterval">
+      @Html.LabelFor(l => l.FrequencyInterval, htmlAttributes: new { @class = "col-sm-3 col-form-label" })
+      <div class="col-sm-9">
+        @Html.TextBoxFor(e => e.FrequencyInterval, htmlAttributes: new { @class = "form-control whl-formfield-frequencyinterval", placeholder = "Enter Interval" })
+      </div>
+    </div>
+
+    <div class="row mb-3 whl-formrow-notificationlist">
+      @Html.LabelFor(l => l.NotificationList, htmlAttributes: new { @class = "col-sm-3 col-form-label" })
+      <div class="col-sm-9">
+        @Html.TextAreaFor(e => e.NotificationList, htmlAttributes: new { @class = "form-control whl-formfield-notificationlist", placeholder = "Enter Notification List", maxlength = 2000 })
+        @Html.ValidationMessageFor(v => v.NotificationList)
+      </div>
+    </div>
+
+    @if (Model.NotificationId > 0)
+    {
+      <div class="row mb-3">
+        <div class="col-sm-3">&nbsp;</div>
+        <div class="form-check form-switch col-sm-9">
+          @Html.CheckBoxFor(m => m.Active, htmlAttributes: new { @class = "form-check-input", role = "switch" })
+          @Html.LabelFor(l => l.Active, htmlAttributes: new { @class = "form-check-label" })
+        </div>
+      </div>
+    }
+  }
+</div>
+
+<script>
+  //<![CDATA[
+  $(function () {
+
+    // Disable submission
+    $('.whl-action-save-notification').attr('disabled', 'disabled');
+    fnToggleNotificationList();
+    fnToggleFrequencyOptions();
+    fnToggleSaveNotification();
+
+    $('.whl-formfield-categorycd').on('change', function (e) {
+      $(this).removeClass('is-valid');
+      $(this).removeClass('is-invalid');
+      var v = $(this).val();
+      if (v !== undefined && v !== null && v.trim().length > 0) {
+        $(this).addClass('is-valid');
+      } else {
+        $(this).addClass('is-invalid');
+      }
+      fnToggleNotificationList();
+      fnToggleSaveNotification();
+    });
+
+    $('.whl-formfield-title').on('change', function (e) {
+      $(this).removeClass('is-valid');
+      $(this).removeClass('is-invalid');
+      var v = $(this).val();
+      if (v !== undefined && v !== null && v.trim().length > 0) {
+        $(this).addClass('is-valid');
+      } else {
+        $(this).addClass('is-invalid');
+      }
+      fnToggleSaveNotification();
+    });
+
+    $('.whl-formfield-text').on('change', function (e) {
+      $(this).removeClass('is-valid');
+      $(this).removeClass('is-invalid');
+      var v = $(this).val();
+      if (v !== undefined && v !== null && v.trim().length > 0) {
+        $(this).addClass('is-valid');
+      } else {
+        $(this).addClass('is-invalid');
+      }
+      fnToggleSaveNotification();
+    });
+
+    $('.whl-formfield-frequencycd').on('change', function (e) {
+      $(this).removeClass('is-valid');
+      $(this).removeClass('is-invalid');
+      var v = $(this).val();
+      if (v !== undefined && v !== null && v.trim().length > 0) {
+        $(this).addClass('is-valid');
+      } else {
+        $(this).addClass('is-invalid');
+      }
+      fnToggleFrequencyOptions();
+      fnToggleSaveNotification();
+    });
+
+    $('.whl-formfield-frequencyinterval').on('keypress', function (e) {
+      var reg = /^\d+$/;
+      var k = e.key;
+      return reg.test(e.key);
+    });
+
+    $('.whl-formfield-frequencyinterval').on('change', function (e) {
+      var reg = /^\d+$/;
+      $(this).removeClass('is-valid');
+      $(this).removeClass('is-invalid');
+      var v = $(this).val();
+      if (v === undefined || v == null || v.trim().length == 0) {
+        $(this).val('0');
+        v = '0';
+      }
+      var fr = $('.whl-formfield-frequencycd').val();
+      if (fr !== undefined && fr !== null && fr.trim().toUpperCase() === 'BEFORE') {
+        var n = parseInt(v);
+        if (!isNaN(n) && n > 0) {
+          $(this).addClass('is-valid');
+        } else {
+          $(this).addClass('is-invalid');
+        }
+      }
+      fnToggleSaveNotification();
+    });
+
+    $('.whl-formfield-notificationlist').on('change', function (e) {
+      $(this).removeClass('is-valid');
+      $(this).removeClass('is-invalid');
+      var v = $(this).val();
+      if (v !== undefined && v !== null && v.trim().length > 0) {
+        $(this).addClass('is-valid');
+      } else {
+        $(this).addClass('is-invalid');
+      }
+      fnToggleSaveNotification();
+    });
+
+    function fnToggleNotificationList() {
+      $('.whl-formfield-notificationlist').removeClass('is-valid');
+      $('.whl-formfield-notificationlist').removeClass('is-invalid');
+      var ca = $('.whl-formfield-categorycd').val();
+      if (ca !== undefined && ca !== null && ca.trim().toUpperCase() === 'INTERNAL') {
+        $('.whl-formrow-notificationlist').show();
+        var nl = $('.whl-formfield-notificationlist').val();
+        if (nl !== undefined && nl !== null && nl.trim().length > 0) {
+          $('.whl-formfield-notificationlist').addClass('is-valid');
+        } else {
+          $('.whl-formfield-notificationlist').addClass('is-invalid');
+        }
+      } else {
+        $('.whl-formrow-notificationlist').hide();
+        $('.whl-formfield-notificationlist').val('');
+      }
+    }
+
+    function fnToggleFrequencyOptions() {
+      var fr = $('.whl-formfield-frequencycd').val();
+      if (fr !== undefined && fr !== null && fr.trim().toUpperCase() === 'BEFORE') {
+        $('.whl-formrow-frequencyinterval').show();
+      } else {
+        $('.whl-formrow-frequencyinterval').hide();
+        $('.whl-formfield-frequencyinterval').val('0');
+      }
+    }
+
+    function fnToggleSaveNotification() {
+      var ca = $('.whl-formfield-categorycd').val();
+      var ti = $('.whl-formfield-title').val();
+      var tx = $('.whl-formfield-text').val();
+      var fr = $('.whl-formfield-frequencycd').val();
+      var fi = $('.whl-formfield-frequencyinterval').val();
+      var nl = $('.whl-formfield-notificationlist').val();
+      var allowSubmission = (ca !== undefined && ca !== null && ca.trim().length > 0)
+                              && (ti !== undefined && ti !== null && ti.trim().length > 0)
+                              && (tx !== undefined && tx !== null && tx.trim().length > 0)
+                              && (fr !== undefined && fr !== null && fr.trim().length > 0);
+      if (allowSubmission && fr.trim().toUpperCase() === 'BEFORE') {
+        var n = parseInt(fi);
+        allowSubmission = !isNaN(n) && n > 0;
+      }
+      if (allowSubmission && ca.trim().toUpperCase() === 'INTERNAL') {
+        allowSubmission = (nl !== undefined && nl !== null && nl.trim().length > 0);
+      }
+      if (allowSubmission) {
+        $('.whl-action-save-notification').removeAttr('disabled');
+      } else {
+        $('.whl-action-save-notification').attr('disabled', 'disabled');
+      }
+    }
+
+  });
+  //]]>
+</script>
